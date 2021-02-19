@@ -5,12 +5,6 @@ call plug#begin()
     " A file system explorer for the Vim editor
     Plug 'preservim/nerdtree'
 
-    " A plugin of NERDTree showing git status flags
-    Plug 'Xuyuanp/nerdtree-git-plugin'
-
-    " Fonts with a high number of glyphs
-    Plug 'ryanoasis/vim-devicons'
-
     " Use gcc to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
 call plug#end()
