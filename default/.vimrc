@@ -7,7 +7,7 @@ call plug#begin()
 
 	" A plugin of NERDTree showing git status flags
 	Plug 'Xuyuanp/nerdtree-git-plugin'
-	
+
 	" Fonts with a high number of glyphs
 	Plug 'ryanoasis/vim-devicons'
 
@@ -58,10 +58,10 @@ autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | e
 
 " Exit Vim if NERDTree is the only window left.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
-    \ quit | endif
+	\ quit | endif
 
 
 "=====================================
 "				Filetype
-"===================================== 
+"=====================================
 filetype plugin indent on
