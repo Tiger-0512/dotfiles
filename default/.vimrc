@@ -1,23 +1,23 @@
 "=====================================
-"				Plugin
+"               Plugin
 "=====================================
 call plug#begin()
-	" A file system explorer for the Vim editor
-	Plug 'preservim/nerdtree'
+    " A file system explorer for the Vim editor
+    Plug 'preservim/nerdtree'
 
-	" A plugin of NERDTree showing git status flags
-	Plug 'Xuyuanp/nerdtree-git-plugin'
+    " A plugin of NERDTree showing git status flags
+    Plug 'Xuyuanp/nerdtree-git-plugin'
 
-	" Fonts with a high number of glyphs
-	Plug 'ryanoasis/vim-devicons'
+    " Fonts with a high number of glyphs
+    Plug 'ryanoasis/vim-devicons'
 
-	" Use gcc to comment out a line, gc to comment out the target of a motion
-	Plug 'tpope/vim-commentary'
+    " Use gcc to comment out a line, gc to comment out the target of a motion
+    Plug 'tpope/vim-commentary'
 call plug#end()
 
 
 "=====================================
-"				Basic
+"               Basic
 "=====================================
 " Encoding
 set encoding=UTF-8
@@ -45,7 +45,7 @@ set smartcase
 
 
 "=====================================
-"				NERDTree
+"               NERDTree
 "=====================================
 nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
@@ -58,10 +58,10 @@ autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | e
 
 " Exit Vim if NERDTree is the only window left.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
-	\ quit | endif
+    \ quit | endif
 
 
 "=====================================
-"				Filetype
+"               Filetype
 "=====================================
 filetype plugin indent on
