@@ -5,6 +5,15 @@ call plug#begin()
     " A file system explorer for the Vim editor
     Plug 'preservim/nerdtree'
 
+    " Make NERDTree feel like a true panel, independent of tabs
+    Plug 'jistr/vim-nerdtree-tabs'
+
+    " Auto Bracket
+    Plug 'Raimondi/delimitMate'
+
+    " Change Bracket by using shortcuts
+    Plug 'tpope/vim-surround
+
     " Use gcc to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
 call plug#end()
@@ -25,7 +34,6 @@ set smarttab
 
 " Indent
 set autoindent
-
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
@@ -40,6 +48,22 @@ highlight clear CursorLine
 set hlsearch
 set ignorecase
 set smartcase
+
+" Key Binding
+imap <C-k> <Up>
+imap <C-j> <Down>
+imap <C-h> <Left>
+imap <C-l> <Right>
+" Go Beggining of a Line in Insert Mode
+imap <C-i> <C-o>^
+" Go End of a Line in Insert Mode
+imap <C-a> <C-o>$
+
+" Key Remupping
+" ; to :
+nnoremap; :
+" Use Enter in Normal Mode
+nnoremap <CR> A<CR><ESC
 
 
 "=====================================
