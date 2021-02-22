@@ -49,6 +49,9 @@ set hlsearch
 set ignorecase
 set smartcase
 
+" Move to up and down rows with 'h' and 'l'
+set whichwrap=b,s,h,l,<,>,[,],~
+
 " Key Binding
 imap <C-k> <Up>
 imap <C-j> <Down>
