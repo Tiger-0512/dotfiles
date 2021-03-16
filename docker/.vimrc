@@ -12,7 +12,7 @@ call plug#begin()
     Plug 'Raimondi/delimitMate'
 
     " Change Bracket by using shortcuts
-    Plug 'tpope/vim-surround
+    Plug 'tpope/vim-surround'
 
     " Use gcc to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
@@ -88,9 +88,12 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 
-" Start NERDTree. If a file is specified, move the cursor to its window
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
+" Show Hidden Files
+let NERDTreeShowHidden = 1
+
+" NERDTree Tabs Settings
+let g:nerdtree_tabs_open_on_console_startup = 1
+let g:nerdtree_tabs_focus_on_files = 1
 
 " Exit Vim if NERDTree is the only window left.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
