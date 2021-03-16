@@ -58,21 +58,32 @@ set smartcase
 " Move to up and down rows with 'h' and 'l'
 set whichwrap=b,s,h,l,<,>,[,],~
 
-" Key Binding
-imap <C-k> <Up>
-imap <C-j> <Down>
-imap <C-h> <Left>
-imap <C-l> <Right>
-" Go Beggining of a Line in Insert Mode
-imap <C-i> <C-o>^
-" Go End of a Line in Insert Mode
-imap <C-a> <C-o>$
-
-" Key Remupping
+" Key Mapping
+" Normal Mode
+" Move Visual Line with 'j' and 'k', Vice Versa
+nnoremap k gk
+nnoremap j gj
+nnoremap gk k
+nnoremap gj j
 " ; to :
 nnoremap; :
-" Use Enter in Normal Mode
+" Use Enter
 nnoremap <CR> A<CR><ESC>
+
+" Highlight the word on the cursor
+nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
+" Cansel Highlighting
+nnoremap  <CS-h> :<C-u>nohlsearch<cr><Esc>
+
+" Insert Mode
+inoremap <C-k> <Up>
+inoremap <C-j> <Down>
+inoremap <C-h> <Left>
+inoremap <C-l> <Right>
+" Go Beggining of a Line
+inoremap <C-i> <C-o>^
+" Go End of a Line
+inoremap <C-a> <C-o>$
 
 
 "=====================================
