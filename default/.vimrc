@@ -28,6 +28,11 @@ call plug#end()
 "=====================================
 "               Basic
 "=====================================
+" Invalid the compatibility with vi
+set nocompatible
+" Specify the motion of Backspace
+set backspace=indent,eol,start
+
 " Encoding
 set encoding=UTF-8
 
