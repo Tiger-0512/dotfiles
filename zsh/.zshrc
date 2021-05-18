@@ -2,6 +2,27 @@ export PATH=/usr/local/bin:$PATH
 export PATH="/usr/local/sbin:$PATH"
 
 
+#-------------------- vim --------------------#
+bindkey -v
+# bindkey '^I'  beginning-of-line
+# bindkey '^A'  end-of-line
+
+# Show current mode
+function zle-keymap-select {
+    RPS1="${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
+    RPS2=$RPS1
+    zle reset-prompt
+}
+zle -N zle-keymap-select
+
+
+#-------------------- alias --------------------#
+alias gc-b=‘git checkout -b’
+alias ga=‘git add‘
+alias gc-m=‘git commit -m’
+alias gp=‘git push’
+
+
 #-------------------- zinit --------------------#
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
@@ -67,3 +88,4 @@ export PATH=$PATH:$HOME/development/flutter/bin
 
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+export JAVA_HOME="/Users/tiger/Library/Java/JavaVirtualMachines/corretto-1.8.0_292/Contents/Home"
