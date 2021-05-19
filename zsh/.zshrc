@@ -4,6 +4,8 @@ export PATH="/usr/local/sbin:$PATH"
 
 #-------------------- vim --------------------#
 bindkey -v
+bindkey -M vicmd "^I" beginning-of-line
+bindkey -M vicmd "^A" end-of-line
 
 # Show current mode
 function zle-keymap-select {
