@@ -4,8 +4,6 @@ export PATH="/usr/local/sbin:$PATH"
 
 #-------------------- vim --------------------#
 bindkey -v
-# bindkey '^I'  beginning-of-line
-# bindkey '^A'  end-of-line
 
 # Show current mode
 function zle-keymap-select {
@@ -48,17 +46,23 @@ zinit light-mode for \
 ### End of Zinit's installer chunk
 
 #-------------------- plugin --------------------#
-# zsh theme
+# Zsh theme
 zinit light denysdovhan/spaceship-prompt
 
-# zinit ice wait'0' lucid blockf
-# zinit light zsh-users/zsh-completions
+# Syntax highlight
+zinit light zsh-users/zsh-syntax-highlighting
 
-zinit ice wait'0' lucid
+# Add vi visual mode
+zinit light b4b4r07/zsh-vimode-visual
+
+# zinit ice wait'0' lucid blockf
 zinit light zsh-users/zsh-autosuggestions
 
-zinit ice wait'0' lucid
-zinit light zsh-users/zsh-syntax-highlighting
+zinit ice wait'0' lucid blockf
+zinit light zsh-users/zsh-completions
+autoload -Uz compinit && compinit -u
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*:default' menu select=1
 
 
 #-------------------- python --------------------#
