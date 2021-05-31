@@ -92,6 +92,3 @@ export PATH=$PATH:$GOPATH/bin
 #-------------------- flutter --------------------#
 export PATH=$PATH:$HOME/development/flutter/bin
 
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-export JAVA_HOME="/Users/tiger/Library/Java/JavaVirtualMachines/corretto-1.8.0_292/Contents/Home"
