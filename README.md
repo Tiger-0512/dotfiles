@@ -10,6 +10,7 @@ These vimrc files can be used for neovim($HOME/.config/nvim/init.vim).
 
 ## Zsh
 - [$HOME/.zshrc](https://github.com/Tiger-0512/dotfiles/blob/main/zsh/.zshrc)
+
 Before use, please install [zinit](https://github.com/zdharma/zinit).
 
 ## Alacritty
@@ -17,5 +18,6 @@ Before use, please install [zinit](https://github.com/zdharma/zinit).
 
 ## Hammerspoon
 - [$HOME/.hammerspoon](https://github.com/Tiger-0512/dotfiles/tree/main/hammerspoon/.hammerspoon)
+
 Locate .hammerspoon folder at your home directory.<br>
 Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
