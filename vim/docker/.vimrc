@@ -20,6 +20,12 @@ call plug#end()
 
 
 "=====================================
+"               Filetype
+"=====================================
+filetype plugin indent on
+
+
+"=====================================
 "               Basic
 "=====================================
 " Invalid the compatibility with vi
@@ -43,6 +49,8 @@ set shiftwidth=4
 set softtabstop=4
 set tabstop=4
 
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab smarttab
+
 " Highlight current row
 autocmd ColorScheme * highlight LineNr ctermfg=12
 highlight CursorLineNr ctermbg=4 ctermfg=0
@@ -64,10 +72,16 @@ nnoremap k gk
 nnoremap j gj
 nnoremap gk k
 nnoremap gj j
+
 " ; to :
 nnoremap; :
+
 " Use Enter
 nnoremap <CR> A<CR><ESC>
+
+" Move working window
+nnoremap gh :tabp<CR>
+nnoremap gl :tabn<CR>
 
 " Highlight the word on the cursor
 nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
@@ -104,8 +118,5 @@ let g:nerdtree_tabs_focus_on_files = 1
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
     \ quit | endif
 
-
-"=====================================
-"               Filetype
-"=====================================
-filetype plugin indent on
+" Don't open NERDTree when open file directly with vim
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
