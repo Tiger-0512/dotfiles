@@ -74,11 +74,6 @@ set whichwrap=b,s,h,l,<,>,[,],~
 " Create the new tab under the current tab
 set splitbelow
 
-" Create terminal window below with T
-command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
-" Start terminal with insert mode
-autocmd TermOpen * startinsert
-
 " Key Mapping
 " Normal Mode
 " Move Visual Line with 'j' and 'k', Vice Versa
@@ -111,6 +106,16 @@ inoremap <C-l> <Right>
 inoremap <C-i> <C-o>^
 " Go End of a Line
 inoremap <C-a> <C-o>$
+
+" Terminal settings for neovim
+if has('nvim')
+    " Create terminal window below with T
+    command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
+    " Start terminal with insert mode
+    autocmd TermOpen * startinsert
+    " Change terminal mode to normal mode in terminal with ESC
+    tnoremap <ESC> <C-\><C-n>
+endif
 
 
 "=====================================
