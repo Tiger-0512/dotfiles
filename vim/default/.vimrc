@@ -11,6 +11,12 @@ call plug#begin()
     " A plugin of NERDTree showing git status flags
     Plug 'Xuyuanp/nerdtree-git-plugin'
 
+    " Git wrapper
+    Plug 'tpope/vim-fugitive'
+
+    " Show git diff markers
+    Plug 'airblade/vim-gitgutter'
+
     " Fonts with a high number of glyphs
     Plug 'ryanoasis/vim-devicons'
 
@@ -20,8 +26,14 @@ call plug#begin()
     " Change Bracket by using shortcuts
     Plug 'tpope/vim-surround'
 
-    " Use gcc to comment out a line, gc to comment out the target of a motion
+    " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
+
+    " Visualize indent/space
+    Plug 'yggdroot/indentline'
+
+    " Linter
+    Plug 'dense-analysis/ale'
 call plug#end()
 
 
@@ -107,6 +119,13 @@ inoremap <C-i> <C-o>^
 " Go End of a Line
 inoremap <C-a> <C-o>$
 
+" Visualize tab, space, etc...
+set list
+set listchars=space:·,tab:>·,extends:»,precedes:«
+" Change colors
+hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
+hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
+
 " Terminal settings for neovim
 if has('nvim')
     " Create terminal window below with T
@@ -114,7 +133,7 @@ if has('nvim')
     " Start terminal with insert mode
     autocmd TermOpen * startinsert
     " Change terminal mode to normal mode in terminal with ESC
-    tnoremap <ESC> <C-\><C-n>
+    tnoremap <C-n><C-m> <C-\><C-n>
 endif
 
 
@@ -139,3 +158,37 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 
 " Don't open NERDTree when open file directly with vim
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'✹',
+                \ 'Staged'    :'✚',
+                \ 'Untracked' :'✭',
+                \ 'Renamed'   :'➜',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'✖',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
+
+
+"=====================================
+"               indentLine
+"=====================================
+let g:indentLine_color_term = 239
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
+
+"=====================================
+"               ALE
+"=====================================
+let g:ale_linters = {
+\ 'python': ['flake8']
+\ }
+let g:ale_fixers = {
+\ 'python': ['black'],
+\ }
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_fix_on_save = 1
+
