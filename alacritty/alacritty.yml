@@ -1,33 +1,67 @@
-# Colors (Panda)
-colors:
-    primary:
-        # background: '#292A2B'
-        # foreground: '#E6E6E6'
-        background: '#161821'
-        foreground: '#d2d4de'
+# # Colors (Ayu Mirage)
+# colors:
+#   # Default colors
+#   primary:
+#     # background: '#202734'
+#     # foreground: '#CBCCC6'
+#     background: '#161821'
+#     foreground: '#d2d4de'
 
-    normal:
-        black:   '#292A2B'
-        red:     '#FF2C6D'
-        green:   '#19f9d8'
-        yellow:  '#FFB86C'
-        blue:    '#45A9F9'
-        magenta: '#FF75B5'
-        cyan:    '#67d3c2'
-        orange:  '#B084EB'
-        white:   '#E6E6E6'
-    bright:
-        black:   '#292A2B'
-        red:     '#FF2C6D'
-        green:   '#19f9d8'
-        yellow:  '#ffcc95'
-        blue:    '#6FC1FF'
-        magenta: '#FF9AC1'
-        cyan:    '#67d3c2'
-        white:   '#ffffff'
+#   # Normal colors
+#   normal:
+#     black: '#191E2A'
+#     red: '#FF3333'
+#     green: '#BAE67E'
+#     yellow: '#FFA759'
+#     blue: '#73D0FF'
+#     magenta: '#FFD580'
+#     cyan: '#95E6CB'
+#     white: '#C7C7C7'
+
+#   # Bright colors
+#   bright:
+#     black: '#686868'
+#     red: '#F27983'
+#     green: '#A6CC70'
+#     yellow: '#FFCC66'
+#     blue: '#5CCFE6'
+#     magenta: '#FFEE99'
+#     cyan: '#95E6CB'
+#     white: '#FFFFFF'
+
+# Colors (Konsole's Dark Pastels)
+colors:
+  # Default colors
+  primary:
+    background: '0x2C2C2C'
+    foreground: '0xDCDCCC'
+
+  # Normal colors
+  normal:
+    black:   '0x3F3F3F'
+    red:     '0x705050'
+    green:   '0x60B48A'
+    yellow:  '0xDFAF8F'
+    blue:    '0x9AB8D7'
+    magenta: '0xDC8CC3'
+    cyan:    '0x8CD0D3'
+    white:   '0xDCDCCC'
+
+  # Bright colors
+  bright:
+    black:   '0x709080'
+    red:     '0xDCA3A3'
+    green:   '0x72D5A3'
+    yellow:  '0xF0DFAF'
+    blue:    '0x94BFF3'
+    magenta: '0xEC93D3'
+    cyan:    '0x93E0E3'
+    white:   '0xFFFFFF'
 
 background_opacity: 0.95
 
 font:
-    normal:
-        family: DroidSansMono Nerd Font
+  normal:
+    family: DroidSansMono Nerd Font
+
+  

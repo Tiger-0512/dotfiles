@@ -32,8 +32,26 @@ call plug#begin()
     " Visualize indent/space
     Plug 'yggdroot/indentline'
 
+    " Rainbow parentheses
+    Plug 'luochen1990/rainbow'
+
     " Linter
     Plug 'dense-analysis/ale'
+
+    " Command-line fuzzy finder
+    Plug 'junegunn/fzf'
+
+    " Add command for fzf
+    Plug 'junegunn/fzf.vim'
+
+    " Color theme
+    Plug 'ulwlu/elly.vim'
+
+    " Lean & mean status/tabline
+    Plug 'vim-airline/vim-airline'
+
+    " vim-airline theme
+    Plug 'vim-airline/vim-airline-themes'
 call plug#end()
 
 
@@ -46,6 +64,9 @@ filetype plugin indent on
 "=====================================
 "               Basic
 "=====================================
+syntax enable
+colorscheme elly
+
 " Invalid the compatibility with vi
 set nocompatible
 " Specify the motion of Backspace
@@ -160,17 +181,25 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 let g:NERDTreeGitStatusIndicatorMapCustom = {
-                \ 'Modified'  :'✹',
-                \ 'Staged'    :'✚',
-                \ 'Untracked' :'✭',
-                \ 'Renamed'   :'➜',
-                \ 'Unmerged'  :'═',
-                \ 'Deleted'   :'✖',
-                \ 'Dirty'     :'✗',
-                \ 'Ignored'   :'☒',
-                \ 'Clean'     :'✔︎',
-                \ 'Unknown'   :'?',
-                \ }
+    \ 'Modified'  :'✹',
+    \ 'Staged'    :'✚',
+    \ 'Untracked' :'✭',
+    \ 'Renamed'   :'➜',
+    \ 'Unmerged'  :'═',
+    \ 'Deleted'   :'✖',
+    \ 'Dirty'     :'✗',
+    \ 'Ignored'   :'☒',
+    \ 'Clean'     :'✔︎',
+    \ 'Unknown'   :'?',
+\ }
+
+
+"=====================================
+"               vim-airline
+"=====================================
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_theme='bubblegum'
+let g:airline_powerline_fonts = 1
 
 
 "=====================================
@@ -178,6 +207,17 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 "=====================================
 let g:indentLine_color_term = 239
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
+
+"=====================================
+"               rainbow
+"=====================================
+let g:rainbow_active = 1
+let g:rainbow_conf = {
+    \ 'separately': {
+        \ 'nerdtree': 0,
+    \ }
+\ }
 
 
 "=====================================
