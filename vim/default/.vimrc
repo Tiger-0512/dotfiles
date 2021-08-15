@@ -1,3 +1,7 @@
+" Invalid the compatibility with vi
+set nocompatible
+
+
 "=====================================
 "               Plugin
 "=====================================
@@ -47,11 +51,29 @@ call plug#begin()
     " Color theme
     Plug 'ulwlu/elly.vim'
 
+    " Color theme
+    Plug 'w0ng/vim-hybrid'
+
+    " Color theme sets
+    Plug 'flazz/vim-colorschemes'
+
+    " Unite and create user interfaces
+    Plug 'shougo/unite.vim'
+
+    " Unite for color scheme
+    Plug 'ujihisa/unite-colorscheme'
+
     " Lean & mean status/tabline
     Plug 'vim-airline/vim-airline'
 
     " vim-airline theme
     Plug 'vim-airline/vim-airline-themes'
+
+    " Solid language pack
+    Plug 'sheerun/vim-polyglot'
+
+    " Jump to any location specified by two characters
+    Plug 'justinmk/vim-sneak'
 call plug#end()
 
 
@@ -65,10 +87,13 @@ filetype plugin indent on
 "               Basic
 "=====================================
 syntax enable
-colorscheme elly
+" Color theme
+if has('nvim')
+    colorscheme hybrid
+else
+    colorscheme elly
+endif
 
-" Invalid the compatibility with vi
-set nocompatible
 " Specify the motion of Backspace
 set backspace=indent,eol,start
 
@@ -96,7 +121,14 @@ highlight CursorLineNr ctermbg=4 ctermfg=0
 set cursorline
 highlight clear CursorLine
 
-" Search Option
+" Background opacity
+highlight Normal ctermbg=NONE
+highlight NonText ctermbg=NONE
+highlight LineNr ctermbg=NONE
+highlight Folded ctermbg=NONE
+highlight EndOfBuffer ctermbg=NONE
+
+" Search option
 set hlsearch
 set ignorecase
 set smartcase
@@ -114,9 +146,6 @@ nnoremap k gk
 nnoremap j gj
 nnoremap gk k
 nnoremap gj j
-
-" ; to :
-nnoremap; :
 
 " Use Enter
 nnoremap <CR> A<CR><ESC>
@@ -147,8 +176,17 @@ set listchars=space:·,tab:>·,extends:»,precedes:«
 hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
-" Terminal settings for neovim
+" Font for gui
+set guifont=FantasqueSansMono\ Nerd\ Font:h12
+
+" Neovim settings
 if has('nvim')
+    " Clipboard to neovim
+    nnoremap <D-v> "*p
+    " Neovim to clipboard
+    set clipboard+=unnamedplus
+
+    " Terminal
     " Create terminal window below with T
     command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
     " Start terminal with insert mode
