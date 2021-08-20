@@ -1,4 +1,4 @@
-# My Dotfiles (Vim, Zsh, Alacritty, Hammerspoon)
+# My Dotfiles (Vim, Zsh, Alacritty, Hammerspoon, Tig)
 
 ## Vim / NeoVim
 - $HOME/.vimrc
