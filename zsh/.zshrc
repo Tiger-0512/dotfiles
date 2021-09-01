@@ -97,6 +97,11 @@ fi
 unset __conda_setup
 
 
+#-------------------- n --------------------#
+export N_PREFIX="$HOME/.n"
+export PATH="$PATH:$N_PREFIX/bin"
+
+
 #-------------------- golang --------------------#
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
@@ -111,6 +116,7 @@ export PATH=$PATH:$HOME/development/flutter/bin
 if [ -f $HOME/google-cloud-sdk/path.zsh.inc ]; then . $HOME/google-cloud-sdk/path.zsh.inc; fi
 # The next line enables shell command completion for gcloud.
 if [ -f $HOME/google-cloud-sdk/completion.zsh.inc ]; then . $HOME/google-cloud-sdk/completion.zsh.inc; fi
+
 
 export PATH=$PATH:$HOME/neovide/target/release
 
