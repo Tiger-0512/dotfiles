@@ -15,11 +15,14 @@ call plug#begin()
     " A plugin of NERDTree showing git status flags
     Plug 'Xuyuanp/nerdtree-git-plugin'
 
-    " Git wrapper
+    " A git wrapper
     Plug 'tpope/vim-fugitive'
 
     " Show git diff markers
     Plug 'airblade/vim-gitgutter'
+
+    " Gitk for vim
+    Plug 'gregsexton/gitv'
 
     " Fonts with a high number of glyphs
     Plug 'ryanoasis/vim-devicons'
@@ -177,7 +180,7 @@ hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
 " Font for gui
-set guifont=FantasqueSansMono\ Nerd\ Font:h12
+set guifont=FantasqueSansMono\ Nerd\ Font:h14
 
 " Neovim settings
 if has('nvim')
