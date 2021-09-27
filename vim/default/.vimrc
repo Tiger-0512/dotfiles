@@ -13,6 +13,7 @@ call plug#begin()
 
     " A plugin of NERDTree showing git status flags
     Plug 'Xuyuanp/nerdtree-git-plugin'
+
     " A git wrapper
     Plug 'tpope/vim-fugitive'
     " Show git diff markers
