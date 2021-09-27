@@ -8,72 +8,60 @@ set nocompatible
 call plug#begin()
     " A file system explorer for the Vim editor
     Plug 'preservim/nerdtree'
-
     " Make NERDTree feel like a true panel, independent of tabs
     Plug 'jistr/vim-nerdtree-tabs'
 
     " A plugin of NERDTree showing git status flags
     Plug 'Xuyuanp/nerdtree-git-plugin'
-
-    " Git wrapper
+    " A git wrapper
     Plug 'tpope/vim-fugitive'
-
     " Show git diff markers
     Plug 'airblade/vim-gitgutter'
-
-    " Fonts with a high number of glyphs
-    Plug 'ryanoasis/vim-devicons'
-
-    " Auto Bracket
-    Plug 'Raimondi/delimitMate'
-
-    " Change Bracket by using shortcuts
-    Plug 'tpope/vim-surround'
-
-    " Use 'gcc' to comment out a line, gc to comment out the target of a motion
-    Plug 'tpope/vim-commentary'
-
-    " Visualize indent/space
-    Plug 'yggdroot/indentline'
-
-    " Rainbow parentheses
-    Plug 'luochen1990/rainbow'
-
-    " Linter
-    Plug 'dense-analysis/ale'
-
-    " Command-line fuzzy finder
-    Plug 'junegunn/fzf'
-
-    " Add command for fzf
-    Plug 'junegunn/fzf.vim'
-
-    " Color theme
-    Plug 'ulwlu/elly.vim'
-
-    " Color theme
-    Plug 'w0ng/vim-hybrid'
-
-    " Color theme sets
-    Plug 'flazz/vim-colorschemes'
-
-    " Unite and create user interfaces
-    Plug 'shougo/unite.vim'
-
-    " Unite for color scheme
-    Plug 'ujihisa/unite-colorscheme'
-
-    " Lean & mean status/tabline
-    Plug 'vim-airline/vim-airline'
-
-    " vim-airline theme
-    Plug 'vim-airline/vim-airline-themes'
-
-    " Solid language pack
-    Plug 'sheerun/vim-polyglot'
+    " Gitk for vim
+    Plug 'gregsexton/gitv'
 
     " Jump to any location specified by two characters
     Plug 'justinmk/vim-sneak'
+    " Unite and create user interfaces
+    Plug 'shougo/unite.vim'
+    " Command-line fuzzy finder
+    Plug 'junegunn/fzf'
+    " Add command for fzf
+    Plug 'junegunn/fzf.vim'
+    " Use RipGrep in Vim and display results in a quickfix list
+    " Plug 'jremmen/vim-ripgrep'
+
+    " Auto Bracket
+    Plug 'Raimondi/delimitMate'
+    " Change Bracket by using shortcuts
+    Plug 'tpope/vim-surround'
+    " Use 'gcc' to comment out a line, gc to comment out the target of a motion
+    Plug 'tpope/vim-commentary'
+
+    " Solid language pack
+    Plug 'sheerun/vim-polyglot'
+    " Linter
+    Plug 'dense-analysis/ale'
+
+    " Fonts with a high number of glyphs
+    Plug 'ryanoasis/vim-devicons'
+    " Visualize indent/space
+    Plug 'yggdroot/indentline'
+    " Rainbow parentheses
+    Plug 'luochen1990/rainbow'
+    " Color theme
+    Plug 'ulwlu/elly.vim'
+    " Color theme
+    Plug 'w0ng/vim-hybrid'
+    " Color theme sets
+    Plug 'flazz/vim-colorschemes'
+    " Unite for color scheme
+    Plug 'ujihisa/unite-colorscheme'
+    " Lean & mean status/tabline
+    Plug 'vim-airline/vim-airline'
+    " vim-airline theme
+    Plug 'vim-airline/vim-airline-themes'
+
 call plug#end()
 
 
@@ -151,8 +139,9 @@ nnoremap gj j
 nnoremap <CR> A<CR><ESC>
 
 " Move working window
-nnoremap gh :tabp<CR>
-nnoremap gl :tabn<CR>
+nnoremap th :tabp<CR>
+nnoremap tl :tabn<CR>
+nnoremap tn :tabnew<CR>
 
 " Highlight the word on the cursor
 nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
@@ -177,7 +166,7 @@ hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
 " Font for gui
-set guifont=FantasqueSansMono\ Nerd\ Font:h12
+set guifont=FantasqueSansMono\ Nerd\ Font:h14
 
 " Neovim settings
 if has('nvim')
@@ -262,11 +251,21 @@ let g:rainbow_conf = {
 "               ALE
 "=====================================
 let g:ale_linters = {
-\ 'python': ['flake8']
+    \ 'python': ['flake8']
 \ }
 let g:ale_fixers = {
-\ 'python': ['black'],
+    \ 'python': ['black'],
 \ }
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fix_on_save = 1
 
+
+"=====================================
+"               FZF
+"=====================================
+nnoremap ,f :<C-u>Files<CR>
+nnoremap ,m :<C-u>History<CR>
+command! -bang -nargs=* Rg
+    \ call fzf#vim#grep(
+    \   'rg --line-number --no-heading '.shellescape(<q-args>), 0,
+    \   fzf#vim#with_preview({'options': '--exact --reverse --delimiter : --nth 3..'}, 'right:50%:wrap'))
