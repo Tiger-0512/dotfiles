@@ -13,7 +13,6 @@ call plug#begin()
 
     " A plugin of NERDTree showing git status flags
     Plug 'Xuyuanp/nerdtree-git-plugin'
-
     " A git wrapper
     Plug 'tpope/vim-fugitive'
     " Show git diff markers
@@ -29,8 +28,6 @@ call plug#begin()
     Plug 'junegunn/fzf'
     " Add command for fzf
     Plug 'junegunn/fzf.vim'
-    " Use RipGrep in Vim and display results in a quickfix list
-    " Plug 'jremmen/vim-ripgrep'
 
     " Auto Bracket
     Plug 'Raimondi/delimitMate'
