@@ -64,7 +64,6 @@ call plug#begin()
     Plug 'vim-airline/vim-airline'
     " vim-airline theme
     Plug 'vim-airline/vim-airline-themes'
-
 call plug#end()
 
 

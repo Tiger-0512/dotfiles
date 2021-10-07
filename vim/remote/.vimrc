@@ -15,10 +15,12 @@ call plug#begin()
     Plug 'Xuyuanp/nerdtree-git-plugin'
     " A git wrapper
     Plug 'tpope/vim-fugitive'
+    " " Lightweight and powerful git branch viewer that integrates with fugitive
+    " Plug 'rbong/vim-flog'
     " Show git diff markers
     Plug 'airblade/vim-gitgutter'
-    " Gitk for vim
-    Plug 'gregsexton/gitv'
+    " A powerful git log viewer
+    Plug 'cohama/agit.vim'
 
     " Jump to any location specified by two characters
     Plug 'justinmk/vim-sneak'
@@ -35,6 +37,8 @@ call plug#begin()
     Plug 'tpope/vim-surround'
     " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
+    " logging registers and reusing them
+    Plug 'LeafCage/yankround.vim'
 
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
@@ -244,3 +248,16 @@ command! -bang -nargs=* Rg
     \ call fzf#vim#grep(
     \   'rg --line-number --no-heading '.shellescape(<q-args>), 0,
     \   fzf#vim#with_preview({'options': '--exact --reverse --delimiter : --nth 3..'}, 'right:50%:wrap'))
+
+
+"=====================================
+"               yankround
+"=====================================
+nmap p <Plug>(yankround-p)
+xmap p <Plug>(yankround-p)
+nmap P <Plug>(yankround-P)
+nmap gp <Plug>(yankround-gp)
+xmap gp <Plug>(yankround-gp)
+nmap gP <Plug>(yankround-gP)
+nmap <C-p> <Plug>(yankround-prev)
+nmap <C-n> <Plug>(yankround-next)
