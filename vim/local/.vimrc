@@ -36,10 +36,14 @@ call plug#begin()
     Plug 'Raimondi/delimitMate'
     " Change Bracket by using shortcuts
     Plug 'tpope/vim-surround'
+    " Auto close (X)HTML tags and others'
+    Plug 'alvan/vim-closetag'
     " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
     " logging registers and reusing them
     Plug 'LeafCage/yankround.vim'
+    " Easy resizing of your vim windows
+    Plug 'jimsei/winresizer'
 
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
@@ -141,9 +145,13 @@ nnoremap gj j
 nnoremap <CR> A<CR><ESC>
 
 " Move working window
-nnoremap th :tabp<CR>
-nnoremap tl :tabn<CR>
-nnoremap tn :tabnew<CR>
+" nnoremap th :tabp<CR>
+" nnoremap tl :tabn<CR>
+" nnoremap tn :tabnew<CR>
+
+" Move buffers
+nnoremap tp :bp<CR>
+nmap tn :bn<CR>
 
 " Highlight the word on the cursor
 nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
@@ -226,9 +234,30 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 "=====================================
 "               vim-airline
 "=====================================
-let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme='bubblegum'
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1 " You can change to previous tab with :bp and next tab with :bn
+let g:airline#extensions#default#layout = [
+    \ [ 'a', 'b', 'c'],
+    \ [ 'x', 'y', 'z', 'error', 'warning'],
+\ ]
+
+
+"=====================================
+"               closetag.vim
+"=====================================
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+let g:closetag_filetypes = 'html,xhtml,phtml'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_regions = {
+    \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+    \ 'javascript.jsx': 'jsxRegion',
+    \ 'typescriptreact': 'jsxRegion,tsxRegion',
+    \ 'javascriptreact': 'jsxRegion',
+    \ }
+let g:closetag_shortcut = '>'
+let g:closetag_close_shortcut = '<leader>>'
 
 
 "=====================================
@@ -252,11 +281,16 @@ let g:rainbow_conf = {
 "=====================================
 "               ALE
 "=====================================
+let g:ale_sign_error = '!!'
+let g:ale_sign_warning = '=='
 let g:ale_linters = {
-    \ 'python': ['flake8']
+    \ 'python': ['flake8'],
+    \ 'go': ['gofmt']
 \ }
 let g:ale_fixers = {
+    \ '*': ['remove_trailing_lines', 'trim_whitespace'],
     \ 'python': ['black'],
+    \ 'go': ['gofmt']
 \ }
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fix_on_save = 1
@@ -284,4 +318,3 @@ xmap gp <Plug>(yankround-gp)
 nmap gP <Plug>(yankround-gP)
 nmap <C-p> <Plug>(yankround-prev)
 nmap <C-n> <Plug>(yankround-next)
-
