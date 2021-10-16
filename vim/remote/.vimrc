@@ -37,8 +37,12 @@ call plug#begin()
     Plug 'tpope/vim-surround'
     " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
-    " logging registers and reusing them
+    " Logging registers and reusing them
     Plug 'LeafCage/yankround.vim'
+    " Easy resizing of your vim windows
+    Plug 'jimsei/winresizer'
+    " Save files to disk automatically
+    Plug '907th/vim-auto-save'
 
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
@@ -261,3 +265,9 @@ xmap gp <Plug>(yankround-gp)
 nmap gP <Plug>(yankround-gP)
 nmap <C-p> <Plug>(yankround-prev)
 nmap <C-n> <Plug>(yankround-next)
+
+
+"=====================================
+"               auto-save
+"=====================================
+let g:auto_save = 1

@@ -1,5 +1,4 @@
 " Invalid the compatibility with vi
-"
 set nocompatible
 
 
@@ -40,10 +39,12 @@ call plug#begin()
     Plug 'alvan/vim-closetag'
     " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
-    " logging registers and reusing them
+    " Logging registers and reusing them
     Plug 'LeafCage/yankround.vim'
     " Easy resizing of your vim windows
     Plug 'jimsei/winresizer'
+    " Save files to disk automatically
+    Plug '907th/vim-auto-save'
 
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
@@ -285,12 +286,14 @@ let g:ale_sign_error = '!!'
 let g:ale_sign_warning = '=='
 let g:ale_linters = {
     \ 'python': ['flake8'],
-    \ 'go': ['gofmt']
+    \ 'go': ['gofmt'],
+    \ 'javascript': ['eslint']
 \ }
 let g:ale_fixers = {
     \ '*': ['remove_trailing_lines', 'trim_whitespace'],
     \ 'python': ['black'],
-    \ 'go': ['gofmt']
+    \ 'go': ['gofmt'],
+    \ 'javascript': ['prettier']
 \ }
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fix_on_save = 1
@@ -318,3 +321,9 @@ xmap gp <Plug>(yankround-gp)
 nmap gP <Plug>(yankround-gP)
 nmap <C-p> <Plug>(yankround-prev)
 nmap <C-n> <Plug>(yankround-next)
+
+
+"=====================================
+"               auto-save
+"=====================================
+let g:auto_save = 1
