@@ -37,8 +37,12 @@ call plug#begin()
     Plug 'tpope/vim-surround'
     " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
-    " logging registers and reusing them
+    " Logging registers and reusing them
     Plug 'LeafCage/yankround.vim'
+    " Easy resizing of your vim windows
+    Plug 'jimsei/winresizer'
+    " Save files to disk automatically
+    Plug '907th/vim-auto-save'
 
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
@@ -74,6 +78,8 @@ filetype plugin indent on
 "               Basic
 "=====================================
 syntax enable
+" Fix row number color
+autocmd ColorScheme * highlight LineNr ctermfg=239
 " Color theme
 colorscheme Tomorrow-Night-Eighties
 
@@ -140,8 +146,7 @@ nnoremap tn :tabnew<CR>
 
 " Highlight the word on the cursor
 nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
-" Cansel Highlighting
-nnoremap  <CS-h> :<C-u>nohlsearch<cr><Esc>
+" When you cansel highlighting, use ':noh'
 
 " Insert Mode
 inoremap <C-k> <Up>
@@ -172,9 +177,13 @@ if has('nvim')
     command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
     " Start terminal with insert mode
     autocmd TermOpen * startinsert
-    " Change terminal mode to normal mode in terminal with ESC
-    tnoremap <C-n><C-m> <C-\><C-n>
+" Vim settings
+else
+    " Terminal
+    command! T terminal ++rows=20
 endif
+" Change terminal mode to normal mode in terminal with ESC
+tnoremap <C-n><C-m> <C-\><C-n>
 
 
 "=====================================
@@ -261,3 +270,10 @@ xmap gp <Plug>(yankround-gp)
 nmap gP <Plug>(yankround-gP)
 nmap <C-p> <Plug>(yankround-prev)
 nmap <C-n> <Plug>(yankround-next)
+
+
+"=====================================
+"               auto-save
+"=====================================
+let g:auto_save = 1
+let g:auto_save_write_all_buffers = 1

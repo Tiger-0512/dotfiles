@@ -1,5 +1,4 @@
 " Invalid the compatibility with vi
-"
 set nocompatible
 
 
@@ -40,10 +39,12 @@ call plug#begin()
     Plug 'alvan/vim-closetag'
     " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
-    " logging registers and reusing them
+    " Logging registers and reusing them
     Plug 'LeafCage/yankround.vim'
     " Easy resizing of your vim windows
     Plug 'jimsei/winresizer'
+    " Save files to disk automatically
+    Plug '907th/vim-auto-save'
 
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
@@ -81,14 +82,16 @@ filetype plugin indent on
 "               Basic
 "=====================================
 syntax enable
+" Fix row number color
+autocmd ColorScheme * highlight LineNr ctermfg=239
 " Color theme
 if has('nvim')
     colorscheme hybrid
 else
-    colorscheme revolution
+    colorscheme spring-night
 endif
 
-" Specify the motion of Backspace
+" Specify the motion of backspace
 set backspace=indent,eol,start
 
 " Encoding
@@ -97,7 +100,7 @@ set encoding=UTF-8
 " Line Number
 set number
 
-" Indent to Space
+" Indent to space
 set expandtab
 set smarttab
 
@@ -109,7 +112,7 @@ set tabstop=4
 
 autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab smarttab
 
-" Highlight Current Row
+" Highlight current row
 autocmd ColorScheme * highlight LineNr ctermfg=12
 highlight CursorLineNr ctermbg=4 ctermfg=0
 set cursorline
@@ -122,7 +125,7 @@ highlight LineNr ctermbg=NONE
 highlight Folded ctermbg=NONE
 highlight EndOfBuffer ctermbg=NONE
 
-" Search option
+" Search options
 set hlsearch
 set ignorecase
 set smartcase
@@ -130,21 +133,21 @@ set smartcase
 " Move to up and down rows with 'h' and 'l'
 set whichwrap=b,s,h,l,<,>,[,],~
 
-" Create the new tab under the current tab
+" Create new tab under the current tab
 set splitbelow
 
-" Key Mapping
-" Normal Mode
-" Move Visual Line with 'j' and 'k', Vice Versa
+" ***** KEY MAPPING *****
+" NORMAL MODE
+" Move visual line with 'j' and 'k', vice versa
 nnoremap k gk
 nnoremap j gj
 nnoremap gk k
 nnoremap gj j
 
-" Use Enter
+" Use enter to create a new line
 nnoremap <CR> A<CR><ESC>
 
-" Move working window
+" Move working windows
 " nnoremap th :tabp<CR>
 " nnoremap tl :tabn<CR>
 " nnoremap tn :tabnew<CR>
@@ -153,26 +156,25 @@ nnoremap <CR> A<CR><ESC>
 nnoremap tp :bp<CR>
 nmap tn :bn<CR>
 
-" Highlight the word on the cursor
+" Highlight a word on the cursor
 nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
-" Cansel Highlighting
-nnoremap  <CS-h> :<C-u>nohlsearch<cr><Esc>
+" When you cansel highlighting, use ':noh'
 
-" Insert Mode
+" INSERT MODE
 inoremap <C-k> <Up>
 inoremap <C-j> <Down>
 inoremap <C-h> <Left>
 inoremap <C-l> <Right>
-" Go Beggining of a Line
+" Go Beggining of the line
 inoremap <C-i> <C-o>^
-" Go End of a Line
+" Go End of the line
 inoremap <C-a> <C-o>$
 
 " Visualize tab, space, etc...
 set list
 set listchars=space:·,tab:>·,extends:»,precedes:«
 " Change colors
-hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
+hi NonText ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
 " Font for gui
@@ -190,9 +192,13 @@ if has('nvim')
     command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
     " Start terminal with insert mode
     autocmd TermOpen * startinsert
-    " Change terminal mode to normal mode in terminal with ESC
-    tnoremap <C-n><C-m> <C-\><C-n>
+" Vim settings
+else
+    " Terminal
+    command! T terminal ++rows=20
 endif
+" Change terminal mode to normal mode in terminal with ESC
+tnoremap <C-n><C-m> <C-\><C-n>
 
 
 "=====================================
@@ -203,14 +209,14 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 
-" Show Hidden Files
+" Show hidden files
 let NERDTreeShowHidden = 1
 
-" NERDTree Tabs Settings
+" NERDTree tabs settings
 let g:nerdtree_tabs_open_on_console_startup = 1
 let g:nerdtree_tabs_focus_on_files = 1
 
-" Exit Vim if NERDTree is the only window left.
+" Exit Vim if NERDTree is the only window left
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
     \ quit | endif
 
@@ -285,12 +291,14 @@ let g:ale_sign_error = '!!'
 let g:ale_sign_warning = '=='
 let g:ale_linters = {
     \ 'python': ['flake8'],
-    \ 'go': ['gofmt']
+    \ 'go': ['gofmt'],
+    \ 'javascript': ['eslint']
 \ }
 let g:ale_fixers = {
     \ '*': ['remove_trailing_lines', 'trim_whitespace'],
     \ 'python': ['black'],
-    \ 'go': ['gofmt']
+    \ 'go': ['gofmt'],
+    \ 'javascript': ['prettier']
 \ }
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fix_on_save = 1
@@ -318,3 +326,10 @@ xmap gp <Plug>(yankround-gp)
 nmap gP <Plug>(yankround-gP)
 nmap <C-p> <Plug>(yankround-prev)
 nmap <C-n> <Plug>(yankround-next)
+
+
+"=====================================
+"               auto-save
+"=====================================
+let g:auto_save = 1
+let g:auto_save_write_all_buffers = 1
