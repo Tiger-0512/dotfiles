@@ -1,5 +1,7 @@
 " Invalid the compatibility with vi
 set nocompatible
+" Setting for using coc with ale
+let g:ale_disable_lsp = 1
 
 
 "=====================================
@@ -36,6 +38,7 @@ call plug#begin()
     " Change Bracket by using shortcuts
     Plug 'tpope/vim-surround'
     " Auto close (X)HTML tags and others'
+    " Alternative: https://github.com/windwp/nvim-ts-autotag
     Plug 'alvan/vim-closetag'
     " Use 'gcc' to comment out a line, gc to comment out the target of a motion
     Plug 'tpope/vim-commentary'
@@ -46,6 +49,15 @@ call plug#begin()
     " Save files to disk automatically
     Plug '907th/vim-auto-save'
 
+    " Text filtering and alignmen
+    Plug 'godlygeek/tabular'
+    " Markdown vim mode
+    Plug 'plasticboy/vim-markdown'
+    " Realtime preview by Vim. (Markdown, reStructuredText, textile)
+    Plug 'previm/previm'
+
+    " Nodejs extension host for vim & neovim, load extensions and host language servers
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
     " Linter
@@ -105,12 +117,17 @@ set expandtab
 set smarttab
 
 " Indent
+" Default
 set autoindent
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
-
-autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab smarttab
+autocmd FileType html  setlocal sw=2 sts=2 ts=2
+autocmd FileType css  setlocal sw=2 sts=2 ts=2
+autocmd FileType javascript  setlocal sw=2 sts=2 ts=2
+autocmd FileType typescript  setlocal sw=2 sts=2 ts=2
+autocmd FileType typescriptreact  setlocal sw=2 sts=2 ts=2
+autocmd FileType dart  setlocal sw=2 sts=2 ts=2
 
 " Highlight current row
 autocmd ColorScheme * highlight LineNr ctermfg=12
@@ -177,8 +194,8 @@ set listchars=space:·,tab:>·,extends:»,precedes:«
 hi NonText ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
-" Font for gui
-set guifont=FantasqueSansMono\ Nerd\ Font:h14
+" Visualize the link when using markdown
+let g:indentLine_concealcursor = "nc"
 
 " Neovim settings
 if has('nvim')
@@ -199,6 +216,9 @@ else
 endif
 " Change terminal mode to normal mode in terminal with ESC
 tnoremap <C-n><C-m> <C-\><C-n>
+
+" Font for gui
+set guifont=FantasqueSansMono\ Nerd\ Font:h14
 
 
 "=====================================
@@ -247,14 +267,17 @@ let g:airline#extensions#default#layout = [
     \ [ 'a', 'b', 'c'],
     \ [ 'x', 'y', 'z', 'error', 'warning'],
 \ ]
+" To visualize coc status
+set statusline^=%{coc#status()}
 
 
 "=====================================
 "               closetag.vim
 "=====================================
-let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+let g:closetag_filenames = "*.html,*.jsx,*.tsx,*.vue,*.xhml,*.xml"
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*tsx'
 let g:closetag_filetypes = 'html,xhtml,phtml'
-let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_regions = {
     \ 'typescript.tsx': 'jsxRegion,tsxRegion',
@@ -285,20 +308,60 @@ let g:rainbow_conf = {
 
 
 "=====================================
+"               Markdown
+"=====================================
+let g:vim_markdown_folding_disabled = 1
+let g:previm_enable_realtime = 1
+let g:previm_open_cmd = 'open -a Google\ Chrome'
+
+
+"=====================================
+"               COC
+"=====================================
+" Installation
+let g:coc_global_extensions = [
+    \ 'coc-html',
+    \ 'coc-css',
+    \ 'coc-tsserver',
+    \ 'coc-flutter',
+    \ 'coc-pyright',
+    \ 'coc-go',
+    \ 'coc-json'
+\ ]
+"
+nnoremap ,n :CocCommand document.renameCurrentWord<CR>
+
+"=====================================
 "               ALE
 "=====================================
+" Installation
+" Flake8: pip install flake8
+" Black: pip install black
+" Prettier: npm install -g prettier
+" Fixjson: npm install -g fixjson
+" Docker: npm install -g dockerfile-language-server-nodejs
 let g:ale_sign_error = '!!'
 let g:ale_sign_warning = '=='
 let g:ale_linters = {
     \ 'python': ['flake8'],
     \ 'go': ['gofmt'],
-    \ 'javascript': ['eslint']
+    \ 'javascript': ['eslint'],
+    \ 'javascriptreact': ['eslint'],
+    \ 'typescript': ['tsserver'],
+    \ 'typescriptreact': ['tsserver'],
 \ }
 let g:ale_fixers = {
     \ '*': ['remove_trailing_lines', 'trim_whitespace'],
     \ 'python': ['black'],
     \ 'go': ['gofmt'],
-    \ 'javascript': ['prettier']
+    \ 'html': ['prettier'],
+    \ 'css': ['prettier'],
+    \ 'javascript': ['prettier'],
+    \ 'javascriptreact': ['prettier'],
+    \ 'typescript': ['prettier'],
+    \ 'typescriptreact': ['prettier'],
+    \ 'json': ['fixjson'],
+    \ 'jsonc': ['fixjson']
 \ }
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fix_on_save = 1
