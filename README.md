@@ -1,30 +1,67 @@
-# My Dotfiles (Vim, Zsh, Alacritty, Hammerspoon, Tig)
+# My Dotfiles (Vim/NeoVim, Zsh, Alacritty, Hammerspoon, Tig)
 
-## Vim / NeoVim
-- $HOME/.vimrc
-  - [For local use](https://github.com/Tiger-0512/dotfiles/blob/main/vim/default/.vimrc)
-  - [For remote(docker) use](https://github.com/Tiger-0512/dotfiles/blob/main/vim/docker/.vimrc)
+## Table of Contents
+- [Vim/NeoVim](#vim)
+- [Zsh](#zsh)
+- [Alacritty](#alacritty)
+- [Hammerspoon](#hammerspoon)
+- [Tig](#tig)
 
-Before use, please install [vim-plug](https://github.com/junegunn/vim-plug).<br>
-These vimrc files can be used for neovim($HOME/.config/nvim/init.vim).<br>
-You can use the symbolic link for neovim.
+
+<a id="vim"></a>
+## Vim/NeoVim
+### Example of Use
+Vim
 ```
-$ ln -sfv ~/.vimrc ~/.config/nvim/init.vim
+$ ln -snvf ./dotfiles/vim/local/.vimrc ~/.vimrc
+```
+NeoVim
+```
+$ ln -snvf ./dotfiles/vim/local/.vimrc ~/.config/nvim/init.vim
+```
+### Notice
+- There are two types of `.vimrc` in this repo.<br>
+- These `.vimrc` supports both Vim and NeoVim.
+    - [For local use](https://github.com/Tiger-0512/dotfiles/blob/main/vim/local/.vimrc)
+    - [For remote(docker) use](https://github.com/Tiger-0512/dotfiles/blob/main/vim/remote/.vimrc) (having basic functions only)<br>
+- Before use, please install [vim-plug](https://github.com/junegunn/vim-plug).<br>
+- If you want to use `coc.nvim`, please execute the below command.
+```
+$ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.config/nvim/coc-settings.json
+$ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.vim/coc-settings.json
 ```
 
+
+<a id="zsh"></a>
 ## Zsh
-- [$HOME/.zshrc](https://github.com/Tiger-0512/dotfiles/blob/main/zsh/.zshrc)
-
+### Example of Use
+```
+$ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
+```
+### Notice
 Before use, please install [zinit](https://github.com/zdharma/zinit).
 
+
+<a id="alacritty"></a>
 ## Alacritty
-- [$HOME/.config/alacritty/alacritty.yml](https://github.com/Tiger-0512/dotfiles/blob/main/alacritty/alacritty.yml)
+### Example of Use
+```
+$ ln -snvf ./dotfiles/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
+```
 
+<a id="hammerspoon"></a>
 ## Hammerspoon
-- [$HOME/.hammerspoon](https://github.com/Tiger-0512/dotfiles/tree/main/hammerspoon/.hammerspoon)
-
-Locate .hammerspoon folder in this repo at your home directory.<br>
+### Example of Use
+```
+$ mv ./dotfiles/hammerspoon/.hammerspoon ~/.
+```
+### Notice
 Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
 
+
+<a id="tig"></a>
 ## Tig
-- [$HOME/.tigrc](https://github.com/Tiger-0512/dotfiles/blob/main/tig/.tigrc)
+### Example of Use
+```
+$ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
+```
