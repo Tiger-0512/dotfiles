@@ -22,8 +22,8 @@ call plug#begin()
     " A powerful git log viewer
     Plug 'cohama/agit.vim'
 
-    " Jump to any location specified by two characters
-    Plug 'justinmk/vim-sneak'
+    " " Jump to any location specified by two characters
+    " Plug 'justinmk/vim-sneak'
     " Unite and create user interfaces
     Plug 'shougo/unite.vim'
     " Command-line fuzzy finder
@@ -43,6 +43,13 @@ call plug#begin()
     Plug 'jimsei/winresizer'
     " Save files to disk automatically
     Plug '907th/vim-auto-save'
+
+    " Text filtering and alignmen
+    Plug 'godlygeek/tabular'
+    " Markdown vim mode
+    Plug 'plasticboy/vim-markdown'
+    " Realtime preview by Vim. (Markdown, reStructuredText, textile)
+    Plug 'previm/previm'
 
     " Solid language pack
     Plug 'sheerun/vim-polyglot'
@@ -101,8 +108,13 @@ set autoindent
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
-
-autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab smarttab
+" Custom
+autocmd FileType html  setlocal sw=2 sts=2 ts=2
+autocmd FileType css  setlocal sw=2 sts=2 ts=2
+autocmd FileType javascript  setlocal sw=2 sts=2 ts=2
+autocmd FileType typescript  setlocal sw=2 sts=2 ts=2
+autocmd FileType typescriptreact  setlocal sw=2 sts=2 ts=2
+autocmd FileType dart  setlocal sw=2 sts=2 ts=2
 
 " Highlight current row
 autocmd ColorScheme * highlight LineNr ctermfg=12
@@ -139,13 +151,23 @@ nnoremap gj j
 " Use Enter
 nnoremap <CR> A<CR><ESC>
 
-" Move working window
-nnoremap th :tabp<CR>
-nnoremap tl :tabn<CR>
-nnoremap tn :tabnew<CR>
+" Move working windows
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap sl <C-w>l
+nnoremap sh <C-w>h
+" Create new windows
+nnoremap ss :<C-u>sp<CR><C-w>j
+nnoremap sv :<C-u>vs<CR><C-w>l
+
+" Move buffers
+nnoremap tp :bp<CR>
+nnoremap tn :bn<CR>
+nnoremap tf :bf<CR>
+nnoremap tl :bl<CR>
 
 " Highlight the word on the cursor
-nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
+nnoremap <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
 " When you cansel highlighting, use ':noh'
 
 " Insert Mode
@@ -164,6 +186,9 @@ set listchars=space:·,tab:>·,extends:»,precedes:«
 " Change colors
 hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
+
+" Visualize the link when using markdown
+let g:indentLine_concealcursor = "nc"
 
 " Neovim settings
 if has('nvim')
@@ -212,9 +237,31 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 "=====================================
 "               vim-airline
 "=====================================
-let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme='bubblegum'
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1 " You can change to previous tab with :bp and next tab with :bn
+let g:airline#extensions#default#layout = [
+    \ [ 'a', 'b', 'c'],
+    \ [ 'x', 'y', 'z', 'error', 'warning'],
+\ ]
+
+
+"=====================================
+"               closetag.vim
+"=====================================
+let g:closetag_filenames = "*.html,*.jsx,*.tsx,*.vue,*.xhml,*.xml"
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*tsx'
+let g:closetag_filetypes = 'html,xhtml,phtml'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx'
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_regions = {
+    \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+    \ 'javascript.jsx': 'jsxRegion',
+    \ 'typescriptreact': 'jsxRegion,tsxRegion',
+    \ 'javascriptreact': 'jsxRegion',
+    \ }
+let g:closetag_shortcut = '>'
+let g:closetag_close_shortcut = '<leader>>'
 
 
 "=====================================
@@ -236,8 +283,24 @@ let g:rainbow_conf = {
 
 
 "=====================================
+"               Markdown
+"=====================================
+let g:vim_markdown_folding_disabled = 1
+let g:previm_enable_realtime = 1
+let g:previm_open_cmd = 'open -a Google\ Chrome'
+
+
+"=====================================
 "               ALE
 "=====================================
+" Installation
+" Flake8: pip install flake8
+" Black: pip install black
+" Prettier: npm install -g prettier
+" Fixjson: npm install -g fixjson
+" Docker: npm install -g dockerfile-language-server-nodejs
+let g:ale_sign_error = '!!'
+let g:ale_sign_warning = '=='
 let g:ale_linters = {
     \ 'python': ['flake8']
 \ }
@@ -245,7 +308,8 @@ let g:ale_fixers = {
     \ 'python': ['black'],
 \ }
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_fix_on_save = 1
+" let g:ale_fix_on_save = 1
+nnoremap ,<Space> :<C-u>ALEFix<CR>
 
 
 "=====================================
@@ -257,6 +321,7 @@ command! -bang -nargs=* Rg
     \ call fzf#vim#grep(
     \   'rg --line-number --no-heading '.shellescape(<q-args>), 0,
     \   fzf#vim#with_preview({'options': '--exact --reverse --delimiter : --nth 3..'}, 'right:50%:wrap'))
+nnoremap ,r :<C-u>Rg<CR>
 
 
 "=====================================
