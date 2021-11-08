@@ -24,8 +24,8 @@ call plug#begin()
     " A powerful git log viewer
     Plug 'cohama/agit.vim'
 
-    " Jump to any location specified by two characters
-    Plug 'justinmk/vim-sneak'
+    " " Jump to any location specified by two characters
+    " Plug 'justinmk/vim-sneak'
     " Unite and create user interfaces
     Plug 'shougo/unite.vim'
     " Command-line fuzzy finder
@@ -122,6 +122,7 @@ set autoindent
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
+" Custom
 autocmd FileType html  setlocal sw=2 sts=2 ts=2
 autocmd FileType css  setlocal sw=2 sts=2 ts=2
 autocmd FileType javascript  setlocal sw=2 sts=2 ts=2
@@ -165,16 +166,22 @@ nnoremap gj j
 nnoremap <CR> A<CR><ESC>
 
 " Move working windows
-" nnoremap th :tabp<CR>
-" nnoremap tl :tabn<CR>
-" nnoremap tn :tabnew<CR>
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap sl <C-w>l
+nnoremap sh <C-w>h
+" Create new windows
+nnoremap ss :<C-u>sp<CR><C-w>j
+nnoremap sv :<C-u>vs<CR><C-w>l
 
 " Move buffers
 nnoremap tp :bp<CR>
-nmap tn :bn<CR>
+nnoremap tn :bn<CR>
+nnoremap tf :bf<CR>
+nnoremap tl :bl<CR>
 
 " Highlight a word on the cursor
-nnoremap <silent> <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
+nnoremap <Space><Space> :let @/ = '\<' . expand('<cword>') . '\>'<CR>:set hlsearch<CR>
 " When you cansel highlighting, use ':noh'
 
 " INSERT MODE
@@ -364,7 +371,8 @@ let g:ale_fixers = {
     \ 'jsonc': ['fixjson']
 \ }
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_fix_on_save = 1
+" let g:ale_fix_on_save = 1
+nnoremap ,<Space> :<C-u>ALEFix<CR>
 
 
 "=====================================
@@ -376,6 +384,7 @@ command! -bang -nargs=* Rg
     \ call fzf#vim#grep(
     \   'rg --line-number --no-heading '.shellescape(<q-args>), 0,
     \   fzf#vim#with_preview({'options': '--exact --reverse --delimiter : --nth 3..'}, 'right:50%:wrap'))
+nnoremap ,r :<C-u>Rg<CR>
 
 
 "=====================================
