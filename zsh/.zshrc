@@ -16,13 +16,6 @@ function zle-keymap-select {
 zle -N zle-keymap-select
 
 
-#-------------------- alias --------------------#
-alias gc-b=‘git checkout -b’
-alias ga=‘git add‘
-alias gc-m=‘git commit -m’
-alias gp=‘git push’
-
-
 #-------------------- zinit --------------------#
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
@@ -46,6 +39,7 @@ zinit light-mode for \
     zinit-zsh/z-a-bin-gem-node
 
 ### End of Zinit's installer chunk
+
 
 #-------------------- plugin --------------------#
 # Zsh theme
