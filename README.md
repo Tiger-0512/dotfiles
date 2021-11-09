@@ -39,7 +39,8 @@ $ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.vim/coc-settings.json
 $ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
 ```
 ### Notice
-Before use, please install [zinit](https://github.com/zdharma/zinit).
+- Before use, please install [zinit](https://github.com/zdharma/zinit).
+- In this setting, I use [aura-theme](https://github.com/daltonmenezes/aura-theme). You can use this theme with [its installation guide](https://github.com/daltonmenezes/aura-theme/tree/main/packages/alacritty).
 
 
 <a id="alacritty"></a>
@@ -56,7 +57,7 @@ $ ln -snvf ./dotfiles/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 $ mv ./dotfiles/hammerspoon/.hammerspoon ~/.
 ```
 ### Notice
-Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
+- Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
 
 
 <a id="tig"></a>
