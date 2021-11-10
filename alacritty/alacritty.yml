@@ -1,62 +1,34 @@
-# # Colors (Ayu Mirage)
-# colors:
-#   # Default colors
-#   primary:
-#     # background: '#202734'
-#     # foreground: '#CBCCC6'
-#     background: '#161821'
-#     foreground: '#d2d4de'
-
-#   # Normal colors
-#   normal:
-#     black: '#191E2A'
-#     red: '#FF3333'
-#     green: '#BAE67E'
-#     yellow: '#FFA759'
-#     blue: '#73D0FF'
-#     magenta: '#FFD580'
-#     cyan: '#95E6CB'
-#     white: '#C7C7C7'
-
-#   # Bright colors
-#   bright:
-#     black: '#686868'
-#     red: '#F27983'
-#     green: '#A6CC70'
-#     yellow: '#FFCC66'
-#     blue: '#5CCFE6'
-#     magenta: '#FFEE99'
-#     cyan: '#95E6CB'
-#     white: '#FFFFFF'
-
-# Colors (Konsole's Dark Pastels)
+# Colors (Aura Theme)
 colors:
   # Default colors
   primary:
-    background: '0x2C2C2C'
-    foreground: '0xDCDCCC'
+    background: '#15141b'
+    foreground: '#edecee'
+
+  cursor:
+    cursor: '#a277ff'
 
   # Normal colors
   normal:
-    black:   '0x3F3F3F'
-    red:     '0x705050'
-    green:   '0x60B48A'
-    yellow:  '0xDFAF8F'
-    blue:    '0x9AB8D7'
-    magenta: '0xDC8CC3'
-    cyan:    '0x8CD0D3'
-    white:   '0xDCDCCC'
+    black:   '#110f18'
+    red:     '#ff6767'
+    green:   '#61ffca'
+    yellow:  '#ffca85'
+    blue:    '#a277ff'
+    magenta: '#a277ff'
+    cyan:    '#61ffca'
+    white:   '#edecee'
 
   # Bright colors
   bright:
-    black:   '0x709080'
-    red:     '0xDCA3A3'
-    green:   '0x72D5A3'
-    yellow:  '0xF0DFAF'
-    blue:    '0x94BFF3'
-    magenta: '0xEC93D3'
-    cyan:    '0x93E0E3'
-    white:   '0xFFFFFF'
+    black:   '#4d4d4d'
+    red:     '#ff6767'
+    green:   '#61ffca'
+    yellow:  '#ffca85'
+    blue:    '#a277ff'
+    magenta: '#a277ff'
+    cyan:    '#61ffca'
+    white:   '#edecee'
 
 background_opacity: 0.95
 
