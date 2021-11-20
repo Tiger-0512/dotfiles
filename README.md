@@ -73,10 +73,10 @@ $ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
 This is the setting for conventional commits
 ### Example of Use
 ```
-$ git config --global commit.template ~/dotfiles/git/.gitcommit-conventions
+$ git config --global commit.template ./dotfiles/git/.gitcommit-conventions
 ```
 ### Notice
-The setting is based on below two rules
+The setting is based on below two rules.
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - [Contributing to Angular](https://github.com/angular/angular/blob/master/CONTRIBUTING.md)
 
