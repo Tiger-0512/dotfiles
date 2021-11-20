@@ -1,0 +1,58 @@
+# ------------------------------------------------------------------------
+# format
+# ------------------------------------------------------------------------
+# <type>(<scope>): <short summary>
+#   │       │             │
+#   │       │             └─⫸ Summary in present tense.
+#   │       │                 Not capitalized. No period at the end.
+#   │       │
+#   │       └─⫸ Commit Scope
+#   │
+#   └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|test|revert
+# ------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------
+# type(scope)
+# ------------------------------------------------------------------------
+# * build   : Changes that affect the build system or 
+#               external dependencies (example scopes: gulp, broccoli, npm)
+# * ci      : Changes to our CI configuration files and scripts
+#               (examples: CircleCi, SauceLabs)
+# * docs    : Documentation only changes
+# * feat    : A new feature
+# * fix     : A bug fix
+# * perf    : A code change that improves performance
+# * refactor: A code change that neither fixes a bug nor adds a feature
+# * test    : Adding missing tests or correcting existing tests
+# * revert  : Reverts a previous commit
+# ------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------
+# short summary
+# ------------------------------------------------------------------------
+# Use the summary field to provide a succinct description of the change:
+# * use the imperative, present tense: "change" not "changed" nor "changes"
+# * don't capitalize the first letter
+# * no dot (.) at the end
+# ------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------
+# Appendix: BREAKING CHANGE and DEPRICATED examples
+# ------------------------------------------------------------------------
+# BREAKING CHANGE: <breaking change summary>
+# <BLANK LINE>
+# <breaking change description + migration instructions>
+# <BLANK LINE>
+# <BLANK LINE>
+# Fixes #<issue number>
+#
+# DEPRECATED: <what is deprecated>
+# <BLANK LINE>
+# <deprecation description + recommended update path>
+# <BLANK LINE>
+# <BLANK LINE>
+# Closes #<pr number>
+# ------------------------------------------------------------------------

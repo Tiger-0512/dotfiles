@@ -6,6 +6,7 @@
 - [Alacritty](#alacritty)
 - [Hammerspoon](#hammerspoon)
 - [Tig](#tig)
+- [Git](#git)
 
 
 <a id="vim"></a>
@@ -66,3 +67,16 @@ $ mv ./dotfiles/hammerspoon/.hammerspoon ~/.
 ```
 $ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
 ```
+
+<a id="git"></a>
+## Git
+This is the setting for conventional commits
+### Example of Use
+```
+$ git config --global commit.template ~/dotfiles/git/.gitcommit-conventions
+```
+### Notice
+The setting is based on below two rules
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- [Contributing to Angular](https://github.com/angular/angular/blob/master/CONTRIBUTING.md)
+
