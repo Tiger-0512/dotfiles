@@ -73,7 +73,7 @@ $ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
 This is the setting for conventional commits
 ### Example of Use
 ```
-$ git config --global commit.template ./dotfiles/git/.gitcommit-conventions
+$ git config --global commit.template [path to your current directory]/dotfiles/git/.conventional-commits-template
 ```
 ### Notice
 The setting is based on below two rules.
