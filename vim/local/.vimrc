@@ -85,14 +85,12 @@ call plug#end()
 
 
 "=====================================
-"               Filetype
+"               Basic
 "=====================================
 filetype plugin indent on
 
+set termguicolors
 
-"=====================================
-"               Basic
-"=====================================
 syntax enable
 " Fix row number color
 autocmd ColorScheme * highlight LineNr ctermfg=239
