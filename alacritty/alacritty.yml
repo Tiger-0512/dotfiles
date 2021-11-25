@@ -36,3 +36,5 @@ font:
   normal:
     family: Hack Nerd Font Mono
 
+# env:
+#   TERM: alacritty

@@ -11,7 +11,7 @@
 
 <a id="vim"></a>
 ## Vim/NeoVim
-### Example of Use
+### Usage
 Vim
 ```
 $ ln -snvf ./dotfiles/vim/local/.vimrc ~/.vimrc
@@ -35,7 +35,7 @@ $ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.vim/coc-settings.json
 
 <a id="zsh"></a>
 ## Zsh
-### Example of Use
+### Usage
 ```
 $ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
 ```
@@ -46,14 +46,14 @@ $ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
 
 <a id="alacritty"></a>
 ## Alacritty
-### Example of Use
+### Usage
 ```
 $ ln -snvf ./dotfiles/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ```
 
 <a id="hammerspoon"></a>
 ## Hammerspoon
-### Example of Use
+### Usage
 ```
 $ mv ./dotfiles/hammerspoon/.hammerspoon ~/.
 ```
@@ -63,17 +63,23 @@ $ mv ./dotfiles/hammerspoon/.hammerspoon ~/.
 
 <a id="tig"></a>
 ## Tig
-### Example of Use
+### Usage
 ```
 $ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
 ```
 
 <a id="git"></a>
 ## Git
-This is the setting for conventional commits
-### Example of Use
+### Usage
 ```
-$ git config --global commit.template [path to your current directory]/dotfiles/git/.conventional-commits-template
+$ mkdir -p ~/.config/git
+
+# Global gitignore
+$ cp ./dotfiles/git/ignore ~/.config/git
+
+# Settings for conventional commits
+$ cp ./dotfiles/git/conventional-commits-template ~/.config/git
+$ git config --global commit.template ~/.config/git/conventional-commits-template
 ```
 ### Notice
 The setting is based on below two rules.
