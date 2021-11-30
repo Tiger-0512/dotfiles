@@ -7,6 +7,7 @@
 - [Hammerspoon](#hammerspoon)
 - [Tig](#tig)
 - [Git](#git)
+- [tmux](#tmux)
 
 
 <a id="vim"></a>
@@ -86,3 +87,10 @@ The setting is based on below two rules.
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - [Contributing to Angular](https://github.com/angular/angular/blob/master/CONTRIBUTING.md)
 
+
+<a id="tmux"></a>
+## tmux
+### Usage
+```
+$ ln -snvf ./dotfiles/tmux/.tmux.conf ~/.tmux.conf
+```

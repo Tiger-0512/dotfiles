@@ -2,10 +2,58 @@ export PATH=/usr/local/bin:$PATH
 export PATH="/usr/local/sbin:$PATH"
 
 
+#-------------------- nnn --------------------#
+export LC_COLLATE="C"
+export NNN_TMPFILE="/tmp/nnn"
+export NNN_OPTS="H"
+export NNN_FIFO="/tmp/nnn.fifo"
+export NNN_PLUG="p:preview-tui"
+export VISUAL="nvim"
+export EDITOR="nvim"
+
+# Enable cd on quit with n
+n()
+{
+    nnn "$@"
+
+    if [ -f $NNN_TMPFILE ]; then
+        . $NNN_TMPFILE
+        rm $NNN_TMPFILE
+    fi
+}
+# Check FIFO
+NNN_FIFO=${NNN_FIFO:-$1}
+if [ ! -r "$NNN_FIFO" ]; then
+    # echo "Unable to open \$NNN_FIFO='$NNN_FIFO'" | less
+    # exit 2
+    mkdir /tmp/nnn.fifo
+fi
+
+
+#-------------------- tmux --------------------#
+if [[ ! -n $TMUX ]]; then
+  # get the IDs
+  ID="`tmux list-sessions`"
+  if [[ -z "$ID" ]]; then
+    tmux new-session
+  fi
+  create_new_session="Create New Session"
+  ID="$ID\n${create_new_session}:"
+  ID="`echo $ID | fzf | cut -d: -f1`"
+  if [[ "$ID" = "${create_new_session}" ]]; then
+    tmux new-session
+  elif [[ -n "$ID" ]]; then
+    tmux attach-session -t "$ID"
+  else
+    :  # Start terminal normally
+  fi
+fi
+
+
 #-------------------- vim --------------------#
 bindkey -v
-bindkey -M vicmd "^I" beginning-of-line
-bindkey -M vicmd "^A" end-of-line
+# bindkey -M vicmd "^I" beginning-of-line
+# bindkey -M vicmd "^A" end-of-line
 
 # Show current mode
 function zle-keymap-select {
