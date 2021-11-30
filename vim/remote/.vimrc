@@ -81,12 +81,22 @@ call plug#end()
 filetype plugin indent on
 
 set termguicolors
+" Color theme
+colorscheme Tomorrow-Night-Eighties
+
+
+" Visualize tab, space, etc...
+set list
+set listchars=space:·,tab:>·,extends:»,precedes:«
+" Change colors
+hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
+hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
 syntax enable
 " Fix row number color
 autocmd ColorScheme * highlight LineNr ctermfg=239
-" Color theme
-colorscheme Tomorrow-Night-Eighties
+" Transparent background
+hi Normal guibg=NONE ctermbg=NONE
 
 " Specify the motion of Backspace
 set backspace=indent,eol,start
@@ -177,13 +187,6 @@ inoremap <C-l> <Right>
 inoremap <C-i> <C-o>^
 " Go End of a Line
 inoremap <C-a> <C-o>$
-
-" Visualize tab, space, etc...
-set list
-set listchars=space:·,tab:>·,extends:»,precedes:«
-" Change colors
-hi NonText    ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
-hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
 " Visualize the link when using markdown
 let g:indentLine_concealcursor = "nc"
