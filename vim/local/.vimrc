@@ -8,13 +8,13 @@ let g:ale_disable_lsp = 1
 "               Plugin
 "=====================================
 call plug#begin()
-    " A file system explorer for the Vim editor
-    Plug 'preservim/nerdtree'
-    " Make NERDTree feel like a true panel, independent of tabs
-    Plug 'jistr/vim-nerdtree-tabs'
+    " General purpose asynchronous tree viewer written in Pure Vim script
+    Plug 'lambdalisue/fern.vim'
+    " Make fern.vim as a default file explorer instead of Netrw
+    Plug 'lambdalisue/fern-hijack.vim'
 
-    " A plugin of NERDTree showing git status flags
-    Plug 'Xuyuanp/nerdtree-git-plugin'
+    " Add Git status badge integration on file:// scheme on fern.vim
+    Plug 'lambdalisue/fern-git-status.vim'
     " A git wrapper
     Plug 'tpope/vim-fugitive'
     " " Lightweight and powerful git branch viewer that integrates with fugitive
@@ -62,9 +62,17 @@ call plug#begin()
     Plug 'sheerun/vim-polyglot'
     " Linter
     Plug 'dense-analysis/ale'
+    " Solidity
+    Plug 'tomlion/vim-solidity'
 
-    " Fonts with a high number of glyphs
-    Plug 'ryanoasis/vim-devicons'
+    " " Fonts with a high number of glyphs
+    " Plug 'ryanoasis/vim-devicons'
+    " Fundemental plugin to handle Nerd Fonts in Vim
+    Plug 'lambdalisue/nerdfont.vim'
+    " fern.vim plugin which add file type icon through nerdfont.vim
+    Plug 'lambdalisue/fern-renderer-nerdfont.vim'
+    " An universal palette for Nerd Fonts
+    Plug 'lambdalisue/glyph-palette.vim'
     " Visualize indent/space
     Plug 'yggdroot/indentline'
     " Rainbow parentheses
@@ -229,39 +237,42 @@ set guifont=FantasqueSansMono\ Nerd\ Font:h14
 
 
 "=====================================
-"               NERDTree
+"              fern
 "=====================================
-nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+" Show/Hide file tree
+nnoremap <C-t> :Fern . -reveal=% -drawer -toggle -width=40<CR>
 
 " Show hidden files
-let NERDTreeShowHidden = 1
+let g:fern#default_hidden=1
 
-" NERDTree tabs settings
-let g:nerdtree_tabs_open_on_console_startup = 1
-let g:nerdtree_tabs_focus_on_files = 1
+" Use nerdfont
+let g:fern#renderer = 'nerdfont'
+" Graph patette settings
+augroup my-glyph-palette
+  autocmd! *
+  autocmd FileType fern call glyph_palette#apply()
+  " autocmd FileType nerdtree,startify call glyph_palette#apply()
+augroup END
 
-" Exit Vim if NERDTree is the only window left
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
-    \ quit | endif
 
-" Don't open NERDTree when open file directly with vim
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"=====================================
+"              gitgutter
+"=====================================
+" Move to previous change by g]
+nnoremap g] :GitGutterPrevHunk<CR>
+" Move to next change by g[
+nnoremap g[ :GitGutterNextHunk<CR>
+" Highlight git diff by gh
+nnoremap gh :GitGutterLineHighlightsToggle<CR>
+" Show git diff in current line by gp
+nnoremap gp :GitGutterPreviewHunk<CR>
+" Change color of the symbols
+highlight GitGutterAdd ctermfg=green
+highlight GitGutterChange ctermfg=blue
+highlight GitGutterDelete ctermfg=red
 
-let g:NERDTreeGitStatusIndicatorMapCustom = {
-    \ 'Modified'  :'✹',
-    \ 'Staged'    :'✚',
-    \ 'Untracked' :'✭',
-    \ 'Renamed'   :'➜',
-    \ 'Unmerged'  :'═',
-    \ 'Deleted'   :'✖',
-    \ 'Dirty'     :'✗',
-    \ 'Ignored'   :'☒',
-    \ 'Clean'     :'✔︎',
-    \ 'Unknown'   :'?',
-\ }
+"" Set update time (default: 4000ms)
+set updatetime=250
 
 
 "=====================================
@@ -335,7 +346,7 @@ let g:coc_global_extensions = [
     \ 'coc-go',
     \ 'coc-json'
 \ ]
-"
+" Rename all same words as the current word
 nnoremap ,n :CocCommand document.renameCurrentWord<CR>
 
 "=====================================
@@ -379,7 +390,7 @@ nnoremap ,<Space> :<C-u>ALEFix<CR>
 "               FZF
 "=====================================
 nnoremap ,f :<C-u>Files<CR>
-nnoremap ,m :<C-u>History<CR>
+nnoremap ,h :<C-u>History<CR>
 command! -bang -nargs=* Rg
     \ call fzf#vim#grep(
     \   'rg --line-number --no-heading '.shellescape(<q-args>), 0,
@@ -405,3 +416,39 @@ nmap <C-n> <Plug>(yankround-next)
 "=====================================
 let g:auto_save = 1
 let g:auto_save_write_all_buffers = 1
+
+
+""=====================================
+""               NERDTree
+""=====================================
+"nnoremap <leader>n :NERDTreeFocus<CR>
+"nnoremap <C-n> :NERDTree<CR>
+"nnoremap <C-t> :NERDTreeToggle<CR>
+"nnoremap <C-f> :NERDTreeFind<CR>
+
+"" Show hidden files
+"let NERDTreeShowHidden = 1
+
+"" NERDTree tabs settings
+"let g:nerdtree_tabs_open_on_console_startup = 1
+"let g:nerdtree_tabs_focus_on_files = 1
+
+"" Exit Vim if NERDTree is the only window left
+"autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
+"    \ quit | endif
+
+"" Don't open NERDTree when open file directly with vim
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+"let g:NERDTreeGitStatusIndicatorMapCustom = {
+"    \ 'Modified'  :'✹',
+"    \ 'Staged'    :'✚',
+"    \ 'Untracked' :'✭',
+"    \ 'Renamed'   :'➜',
+"    \ 'Unmerged'  :'═',
+"    \ 'Deleted'   :'✖',
+"    \ 'Dirty'     :'✗',
+"    \ 'Ignored'   :'☒',
+"    \ 'Clean'     :'✔︎',
+"    \ 'Unknown'   :'?',
+"\ }

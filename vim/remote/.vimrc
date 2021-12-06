@@ -6,13 +6,13 @@ set nocompatible
 "               Plugin
 "=====================================
 call plug#begin()
-    " A file system explorer for the Vim editor
-    Plug 'preservim/nerdtree'
-    " Make NERDTree feel like a true panel, independent of tabs
-    Plug 'jistr/vim-nerdtree-tabs'
+    " General purpose asynchronous tree viewer written in Pure Vim script
+    Plug 'lambdalisue/fern.vim'
+    " Make fern.vim as a default file explorer instead of Netrw
+    Plug 'lambdalisue/fern-hijack.vim'
 
-    " A plugin of NERDTree showing git status flags
-    Plug 'Xuyuanp/nerdtree-git-plugin'
+    " Add Git status badge integration on file:// scheme on fern.vim
+    Plug 'lambdalisue/fern-git-status.vim'
     " A git wrapper
     Plug 'tpope/vim-fugitive'
     " " Lightweight and powerful git branch viewer that integrates with fugitive
@@ -213,26 +213,42 @@ tnoremap <C-n><C-m> <C-\><C-n>
 
 
 "=====================================
-"               NERDTree
+"              fern
 "=====================================
-nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+" Show/Hide file tree
+nnoremap <C-t> :Fern . -reveal=% -drawer -toggle -width=40<CR>
 
-" Show Hidden Files
-let NERDTreeShowHidden = 1
+" Show hidden files
+let g:fern#default_hidden=1
 
-" NERDTree Tabs Settings
-let g:nerdtree_tabs_open_on_console_startup = 1
-let g:nerdtree_tabs_focus_on_files = 1
+" Use nerdfont
+let g:fern#renderer = 'nerdfont'
+" Graph patette settings
+augroup my-glyph-palette
+  autocmd! *
+  autocmd FileType fern call glyph_palette#apply()
+  " autocmd FileType nerdtree,startify call glyph_palette#apply()
+augroup END
 
-" Exit Vim if NERDTree is the only window left.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
-    \ quit | endif
 
-" Don't open NERDTree when open file directly with vim
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"=====================================
+"              gitgutter
+"=====================================
+" Move to previous change by g]
+nnoremap g] :GitGutterPrevHunk<CR>
+" Move to next change by g[
+nnoremap g[ :GitGutterNextHunk<CR>
+" Highlight git diff by gh
+nnoremap gh :GitGutterLineHighlightsToggle<CR>
+" Show git diff in current line by gp
+nnoremap gp :GitGutterPreviewHunk<CR>
+" Change color of the symbols
+highlight GitGutterAdd ctermfg=green
+highlight GitGutterChange ctermfg=blue
+highlight GitGutterDelete ctermfg=red
+
+"" Set update time (default: 4000ms)
+set updatetime=250
 
 
 "=====================================
@@ -317,7 +333,7 @@ nnoremap ,<Space> :<C-u>ALEFix<CR>
 "               FZF
 "=====================================
 nnoremap ,f :<C-u>Files<CR>
-nnoremap ,m :<C-u>History<CR>
+nnoremap ,h :<C-u>History<CR>
 command! -bang -nargs=* Rg
     \ call fzf#vim#grep(
     \   'rg --line-number --no-heading '.shellescape(<q-args>), 0,
