@@ -292,7 +292,7 @@ set statusline^=%{coc#status()}
 "=====================================
 "               closetag.vim
 "=====================================
-let g:closetag_filenames = "*.html,*.jsx,*.tsx,*.vue,*.xhml,*.xml"
+let g:closetag_filenames = "*.html,*.js,*.jsx,*.tsx,*.vue,*.xhml,*.xml"
 let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*tsx'
 let g:closetag_filetypes = 'html,xhtml,phtml'
 let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx'

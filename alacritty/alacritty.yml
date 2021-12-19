@@ -6,7 +6,8 @@ colors:
     foreground: '#edecee'
 
   cursor:
-    cursor: '#a277ff'
+    # cursor: '#a277ff'
+    cursor: '#AC98E6'
 
   # Normal colors
   normal:
@@ -14,7 +15,8 @@ colors:
     red:     '#ff6767'
     green:   '#61ffca'
     yellow:  '#ffca85'
-    blue:    '#a277ff'
+    # blue:    '#a277ff'
+    blue:    '#7C90DA'
     magenta: '#a277ff'
     cyan:    '#61ffca'
     white:   '#edecee'
@@ -25,7 +27,8 @@ colors:
     red:     '#ff6767'
     green:   '#61ffca'
     yellow:  '#ffca85'
-    blue:    '#a277ff'
+    # blue:    '#a277ff'
+    blue:    '#7C90DA'
     magenta: '#a277ff'
     cyan:    '#61ffca'
     white:   '#edecee'
