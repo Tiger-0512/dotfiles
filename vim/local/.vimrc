@@ -24,8 +24,8 @@ call plug#begin()
     " A powerful git log viewer
     Plug 'cohama/agit.vim'
 
-    " " Jump to any location specified by two characters
-    " Plug 'justinmk/vim-sneak'
+    " Vim motions on speed
+    Plug 'easymotion/vim-easymotion'
     " Unite and create user interfaces
     Plug 'shougo/unite.vim'
     " Command-line fuzzy finder
@@ -416,6 +416,27 @@ nmap <C-n> <Plug>(yankround-next)
 "=====================================
 let g:auto_save = 1
 let g:auto_save_write_all_buffers = 1
+
+
+"=====================================
+"               easymotion
+"=====================================
+" Disable default mappings
+let g:EasyMotion_do_mapping = 0
+
+let mapleader = ","
+map <Leader> <Plug>(easymotion-prefix)
+
+" Move to line
+map <Leader>l <Plug>(easymotion-bd-jk)
+nmap <Leader>l <Plug>(easymotion-overwin-line)
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
+
+map  <Leader> <Plug>(easymotion-prefix)
+nmap m <Plug>(easymotion-s2)
+xmap m <Plug>(easymotion-s2)
 
 
 ""=====================================
