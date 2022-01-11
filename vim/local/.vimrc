@@ -358,6 +358,16 @@ nnoremap ,n :CocCommand document.renameCurrentWord<CR>
 " Prettier: npm install -g prettier
 " Fixjson: npm install -g fixjson
 " Docker: npm install -g dockerfile-language-server-nodejs
+
+" Set python path derived from asdf
+let g:python3_host_prog = $ASDF_PATH . '/shims/python'
+let g:ale_python_flake8_executable = g:python3_host_prog
+let g:ale_python_flake8_options = '-m flake8'
+let g:ale_python_black_executable = g:python3_host_prog
+let g:ale_python_black_options = '-m black'
+let g:ale_python_isort_executable = g:python3_host_prog
+let g:ale_python_isort_options = '-m isort'
+
 let g:ale_sign_error = '!!'
 let g:ale_sign_warning = '=='
 let g:ale_linters = {
@@ -370,7 +380,7 @@ let g:ale_linters = {
 \ }
 let g:ale_fixers = {
     \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-    \ 'python': ['black'],
+    \ 'python': ['black', 'isort'],
     \ 'go': ['gofmt'],
     \ 'html': ['prettier'],
     \ 'css': ['prettier'],

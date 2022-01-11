@@ -114,34 +114,9 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*:default' menu select=1
 
 
-#-------------------- python --------------------#
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/tiger/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/tiger/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/tiger/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/tiger/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-# For my macbook
-__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
+#-------------------- asdf --------------------#
+. /usr/local/opt/asdf/libexec/asdf.sh
+export ASDF_PATH=$HOME/.asdf
 
 
 #-------------------- Volta --------------------#
@@ -166,3 +141,4 @@ if [ -f $HOME/google-cloud-sdk/completion.zsh.inc ]; then . $HOME/google-cloud-s
 
 
 export PATH=$PATH:$HOME/neovide/target/release
+
