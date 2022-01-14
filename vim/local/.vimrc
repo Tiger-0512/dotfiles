@@ -95,6 +95,12 @@ call plug#end()
 "=====================================
 "               Basic
 "=====================================
+" Visualize tab, space, etc...
+set list
+set listchars=space:·,tab:>·,extends:»,precedes:«,trail:-,nbsp:%
+" Change colors
+hi NonText ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
+hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 filetype plugin indent on
 
 set termguicolors
@@ -104,13 +110,6 @@ if has('nvim')
 else
     colorscheme spring-night
 endif
-
-" Visualize tab, space, etc...
-set list
-set listchars=space:·,tab:>·,extends:»,precedes:«,trail:-,nbsp:%
-" Change colors
-hi NonText ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
-hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 
 syntax enable
 " Fix row number color
