@@ -1,0 +1,10 @@
+command_timeout = 5000
+
+[[battery.display]]
+threshold = 50
+style = "bold blue"
+
+[battery]
+full_symbol = "🤗"
+charging_symbol = "😌"
+discharging_symbol = "😨"
