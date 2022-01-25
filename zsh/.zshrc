@@ -2,6 +2,52 @@ export PATH=/usr/local/bin:$PATH
 export PATH="/usr/local/sbin:$PATH"
 
 
+#-------------------- zinit --------------------#
+### Added by Zinit's installer
+if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.zinit/bin" && \
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
+        print -P "%F{160}▓▒░ The clone has failed.%f%b"
+fi
+
+source "$HOME/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/z-a-rust \
+    zdharma-continuum/z-a-as-monitor \
+    zdharma-continuum/z-a-patch-dl \
+    zdharma-continuum/z-a-bin-gem-node
+
+### End of Zinit's installer chunk
+
+
+#-------------------- plugin --------------------#
+# Syntax highlight
+zinit light zsh-users/zsh-syntax-highlighting
+
+# Add vi visual mode
+zinit light b4b4r07/zsh-vimode-visual
+
+# zinit ice wait'0' lucid blockf
+zinit light zsh-users/zsh-autosuggestions
+
+zinit ice wait'0' lucid blockf
+zinit light zsh-users/zsh-completions
+autoload -Uz compinit && compinit -u
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*:default' menu select=1
+
+
+#-------------------- theme --------------------#
+eval "$(starship init zsh)"
+
+
 #-------------------- nnn --------------------#
 export LC_COLLATE="C"
 export NNN_TMPFILE="/tmp/nnn"
@@ -69,51 +115,6 @@ function zle-keymap-select {
 zle -N zle-keymap-select
 
 
-#-------------------- zinit --------------------#
-### Added by Zinit's installer
-if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
-    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
-    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
-    command git clone https://github.com/zdharma/zinit "$HOME/.zinit/bin" && \
-        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
-        print -P "%F{160}▓▒░ The clone has failed.%f%b"
-fi
-
-source "$HOME/.zinit/bin/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
-
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
-zinit light-mode for \
-    zinit-zsh/z-a-rust \
-    zinit-zsh/z-a-as-monitor \
-    zinit-zsh/z-a-patch-dl \
-    zinit-zsh/z-a-bin-gem-node
-
-### End of Zinit's installer chunk
-
-
-#-------------------- plugin --------------------#
-# Zsh theme
-zinit light denysdovhan/spaceship-prompt
-
-# Syntax highlight
-zinit light zsh-users/zsh-syntax-highlighting
-
-# Add vi visual mode
-zinit light b4b4r07/zsh-vimode-visual
-
-# zinit ice wait'0' lucid blockf
-zinit light zsh-users/zsh-autosuggestions
-
-zinit ice wait'0' lucid blockf
-zinit light zsh-users/zsh-completions
-autoload -Uz compinit && compinit -u
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-zstyle ':completion:*:default' menu select=1
-
-
 #-------------------- asdf --------------------#
 . /usr/local/opt/asdf/libexec/asdf.sh
 export ASDF_PATH=$HOME/.asdf
@@ -140,5 +141,4 @@ if [ -f $HOME/google-cloud-sdk/path.zsh.inc ]; then . $HOME/google-cloud-sdk/pat
 if [ -f $HOME/google-cloud-sdk/completion.zsh.inc ]; then . $HOME/google-cloud-sdk/completion.zsh.inc; fi
 
 
-export PATH=$PATH:$HOME/neovide/target/release
-
+# export PATH=$PATH:$HOME/neovide/target/release
