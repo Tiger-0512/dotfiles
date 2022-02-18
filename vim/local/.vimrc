@@ -103,12 +103,14 @@ hi NonText ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 hi SpecialKey ctermbg=NONE ctermfg=59 guibg=NONE guifg=NONE
 filetype plugin indent on
 
-set termguicolors
 " Color theme
 if has('nvim')
+    set termguicolors
     colorscheme hybrid
+    " colorscheme elly
 else
-    colorscheme spring-night
+    colorscheme Atelier_CaveDark
+
 endif
 
 syntax enable

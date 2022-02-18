@@ -1,0 +1,17 @@
+# Show icons
+set icons
+
+# Show hidden files
+map . set hidden!
+
+# custom 'delete' command
+cmd delete ${{
+    set -f
+    printf "$fx\n"
+    printf "delete?[y/n]"
+    read ans
+    [ $ans = "y" ] && rm -rf $fx
+}}
+# use 'DD' key for either 'trash' or 'delete' command
+map DD delete
+
