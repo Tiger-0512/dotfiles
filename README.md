@@ -1,14 +1,30 @@
 # My Dotfiles (Vim/NeoVim, Zsh, Alacritty, Hammerspoon, Tig)
 
 ## Table of Contents
-- [Vim/NeoVim](#vim)
 - [Zsh](#zsh)
+- [Vim/NeoVim](#vim)
 - [Alacritty](#alacritty)
+- [LF](#lf)
+- [Git](#git)
+- [GitUI](#gitui)
+- [tmux](#tmux)
 - [Hammerspoon](#hammerspoon)
 - [Tig](#tig)
-- [Git](#git)
-- [tmux](#tmux)
 
+
+<a id="zsh"></a>
+## Zsh
+### Usage
+```
+$ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
+```
+### Notice
+- Before use, please install [zinit](https://github.com/zdharma/zinit).
+- In this setting, I use [aura-theme](https://github.com/daltonmenezes/aura-theme). You can use this theme with [its installation guide](https://github.com/daltonmenezes/aura-theme/tree/main/packages/alacritty).
+- Also, I use [Starship Prompt](https://starship.rs/). The below command sets my starship settings.
+```
+$ ln -snvf ./dotfiles/zsh/starship/starship.toml ~/.config/starship.toml
+```
 
 <a id="vim"></a>
 ## Vim/NeoVim
@@ -33,18 +49,6 @@ $ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.config/nvim/coc-settings.json
 $ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.vim/coc-settings.json
 ```
 
-
-<a id="zsh"></a>
-## Zsh
-### Usage
-```
-$ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
-```
-### Notice
-- Before use, please install [zinit](https://github.com/zdharma/zinit).
-- In this setting, I use [aura-theme](https://github.com/daltonmenezes/aura-theme). You can use this theme with [its installation guide](https://github.com/daltonmenezes/aura-theme/tree/main/packages/alacritty).
-
-
 <a id="alacritty"></a>
 ## Alacritty
 ### Usage
@@ -52,21 +56,11 @@ $ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
 $ ln -snvf ./dotfiles/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ```
 
-<a id="hammerspoon"></a>
-## Hammerspoon
+<a id="lf"></a>
+## LF
 ### Usage
 ```
-$ mv ./dotfiles/hammerspoon/.hammerspoon ~/.
-```
-### Notice
-- Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
-
-
-<a id="tig"></a>
-## Tig
-### Usage
-```
-$ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
+$ ln -snvf ./dotfiles/lf ~
 ```
 
 <a id="git"></a>
@@ -88,9 +82,34 @@ The setting is based on below two rules.
 - [Contributing to Angular](https://github.com/angular/angular/blob/master/CONTRIBUTING.md)
 
 
+<a id="gitui"></a>
+## GitUI
+### Usage
+```
+$ ln -snvf ./dotfiles/gitui ~
+```
+
+
 <a id="tmux"></a>
 ## tmux
 ### Usage
 ```
 $ ln -snvf ./dotfiles/tmux/.tmux.conf ~/.tmux.conf
+```
+
+<a id="hammerspoon"></a>
+## Hammerspoon
+### Usage
+```
+$ ln -snvf ./dotfiles/hammerspoon/.hammerspoon ~
+```
+### Notice
+- Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
+
+
+<a id="tig"></a>
+## Tig
+### Usage
+```
+$ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
 ```
