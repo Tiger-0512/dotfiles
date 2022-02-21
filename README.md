@@ -60,7 +60,7 @@ $ ln -snvf ./dotfiles/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ## LF
 ### Usage
 ```
-$ ln -snvf ./dotfiles/lf ~
+$ ln -snvf $(pwd)/lf ~/.config
 ```
 
 <a id="git"></a>
@@ -86,7 +86,7 @@ The setting is based on below two rules.
 ## GitUI
 ### Usage
 ```
-$ ln -snvf ./dotfiles/gitui ~
+$ ln -snvf $(pwd)/gitui ~/.config
 ```
 
 
@@ -101,7 +101,7 @@ $ ln -snvf ./dotfiles/tmux/.tmux.conf ~/.tmux.conf
 ## Hammerspoon
 ### Usage
 ```
-$ ln -snvf ./dotfiles/hammerspoon/.hammerspoon ~
+$ ln -snvf $(pwd)/hammerspoon/.hammerspoon ~
 ```
 ### Notice
 - Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
