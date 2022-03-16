@@ -16,14 +16,14 @@
 ## Zsh
 ### Usage
 ```
-$ ln -snvf ./dotfiles/zsh/.zshrc ~/.zshrc
+$ ln -snvf $(pwd)/zsh/.zshrc ~/.zshrc
 ```
 ### Notice
 - Before use, please install [zinit](https://github.com/zdharma/zinit).
 - In this setting, I use [aura-theme](https://github.com/daltonmenezes/aura-theme). You can use this theme with [its installation guide](https://github.com/daltonmenezes/aura-theme/tree/main/packages/alacritty).
 - Also, I use [Starship Prompt](https://starship.rs/). The below command sets my starship settings.
 ```
-$ ln -snvf ./dotfiles/zsh/starship/starship.toml ~/.config/starship.toml
+$ ln -snvf $(pwd)/zsh/starship/starship.toml ~/.config/starship.toml
 ```
 
 <a id="vim"></a>
@@ -31,11 +31,11 @@ $ ln -snvf ./dotfiles/zsh/starship/starship.toml ~/.config/starship.toml
 ### Usage
 Vim
 ```
-$ ln -snvf ./dotfiles/vim/local/.vimrc ~/.vimrc
+$ ln -snvf $(pwd)/vim/local/.vimrc ~/.vimrc
 ```
 NeoVim
 ```
-$ ln -snvf ./dotfiles/vim/local/.vimrc ~/.config/nvim/init.vim
+$ ln -snvf $(pwd)/vim/local/.vimrc ~/.config/nvim/init.vim
 ```
 ### Notice
 - There are two types of `.vimrc` in this repo.<br>
@@ -45,15 +45,15 @@ $ ln -snvf ./dotfiles/vim/local/.vimrc ~/.config/nvim/init.vim
 - Before use, please install [vim-plug](https://github.com/junegunn/vim-plug).<br>
 - If you want to use `coc.nvim`, please execute the below command.
 ```
-$ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.config/nvim/coc-settings.json
-$ ln -snvf ./dotfiles/vim/coc/coc-settings.json ~/.vim/coc-settings.json
+$ ln -snvf $(pwd)/vim/coc/coc-settings.json ~/.config/nvim/coc-settings.json
+$ ln -snvf $(pwd)/vim/coc/coc-settings.json ~/.vim/coc-settings.json
 ```
 
 <a id="alacritty"></a>
 ## Alacritty
 ### Usage
 ```
-$ ln -snvf ./dotfiles/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
+$ ln -snvf $(pwd)/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ```
 
 <a id="lf"></a>
@@ -94,7 +94,7 @@ $ ln -snvf $(pwd)/gitui ~/.config
 ## tmux
 ### Usage
 ```
-$ ln -snvf ./dotfiles/tmux/.tmux.conf ~/.tmux.conf
+$ ln -snvf $(pwd)/tmux/.tmux.conf ~/.tmux.conf
 ```
 
 <a id="hammerspoon"></a>
@@ -111,5 +111,5 @@ $ ln -snvf $(pwd)/hammerspoon/.hammerspoon ~
 ## Tig
 ### Usage
 ```
-$ ln -snvf ./dotfiles/tig/.tigrc ~/.tigrc
+$ ln -snvf $(pwd)/tig/.tigrc ~/.tigrc
 ```
