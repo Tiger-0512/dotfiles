@@ -33,29 +33,9 @@ end
 -- ModalMgr Spoon must be loaded explicitly, because this repository heavily relies upon it.
 hs.loadSpoon("ModalMgr")
 
--- Define default Spoons which will be loaded later
--- if not hspoon_list then
---     hspoon_list = {
---         "resizeM",
---     }
--- end
-
 -- Load those Spoons
 for _, v in pairs(hspoon_list) do
     hs.loadSpoon(v)
-end
-
-
-----------------------------------------------------------------------------------------------------
--- Create/Register all kinds of modal keybindings environments.
-----------------------------------------------------------------------------------------------------
--- Register windowHints (Register a keybinding which is NOT modal environment with modal supervisor)
-hswhints_keys = hswhints_keys or {"alt", "tab"}
-if string.len(hswhints_keys[2]) > 0 then
-    spoon.ModalMgr.supervisor:bind(hswhints_keys[1], hswhints_keys[2], 'Show Window Hints', function()
-        spoon.ModalMgr:deactivateAll()
-        hs.hints.windowHints()
-    end)
 end
 
 
@@ -164,6 +144,3 @@ remapKey({'ctrl'}, 'l', keyCode('right'))
 
 remapKey({'ctrl'}, 'i', keyCode('left', {'cmd'}))
 remapKey({'ctrl'}, 'a', keyCode('right', {'cmd'}))
-
-
-----------------------------------------------------------------------------------------------------

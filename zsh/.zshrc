@@ -1,8 +1,10 @@
 export PATH=/usr/local/bin:$PATH
 export PATH="/usr/local/sbin:$PATH"
 
+export CC="gcc-11"
 
-#-------------------- zinit --------------------#
+
+#-------------------- Zinit --------------------#
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
     print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
@@ -27,7 +29,7 @@ zinit light-mode for \
 ### End of Zinit's installer chunk
 
 
-#-------------------- plugin --------------------#
+#-------------------- Plugin --------------------#
 # Syntax highlight
 zinit light zsh-users/zsh-syntax-highlighting
 
@@ -44,11 +46,11 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*:default' menu select=1
 
 
-#-------------------- theme --------------------#
+#-------------------- Theme --------------------#
 eval "$(starship init zsh)"
 
 
-#-------------------- lf --------------------#
+#-------------------- LF --------------------#
 # Set icons
 source ~/.config/lf/icons
 export EDITOR="nvim"
@@ -64,6 +66,14 @@ lfcd () {
     fi
 }
 bindkey -s '^o' 'lfcd\n'
+
+
+#-------------------- GitUI --------------------#
+bindkey -s '^g' 'gitui\n'
+
+
+#-------------------- fzf --------------------#
+export FZF_DEFAULT_OPTS="--height 50% --layout=reverse --border --inline-info --preview 'head -100 {}'"
 
 
 #-------------------- tmux --------------------#
@@ -86,7 +96,7 @@ if [[ ! -n $TMUX ]]; then
 fi
 
 
-#-------------------- vim --------------------#
+#-------------------- Vim --------------------#
 bindkey -v
 # bindkey -M vicmd "^I" beginning-of-line
 # bindkey -M vicmd "^A" end-of-line
@@ -112,16 +122,16 @@ export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 
 
-#-------------------- golang --------------------#
+#-------------------- Golang --------------------#
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
 
-#-------------------- flutter --------------------#
+#-------------------- Flutter --------------------#
 export PATH=$PATH:$HOME/development/flutter/bin
 
 
-#-------------------- gcloud sdk --------------------#
+#-------------------- GCloud SDK --------------------#
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f $HOME/google-cloud-sdk/path.zsh.inc ]; then . $HOME/google-cloud-sdk/path.zsh.inc; fi
 # The next line enables shell command completion for gcloud.

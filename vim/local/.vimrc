@@ -49,7 +49,7 @@ call plug#begin()
     " Save files to disk automatically
     Plug '907th/vim-auto-save'
 
-    " Text filtering and alignmen
+    " Text filtering and alignment
     Plug 'godlygeek/tabular'
     " Markdown vim mode
     Plug 'plasticboy/vim-markdown'
@@ -64,6 +64,13 @@ call plug#begin()
     Plug 'dense-analysis/ale'
     " Solidity
     Plug 'tomlion/vim-solidity'
+    " Nvim Treesitter configurations and abstraction layer
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+    " plenary: full; complete; entire; absolute; unqualified. All the lua functions I don't want to write twice
+    Plug 'nvim-lua/plenary.nvim'
+    " Highlight, list and search todo comments in your projects
+    Plug 'folke/todo-comments.nvim'
 
     " " Fonts with a high number of glyphs
     " Plug 'ryanoasis/vim-devicons'
@@ -85,10 +92,11 @@ call plug#begin()
     Plug 'flazz/vim-colorschemes'
     " Unite for color scheme
     Plug 'ujihisa/unite-colorscheme'
-    " Lean & mean status/tabline
-    Plug 'vim-airline/vim-airline'
-    " vim-airline theme
-    Plug 'vim-airline/vim-airline-themes'
+    Plug 'kyazdani42/nvim-web-devicons'
+    " A blazing fast and easy to configure neovim statusline plugin written in pure lua
+    Plug 'nvim-lualine/lualine.nvim'
+    " A snazzy bufferline for Neovim
+    Plug 'akinsho/bufferline.nvim'
 call plug#end()
 
 
@@ -276,18 +284,54 @@ highlight GitGutterDelete ctermfg=red
 set updatetime=250
 
 
+""=====================================
+""               lualine.nvim
+""=====================================
+lua <<EOF
+require('lualine').setup {
+    options = {
+        icons_enabled = true,
+        theme = 'ayu_dark',
+        component_separators = {left = '', right = ''},
+        section_separators = {left = '', right = ''},
+        disabled_filetypes = {},
+        always_divide_middle = true,
+        globalstatus = false,
+    },
+    sections = {
+        lualine_a = {'mode'},
+        lualine_b = {'branch', 'diff', 'diagnostics'},
+        lualine_c = {
+            {
+                'filename',
+                file_status = true,
+                path = 2
+            }
+        },
+        lualine_x = {'encoding', 'fileformat', 'filetype'},
+        lualine_y = {'progress'},
+        lualine_z = {'location'}
+    },
+    inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = {'filename'},
+        lualine_x = {'location'},
+        lualine_y = {},
+        lualine_z = {}
+    },
+    tabline = {},
+    extensions = {}
+}
+EOF
+
+
 "=====================================
-"               vim-airline
+"               bufferline.nvim
 "=====================================
-let g:airline_theme='bubblegum'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1 " You can change to previous tab with :bp and next tab with :bn
-let g:airline#extensions#default#layout = [
-    \ [ 'a', 'b', 'c'],
-    \ [ 'x', 'y', 'z', 'error', 'warning'],
-\ ]
-" To visualize coc status
-set statusline^=%{coc#status()}
+lua << EOF
+require("bufferline").setup{}
+EOF
 
 
 "=====================================
@@ -350,9 +394,12 @@ let g:coc_global_extensions = [
 " Rename all same words as the current word
 nnoremap ,n :CocCommand document.renameCurrentWord<CR>
 
+
 "=====================================
 "               ALE
 "=====================================
+let g:ale_lint_on_text_changed = 1
+
 " Installation
 " Flake8: pip install flake8
 " Black: pip install black
@@ -450,6 +497,63 @@ nmap m <Plug>(easymotion-s2)
 xmap m <Plug>(easymotion-s2)
 
 
+"=====================================
+"               Treesitter
+"=====================================
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+    ensure_installed = "maintained",
+    highlight = {
+        enable = true,
+        disable = {},
+    },
+}
+EOF
+
+
+"=====================================
+"               todo-comments
+"=====================================
+lua << EOF
+require("todo-comments").setup {
+    signs = true, -- show icons in the signs column
+    sign_priority = 8, -- sign priority
+    keywords = {
+        FIX = {
+            icon = " ", -- icon used for the sign, and in search results
+            color = "error", -- can be a hex color, or a named color (see below)
+            alt = { "FIXME", "BUG", "FIXIT", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
+            -- signs = false, -- configure signs for some keywords individually
+        },
+        TODO = { icon = " ", color = "info" },
+        HACK = { icon = " ", color = "warning" },
+        WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
+        PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+        NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
+    },
+    merge_keywords = true, -- when true, custom keywords will be merged with the defaults
+    highlight = {
+        before = "", -- "fg" or "bg" or empty
+        keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
+        after = "fg", -- "fg" or "bg" or empty
+        pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
+        comments_only = true, -- uses treesitter to match keywords in comments only
+        max_line_len = 400, -- ignore lines longer than this
+        exclude = {}, -- list of file types to exclude highlighting
+    },
+    -- list of named colors where we try to extract the guifg from the
+    -- list of hilight groups or use the hex color if hl not found as a fallback
+    colors = {
+        error = { "DiagnosticError", "ErrorMsg", "#DC2626" },
+        warning = { "DiagnosticWarning", "WarningMsg", "#FBBF24" },
+        info = { "DiagnosticInfo", "#2563EB" },
+        hint = { "DiagnosticHint", "#10B981" },
+        default = { "Identifier", "#7C3AED" },
+    },
+}
+EOF
+
+
 ""=====================================
 ""               NERDTree
 ""=====================================
@@ -483,4 +587,4 @@ xmap m <Plug>(easymotion-s2)
 "    \ 'Ignored'   :'☒',
 "    \ 'Clean'     :'✔︎',
 "    \ 'Unknown'   :'?',
-"\ }
+"\
