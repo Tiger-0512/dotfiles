@@ -92,7 +92,7 @@ call plug#begin()
     Plug 'flazz/vim-colorschemes'
     " Unite for color scheme
     Plug 'ujihisa/unite-colorscheme'
-    Plug 'kyazdani42/nvim-web-devicons'
+    " Plug 'kyazdani42/nvim-web-devicons'
     " A blazing fast and easy to configure neovim statusline plugin written in pure lua
     Plug 'nvim-lualine/lualine.nvim'
     " A snazzy bufferline for Neovim
