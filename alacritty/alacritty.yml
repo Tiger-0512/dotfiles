@@ -40,5 +40,6 @@ font:
   normal:
     family: Hack Nerd Font Mono
 
-# env:
-#   TERM: alacritty
+key_bindings:
+  - {key: W, mods: Control|Shift, chars: "\x1BB"}
+  - {key: W, mods: Control, chars: "\x1BF"}
