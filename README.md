@@ -2,7 +2,7 @@
 
 ## Table of Contents
 - [Zsh](#zsh)
-- [Vim/NeoVim](#vim)
+- [NeoVim](#neovim)
 - [Alacritty](#alacritty)
 - [LF](#lf)
 - [Git](#git)
@@ -26,27 +26,12 @@ $ ln -snvf $(pwd)/zsh/.zshrc ~/.zshrc
 $ ln -snvf $(pwd)/zsh/starship/starship.toml ~/.config/starship.toml
 ```
 
-<a id="vim"></a>
-## Vim/NeoVim
+<a id="neovim"></a>
+## NeoVim
 ### Usage
-Vim
-```
-$ ln -snvf $(pwd)/vim/local/.vimrc ~/.vimrc
-```
 NeoVim
 ```
-$ ln -snvf $(pwd)/vim/local/.vimrc ~/.config/nvim/init.vim
-```
-### Notice
-- There are two types of `.vimrc` in this repo.<br>
-- These `.vimrc` supports both Vim and NeoVim.
-    - [For local use](https://github.com/Tiger-0512/dotfiles/blob/main/vim/local/.vimrc)
-    - [For remote(docker) use](https://github.com/Tiger-0512/dotfiles/blob/main/vim/remote/.vimrc) (having basic functions only)<br>
-- Before use, please install [vim-plug](https://github.com/junegunn/vim-plug).<br>
-- If you want to use `coc.nvim`, please execute the below command.
-```
-$ ln -snvf $(pwd)/vim/coc/coc-settings.json ~/.config/nvim/coc-settings.json
-$ ln -snvf $(pwd)/vim/coc/coc-settings.json ~/.vim/coc-settings.json
+$ ln -snvf $(pwd)/neovim ~/.config/nvim
 ```
 
 <a id="alacritty"></a>
