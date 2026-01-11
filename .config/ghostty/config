@@ -87,11 +87,15 @@ keybind = ctrl+shift+cmd+k=resize_split:up,10
 keybind = ctrl+shift+cmd+l=resize_split:right,10
 
 # Scroll pane
-keybind = ctrl+shift+u=scroll_page_fractional:0.3
-keybind = ctrl+shift+i=scroll_page_fractional:-0.3
+keybind = ctrl+shift+u=scroll_page_fractional:1
+keybind = ctrl+shift+i=scroll_page_fractional:-1
 
 # Create tab
 keybind = ctrl+shift+t=new_tab
+
+# Move tab
+keybind = ctrl+shift+comma=previous_tab
+keybind = ctrl+shift+period=next_tab
 
 # Create window
 keybind = ctrl+shift+w=new_window
