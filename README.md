@@ -1,100 +1,108 @@
-# My Dotfiles (Vim/NeoVim, Zsh, Alacritty, Hammerspoon, Tig)
+# Dotfiles
 
-## Table of Contents
-- [Zsh](#zsh)
-- [NeoVim](#neovim)
-- [Alacritty](#alacritty)
-- [LF](#lf)
-- [Git](#git)
-- [GitUI](#gitui)
-- [tmux](#tmux)
-- [Hammerspoon](#hammerspoon)
-- [Tig](#tig)
+[chezmoi](https://www.chezmoi.io/)で管理しているdotfilesリポジトリを公開用に通常のdotfilesの形式に修正し公開。
 
+## 含まれる設定
 
-<a id="zsh"></a>
-## Zsh
-### Usage
-```
-$ ln -snvf $(pwd)/zsh/.zshrc ~/.zshrc
-```
-### Notice
-- Before use, please install [zinit](https://github.com/zdharma/zinit).
-- In this setting, I use [aura-theme](https://github.com/daltonmenezes/aura-theme). You can use this theme with [its installation guide](https://github.com/daltonmenezes/aura-theme/tree/main/packages/alacritty).
-- Also, I use [Starship Prompt](https://starship.rs/). The below command sets my starship settings.
-```
-$ ln -snvf $(pwd)/zsh/starship/starship.toml ~/.config/starship.toml
-```
+| ツール | カテゴリ | 設定ファイル |
+|--------|---------|-------------|
+| Zsh | シェル | `.zshrc` |
+| [Sheldon](https://github.com/rossmacarthur/sheldon) | Zshプラグインマネージャ | `.config/sheldon/plugins.toml` |
+| [Starship](https://starship.rs/) | プロンプト | `.config/starship.toml` |
+| Neovim | エディタ | `.config/nvim/` |
+| Vim | エディタ | `.vimrc` |
+| [Alacritty](https://alacritty.org/) | ターミナル | `.config/alacritty/` |
+| [Ghostty](https://ghostty.org/) | ターミナル | `.config/ghostty/config` |
+| tmux | マルチプレクサ | `.tmux.conf` |
+| [Zellij](https://zellij.dev/) | マルチプレクサ | `.config/zellij/config.kdl` |
+| [Yazi](https://yazi-rs.github.io/) | ファイルマネージャ | `.config/yazi/` |
+| [lf](https://github.com/gokcehan/lf) | ファイルマネージャ | `.config/lf/` |
+| Git | Git | `.config/git/` |
+| [LazyGit](https://github.com/jesseduffield/lazygit) | Git UI | `.config/lazygit/config.yml` |
+| [GitUI](https://github.com/extrawurst/gitui) | Git UI | `.config/gitui/` |
+| [Hammerspoon](https://www.hammerspoon.org/) | macOS自動化 | `.hammerspoon/` |
 
-<a id="neovim"></a>
-## NeoVim
-### Usage
-NeoVim
-```
-$ ln -snvf $(pwd)/neovim ~/.config/nvim
-```
+※ Alacritty, tmux, Zellij, lf, GitUIは現在利用していないため古い設定になっている可能性があります。
 
-<a id="alacritty"></a>
-## Alacritty
-### Usage
-```
-$ ln -snvf $(pwd)/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
-```
+## 主要なツール
 
-<a id="lf"></a>
-## LF
-### Usage
-```
-$ ln -snvf $(pwd)/lf ~/.config
-```
+### Zsh プラグイン (Sheldon)
 
-<a id="git"></a>
-## Git
-### Usage
-```
-$ mkdir -p ~/.config/git
+- [zsh-defer](https://github.com/romkatv/zsh-defer) - 遅延読み込み
+- [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) - シンタックスハイライト
+- [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) - 自動補完候補
+- [zsh-completions](https://github.com/zsh-users/zsh-completions) - 追加の補完定義
 
-# Global gitignore
-$ cp ./dotfiles/git/ignore ~/.config/git
+### キーバインド
 
-# Settings for conventional commits
-$ cp ./dotfiles/git/conventional-commits-template ~/.config/git
-$ git config --global commit.template ~/.config/git/conventional-commits-template
-```
-### Notice
-The setting is based on below two rules.
-- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-- [Contributing to Angular](https://github.com/angular/angular/blob/master/CONTRIBUTING.md)
+| キー | 機能 |
+|------|------|
+| `Ctrl+f` | Yaziでファイル操作 |
+| `Ctrl+g Ctrl+g` | LazyGit起動 |
+| `Ctrl+g Ctrl+f` | zoxideでディレクトリ移動 (fzf) |
 
+### Git設定
 
-<a id="gitui"></a>
-## GitUI
-### Usage
-```
-$ ln -snvf $(pwd)/gitui ~/.config
-```
+コミットメッセージは[Conventional Commits](https://www.conventionalcommits.org/)に基づくテンプレートを使用。
 
+## Neovim
 
-<a id="tmux"></a>
-## tmux
-### Usage
-```
-$ ln -snvf $(pwd)/tmux/.tmux.conf ~/.tmux.conf
-```
+Luaベースの設定。主な機能:
 
-<a id="hammerspoon"></a>
+- Leader: `,`
+- カラースキーム: hybrid
+- プラグイン管理: [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+## Ghostty
+
+### 外観
+
+- テーマ: Catppuccin Mocha
+- 背景透過: 85%（ブラー半径20）
+- フォント: FantasqueSansM Nerd Font Mono + Hiragino Kaku Gothic ProN
+
+### キーバインド
+
+| キー | 機能 |
+|------|------|
+| `Ctrl+Shift+'` | 右に分割 |
+| `Ctrl+Shift+;` | 下に分割 |
+| `Ctrl+Shift+h/j/k/l` | ペイン移動 (左/下/上/右) |
+| `Ctrl+Shift+Cmd+h/j/k/l` | ペインリサイズ |
+| `Ctrl+Shift+u/i` | スクロール (下/上) |
+| `Ctrl+Shift+t` | 新規タブ |
+| `Ctrl+Shift+,/.` | タブ移動 (前/次) |
+| `Ctrl+Shift+w` | 新規ウィンドウ |
+
 ## Hammerspoon
-### Usage
-```
-$ ln -snvf $(pwd)/hammerspoon/.hammerspoon ~
-```
-### Notice
-- Part of the setting is forked from [awesome-hammerspoon](https://github.com/ashfinal/awesome-hammerspoon).
 
+macOS用の自動化ツール。ウィンドウ管理とキーリマップに使用。
 
-<a id="tig"></a>
-## Tig
-### Usage
-```
-$ ln -snvf $(pwd)/tig/.tigrc ~/.tigrc
-```
+### ウィンドウ管理
+
+`Alt+Shift+Ctrl` をモディファイアキーとして使用。
+
+| キー | 機能 |
+|------|------|
+| `Alt+Shift+Ctrl+h` | フォーカスしているウインドウを左半分に移動 |
+| `Alt+Shift+Ctrl+l` | フォーカスしているウインドウを右半分に移動 |
+| `Alt+Shift+Ctrl+k` | フォーカスしているウインドウを上半分に移動 |
+| `Alt+Shift+Ctrl+j` | フォーカスしているウインドウを下半分に移動 |
+| `Alt+Shift+Ctrl+b` | フォーカスしているウインドウを右下 (60%幅) に移動 |
+| `Alt+Shift+Ctrl+f` | フォーカスしているウインドウをフルスクリーンに |
+
+### キーリマップ
+
+Vimライクなカーソル移動をシステム全体で有効化。
+
+| キー | 機能 |
+|------|------|
+| `Ctrl+h/j/k/l` | カーソル移動 (左/下/上/右) |
+| `Ctrl+i` | 行頭へ移動 |
+| `Ctrl+a` | 行末へ移動 |
+| `Ctrl+w` | 単語選択 (右方向) |
+| `Ctrl+Shift+w` | 単語選択 (左方向) |
+
+### ターミナル起動
+
+- `Option`キー2回押し: Ghosttyを起動/フォーカス
