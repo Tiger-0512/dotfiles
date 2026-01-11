@@ -1,0 +1,88 @@
+## LSP (Lspsaga) @lsp @language-server
+
+# Navigation
+Jump to definition (peek) | gd
+Jump to type definition | gy
+Find references and definitions | gr
+
+# Documentation
+Show hover documentation | K
+
+# Code Actions
+Show code actions | ga
+Rename symbol | gn
+
+# Diagnostics
+Show line diagnostics | ge
+Jump to previous diagnostic | g[
+Jump to next diagnostic | g]
+
+# Formatting
+Format buffer | fm
+
+## File Explorer (Yazi) @files @explorer
+
+Open yazi at current file | ,t
+Open yazi in working directory | ,tw
+Resume last yazi session | ,tr
+
+## Telescope @search @find
+
+Find files | ,ff
+Live grep | ,fg
+Buffers | ,fb
+Help tags | ,fh
+Notifications | ,fn
+
+## Terminal @lspsaga-terminal @terminal
+
+Toggle terminal | gt
+
+## Git (Lazygit) @git @version-control
+
+Open lazygit | ,lg
+
+## Yanky (Yank History) @yanky @clipboard @paste
+
+# Basic Paste
+Paste after cursor | p
+Paste before cursor | P
+Paste after and move cursor to end | gp
+Paste before and move cursor to end | gP
+
+# Cycle Through Yank History
+Cycle to next yank in history | <C-n>
+Cycle to previous yank in history | <C-p>
+
+## nvim-cmp (Completion) @completion @autocomplete
+
+# Insert Mode Completion
+Select previous completion item | <C-p>
+Select next completion item | <C-n>
+Trigger completion menu | <C-l>
+Abort completion | <C-e>
+Confirm completion | <C-y>
+
+## Todo Comments @todos
+
+# Provided by todo-comments.nvim plugin
+
+## General Vim @vim @basic
+
+# Window Management
+Split window horizontally | ss
+Split window vertically | sv
+Move to window below | sj
+Move to window above | sk
+Move to window left | sh
+Move to window right | sl
+
+# Buffer Management
+Previous buffer | tp
+Next buffer | tn
+First buffer | tf
+Last buffer | tl
+
+# Editing
+Create new line | <CR>
+Highlight word under cursor | <Space><Space>

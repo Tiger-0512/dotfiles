@@ -1,0 +1,97 @@
+# This is the configuration file for Ghostty.
+#
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   /Users/taigamat/Library/Application Support/com.mitchellh.ghostty/config
+#
+# The template does not set any default options, since Ghostty ships
+# with sensible defaults for all options. Users should only need to set
+# options that they want to change from the default.
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Additionally, each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+
+# Config syntax crash course
+# ==========================
+# # The config file consists of simple key-value pairs,
+# # separated by equals signs.
+# font-family = Iosevka
+# window-padding-x = 2
+#
+# # Spacing around the equals sign does not matter.
+# # All of these are identical:
+# key=value
+# key= value
+# key =value
+# key = value
+#
+# # Any line beginning with a # is a comment. It's not possible to put
+# # a comment after a config option, since it would be interpreted as a
+# # part of the value. For example, this will have a value of "#123abc":
+# background = #123abc
+#
+# # Empty values are used to reset config keys to default.
+# key =
+#
+# # Some config options have unique syntaxes for their value,
+# # which is explained in the docs for that config option.
+# # Just for example:
+# resize-overlay-duration = 4s 200ms
+
+
+# ***********************************
+# ********** User settings **********
+# ***********************************
+
+# ********** Theme/UI **********
+theme = Catppuccin Mocha
+window-theme = auto
+
+background-opacity = 0.85
+background-blur-radius = 20
+
+macos-titlebar-style = transparent
+
+# ********** Padding **********
+window-padding-x = 20
+window-padding-y = 5
+window-padding-balance = true
+
+# ********** Font **********
+font-family = "FantasqueSansM Nerd Font Mono"
+font-family = "Hiragino Kaku Gothic ProN"
+font-feature = "-calt"
+font-feature = "-dlig"
+font-feature = "-liga"
+font-size = 16
+
+# ********** Keybind **********
+# Split pane
+keybind = ctrl+shift+'=new_split:right
+keybind = ctrl+shift+;=new_split:down
+
+# Move pane
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+j=goto_split:down
+keybind = ctrl+shift+k=goto_split:up
+keybind = ctrl+shift+l=goto_split:right
+
+# Resize pane
+keybind = ctrl+shift+cmd+h=resize_split:left,10
+keybind = ctrl+shift+cmd+j=resize_split:down,10
+keybind = ctrl+shift+cmd+k=resize_split:up,10
+keybind = ctrl+shift+cmd+l=resize_split:right,10
+
+# Scroll pane
+keybind = ctrl+shift+u=scroll_page_fractional:0.3
+keybind = ctrl+shift+i=scroll_page_fractional:-0.3
+
+# Create tab
+keybind = ctrl+shift+t=new_tab
+
+# Create window
+keybind = ctrl+shift+w=new_window

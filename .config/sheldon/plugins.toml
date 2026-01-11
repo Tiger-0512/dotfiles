@@ -1,0 +1,32 @@
+# `sheldon` configuration file
+# ----------------------------
+
+shell = "zsh"
+
+[templates]
+defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"
+
+[plugins]
+
+# zsh-defer must be loaded first (not deferred)
+[plugins.zsh-defer]
+github = "romkatv/zsh-defer"
+
+# Syntax highlighting (deferred)
+[plugins.zsh-syntax-highlighting]
+github = "zsh-users/zsh-syntax-highlighting"
+apply = ["defer"]
+
+# Autosuggestions (NOT deferred - conflicts with kiro-cli shell integration)
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+
+# Completions (deferred)
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+apply = ["defer"]
+hooks.post = """
+zsh-defer -c 'autoload -Uz compinit && compinit -u'
+zsh-defer -c "zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'"
+zsh-defer -c "zstyle ':completion:*:default' menu select=1"
+"""

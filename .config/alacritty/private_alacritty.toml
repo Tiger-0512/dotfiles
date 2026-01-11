@@ -1,0 +1,44 @@
+[[keyboard.bindings]]
+chars = "\u001BB"
+key = "W"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BF"
+key = "W"
+mods = "Control"
+
+[colors.bright]
+black = "#4d4d4d"
+blue = "#7C90DA"
+cyan = "#61ffca"
+green = "#61ffca"
+magenta = "#a277ff"
+red = "#ff6767"
+white = "#edecee"
+yellow = "#ffca85"
+
+[colors.cursor]
+cursor = "#AC98E6"
+
+[colors.normal]
+black = "#999999"
+blue = "#7C90DA"
+cyan = "#61ffca"
+green = "#61ffca"
+magenta = "#a277ff"
+red = "#ff6767"
+white = "#edecee"
+yellow = "#ffca85"
+
+[colors.primary]
+background = "#15141b"
+foreground = "#edecee"
+
+[font.normal]
+family = "Hack Nerd Font Mono"
+
+[window]
+opacity = 0.9
+
+[keyboard]
