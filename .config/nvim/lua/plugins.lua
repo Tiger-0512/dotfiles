@@ -60,7 +60,7 @@ require("lazy").setup({
 		},
 		keys = {
 			{
-				"<leader>t",
+				"<leader>tt",
 				mode = { "n", "v" },
 				"<cmd>Yazi<cr>",
 				desc = "Open yazi at the current file",
@@ -379,18 +379,18 @@ require("lazy").setup({
 
 			-- Ruff for Python (LSP + linter + formatter)
 			vim.lsp.config("ruff", {
-			capabilities = capabilities,
+				capabilities = capabilities,
 			})
 
 			-- Markdown Oxide for Markdown (LSP)
 			-- Only start on markdown files to avoid crashes on unnamed buffers
-		vim.lsp.config("markdown_oxide", {
-			capabilities = capabilities,
-			filetypes = { "markdown" },
-		})
+			vim.lsp.config("markdown_oxide", {
+				capabilities = capabilities,
+				filetypes = { "markdown" },
+			})
 
-		require("mason-lspconfig").setup({
-			ensure_installed = {
+			require("mason-lspconfig").setup({
+				ensure_installed = {
 					"lua_ls",
 					"biome",
 					"ruff",
@@ -489,7 +489,12 @@ require("lazy").setup({
 			vim.keymap.set("n", "g[", "<cmd>Lspsaga diagnostic_jump_prev<CR>", { desc = "Previous diagnostic" })
 			vim.keymap.set("n", "g]", "<cmd>Lspsaga diagnostic_jump_next<CR>", { desc = "Next diagnostic" })
 			-- Format（フォーマット）
-			vim.keymap.set("n", "fm", "<cmd>lua vim.lsp.buf.format({ timeout_ms = 5000 })<CR>", { desc = "Format buffer" })
+			vim.keymap.set(
+				"n",
+				"fm",
+				"<cmd>lua vim.lsp.buf.format({ timeout_ms = 5000 })<CR>",
+				{ desc = "Format buffer" }
+			)
 			-- Terminal Toggle（ノーマルモード・ターミナルモード両方で動作）
 			vim.keymap.set({ "n", "t" }, "gt", "<cmd>Lspsaga term_toggle<CR>", { desc = "Toggle terminal" })
 		end,
