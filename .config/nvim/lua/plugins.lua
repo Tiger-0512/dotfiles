@@ -295,6 +295,53 @@ require("lazy").setup({
 	-- Easy resizing of your vim windows
 	{ "jimsei/winresizer" },
 
+	-- CSV/TSV viewer and editor
+	{
+		"hat0uma/csvview.nvim",
+		ft = { "csv", "tsv" },
+		cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
+		---@type CsvView.Options
+		opts = {
+			parser = {
+				-- コメント行として認識する文字
+				comments = { "#", "//" },
+				-- デリミタの自動検出設定
+				delimiter = {
+					ft = {
+						csv = ",",
+						tsv = "\t",
+					},
+					-- 自動検出用のフォールバック
+					fallbacks = { ",", "\t", ";", "|" },
+				},
+			},
+			view = {
+				-- 最小カラム幅
+				min_column_width = 5,
+				-- カラム間のスペース
+				spacing = 2,
+				-- 表示モード: "highlight" または "border"
+				display_mode = "border",
+				-- スティッキーヘッダー
+				sticky_header = {
+					enabled = true,
+					separator = "─",
+				},
+			},
+			-- キーマップ設定
+			keymaps = {
+				-- フィールド選択用テキストオブジェクト
+				textobject_field_inner = { "if", mode = { "o", "x" } },
+				textobject_field_outer = { "af", mode = { "o", "x" } },
+				-- Excel風ナビゲーション
+				jump_next_field_end = { "<Tab>", mode = { "n", "v" } },
+				jump_prev_field_end = { "<S-Tab>", mode = { "n", "v" } },
+				jump_next_row = { "<Down>", mode = { "n", "v" } },
+				jump_prev_row = { "<Up>", mode = { "n", "v" } },
+			},
+		},
+	},
+
 	-- Markdown preview in browser with synchronised scrolling
 	{
 		"iamcco/markdown-preview.nvim",
@@ -368,8 +415,21 @@ require("lazy").setup({
 			-- Configure LSP servers using vim.lsp.config
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+			-- Lua Language Server with built-in formatter
 			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
+				settings = {
+					Lua = {
+						format = {
+							enable = true,
+							defaultConfig = {
+								indent_style = "tab",
+								indent_size = "1",
+								quote_style = "double",
+							},
+						},
+					},
+				},
 			})
 
 			-- Biome for TypeScript/JavaScript (LSP + linter + formatter)
@@ -377,9 +437,44 @@ require("lazy").setup({
 				capabilities = capabilities,
 			})
 
+			-- ts_ls for TypeScript/JavaScript (type checking, go-to-definition, etc.)
+			vim.lsp.config("ts_ls", {
+				capabilities = capabilities,
+				init_options = {
+					hostInfo = "neovim",
+					preferences = {
+						includeInlayParameterNameHints = "all",
+						includeInlayFunctionParameterTypeHints = true,
+						includeInlayVariableTypeHints = true,
+					},
+				},
+			})
+
 			-- Ruff for Python (LSP + linter + formatter)
 			vim.lsp.config("ruff", {
 				capabilities = capabilities,
+				init_options = {
+					settings = {
+						lint = {
+							extendSelect = { "I" }, -- isortルールを追加
+						},
+					},
+				},
+			})
+
+			-- Pyright for Python (type checking, go-to-definition, etc.)
+			vim.lsp.config("pyright", {
+				capabilities = capabilities,
+				settings = {
+					python = {
+						analysis = {
+							autoSearchPaths = true,
+							useLibraryCodeForTypes = true,
+							diagnosticMode = "openFilesOnly",
+							typeCheckingMode = "basic",
+						},
+					},
+				},
 			})
 
 			-- Markdown Oxide for Markdown (LSP)
@@ -393,28 +488,15 @@ require("lazy").setup({
 				ensure_installed = {
 					"lua_ls",
 					"biome",
+					"ts_ls",
 					"ruff",
+					"pyright",
 					"markdown_oxide",
 				},
 				automatic_enable = true,
 			})
-		end,
-	},
 
-	-- Use Neovim as a language server to inject LSP diagnostics, code actions, and more via Lua
-	-- Note: Python uses ruff, TypeScript uses biome (both have built-in formatting)
-	{
-		"nvimtools/none-ls.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			local null_ls = require("null-ls")
-			null_ls.setup({
-				sources = {
-					-- Lua formatter
-					null_ls.builtins.formatting.stylua,
-				},
-			})
-
+			-- Auto format on save
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(ev)
 					local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -428,7 +510,16 @@ require("lazy").setup({
 						vim.api.nvim_create_autocmd("BufWritePre", {
 							group = augroup,
 							buffer = ev.bufnr,
-							callback = function(args)
+							callback = function()
+								-- Pythonファイルの場合、先にimportを整理
+								if vim.bo.filetype == "python" then
+									vim.lsp.buf.code_action({
+										context = { only = { "source.organizeImports" } },
+										apply = true,
+									})
+									vim.wait(100) -- code_actionの完了を待つ
+								end
+
 								vim.lsp.buf.format({
 									timeout_ms = 5000,
 									async = false,
@@ -441,21 +532,6 @@ require("lazy").setup({
 		end,
 	},
 
-	{
-		"jay-babu/mason-null-ls.nvim",
-		dependencies = { "mason-org/mason.nvim", "nvimtools/none-ls.nvim" },
-		config = function()
-			require("mason-null-ls").setup({
-				ensure_installed = {
-					-- Lua tools only (Python uses ruff, TypeScript uses biome)
-					"luacheck",
-					"stylua",
-				},
-				automatic_setup = true,
-				handlers = {},
-			})
-		end,
-	},
 
 	-- improve neovim lsp experience
 	{

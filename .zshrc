@@ -39,8 +39,7 @@ export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}
 sheldon_cache="$cache_dir/sheldon.zsh"
 sheldon_toml="$HOME/.config/sheldon/plugins.toml"
-# zellij内ではキャッシュ再生成をスキップ（ハング防止）
-if [[ ! -r "$sheldon_cache" ]] || { [[ "$sheldon_toml" -nt "$sheldon_cache" ]] && ! _is_inside_zellij; }; then
+if [[ ! -r "$sheldon_cache" ]] || [[ "$sheldon_toml" -nt "$sheldon_cache" ]]; then
   mkdir -p $cache_dir
   sheldon source > $sheldon_cache
 fi
@@ -51,8 +50,7 @@ unset cache_dir sheldon_cache sheldon_toml
 #-------------------- Theme --------------------#
 # Starship の初期化をキャッシュ
 _starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/starship.zsh"
-# zellij内ではキャッシュ再生成をスキップ（ハング防止）
-if [[ ! -f "$_starship_cache" ]] || { [[ /opt/homebrew/bin/starship -nt "$_starship_cache" ]] && ! _is_inside_zellij; }; then
+if [[ ! -f "$_starship_cache" ]] || [[ /opt/homebrew/bin/starship -nt "$_starship_cache" ]]; then
   starship init zsh > "$_starship_cache"
 fi
 source "$_starship_cache"
@@ -198,6 +196,24 @@ eval "$(direnv hook zsh)"
 
 # #-------------------- finch --------------------#
 # alias docker='finch'
+
+#-------------------- WezTerm shell integration --------------------#
+if [[ "$TERM_PROGRAM" == "WezTerm" ]]; then
+  __wezterm_set_user_var() {
+    printf "\033]1337;SetUserVar=%s=%s\007" "$1" "$(echo -n "$2" | base64)"
+  }
+  __wezterm_preexec() {
+    __wezterm_set_user_var WEZTERM_CMD "${1%% *}"
+    printf "\033]2;%s\007" "${1%% *}"
+  }
+  __wezterm_precmd() {
+    __wezterm_set_user_var WEZTERM_CMD ""
+    printf "\033]2;%s\007" "zsh"
+  }
+  autoload -U add-zsh-hook
+  add-zsh-hook preexec __wezterm_preexec
+  add-zsh-hook precmd __wezterm_precmd
+fi
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
