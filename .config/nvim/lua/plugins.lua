@@ -532,7 +532,6 @@ require("lazy").setup({
 		end,
 	},
 
-
 	-- improve neovim lsp experience
 	{
 		"glepnir/lspsaga.nvim",
@@ -790,119 +789,7 @@ require("lazy").setup({
 		end,
 	},
 
-	-- avante-status
-	{ "takeshid/avante-status.nvim" },
 
-	-- avante.nvim
-	{
-		"yetone/avante.nvim",
-		branch = "main",
-		build = "make BUILD_FROM_SOURCE=true",
-		lazy = false,
-		version = false,
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"stevearc/dressing.nvim",
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			"nvim-tree/nvim-web-devicons",
-			"HakonHarnes/img-clip.nvim",
-		},
-		config = function()
-			require("avante_lib").load()
-			require("avante").setup({
-				provider = "ollama",
-				auto_suggestions_provider = "ollama",
-				providers = {
-					ollama = {
-						endpoint = "http://localhost:11434",
-						model = "nezahatkorkmaz/deepseek-v3:latest",
-						timeout = 30000,
-						extra_request_body = {
-							options = {
-								temperature = 0.6,
-								num_ctx = 4096,
-							},
-						},
-					},
-				},
-				ui = {
-					code_action_icon = "", -- 空文字列で非表示
-					border = "rounded",
-				},
-				behaviour = {
-					auto_suggestions = false,
-					auto_set_highlight_group = true,
-					auto_set_keymaps = true,
-					auto_apply_diff_after_generation = false,
-					support_paste_from_clipboard = false,
-					minimize_diff = true,
-				},
-				mappings = {
-					diff = {
-						ours = "co",
-						theirs = "ct",
-						all_theirs = "ca",
-						both = "cb",
-						cursor = "cc",
-						next = "]x",
-						prev = "[x",
-					},
-					suggestion = {
-						accept = "<M-l>",
-						next = "<M-]>",
-						prev = "<M-[>",
-						dismiss = "<C-]>",
-					},
-					jump = {
-						next = "]]",
-						prev = "[[",
-					},
-					submit = {
-						normal = "<CR>",
-						insert = "<C-s>",
-					},
-					sidebar = {
-						apply_all = "A",
-						apply_cursor = "a",
-						switch_windows = "<Tab>",
-						reverse_switch_windows = "<S-Tab>",
-					},
-				},
-				hints = { enabled = true },
-				windows = {
-					position = "right",
-					wrap = true,
-					width = 30,
-					sidebar_header = {
-						enabled = true,
-						align = "center",
-						rounded = true,
-					},
-					input = {
-						prefix = "> ",
-						height = 8,
-					},
-					edit = {
-						border = "rounded",
-						start_insert = true,
-					},
-					ask = {
-						floating = false,
-						start_insert = true,
-						border = "rounded",
-						focus_on_apply = "ours",
-					},
-				},
-				highlights = {
-					diff = {
-						current = "DiffText",
-						incoming = "DiffAdd",
-					},
-				},
-			})
-		end,
-	},
 
 	-- dressing.nvim
 	{ "stevearc/dressing.nvim" },
@@ -910,20 +797,20 @@ require("lazy").setup({
 	-- img-clip.nvim
 	{ "HakonHarnes/img-clip.nvim" },
 
-	-- Neovim plugin to animate the cursor with a smear effect
-	{
-		"sphamba/smear-cursor.nvim",
-		opts = {
-			-- Smear cursor when switching buffers or windows
-			smear_between_buffers = true,
-			-- Smear cursor when moving within line or to neighbor lines
-			smear_between_neighbor_lines = true,
-			-- Draw the smear in buffer space instead of screen space when scrolling
-			scroll_buffer_space = true,
-			-- Smear cursor in insert mode
-			smear_insert_mode = true,
-		},
-	},
+	-- -- Neovim plugin to animate the cursor with a smear effect
+	-- {
+	-- 	"sphamba/smear-cursor.nvim",
+	-- 	opts = {
+	-- 		-- Smear cursor when switching buffers or windows
+	-- 		smear_between_buffers = true,
+	-- 		-- Smear cursor when moving within line or to neighbor lines
+	-- 		smear_between_neighbor_lines = true,
+	-- 		-- Draw the smear in buffer space instead of screen space when scrolling
+	-- 		scroll_buffer_space = true,
+	-- 		-- Smear cursor in insert mode
+	-- 		smear_insert_mode = true,
+	-- 	},
+	-- },
 }, {
 	-- lazy.nvim options
 	install = { colorscheme = { "hybrid", "habamax" } },
