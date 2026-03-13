@@ -197,6 +197,12 @@ eval "$(direnv hook zsh)"
 # #-------------------- finch --------------------#
 # alias docker='finch'
 
+#-------------------- oxker --------------------#
+alias oxker="oxker --host \"$HOME/.config/colima/default/docker.sock\""
+
+#-------------------- bat --------------------#
+alias cat='bat'
+
 #-------------------- WezTerm shell integration --------------------#
 if [[ "$TERM_PROGRAM" == "WezTerm" ]]; then
   __wezterm_set_user_var() {
@@ -215,18 +221,22 @@ if [[ "$TERM_PROGRAM" == "WezTerm" ]]; then
   add-zsh-hook precmd __wezterm_precmd
 fi
 
+export PATH=$HOME/.toolbox/bin:$PATH
+
+# Added by AIM CLI
+export PATH="$HOME/.aim/mcp-servers:$PATH"
+
+# Q-SPEC Kit
+export PATH="$HOME/.q-spec/bin:$PATH"
+
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
 
 # Cline settings to use shell integration
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
 
-export PATH=$HOME/.toolbox/bin:$PATH
-
-alias cat='bat'
-
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
-
 
 # Kiro CLI post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+
