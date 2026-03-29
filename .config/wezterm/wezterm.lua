@@ -22,11 +22,14 @@ config.window_padding = {
 }
 
 -- ********** Font **********
+-- テキスト表示用と絵文字用は独立しているため、同じフォントを2回指定してフォールバックさせる必要がある
+-- ref: https://zenn.dev/paiza/articles/9ca689a0365b05
 config.font = wezterm.font_with_fallback({
 	{
 		family = "FantasqueSansM Nerd Font Mono",
 		harfbuzz_features = { "calt=0", "dlig=0", "liga=0" },
 	},
+	{ family = "FantasqueSansM Nerd Font Mono", assume_emoji_presentation = true },
 	{ family = "Hiragino Kaku Gothic ProN" },
 })
 config.font_size = 16
@@ -42,7 +45,7 @@ config.window_frame = {
 	inactive_titlebar_bg = "none",
 	active_titlebar_bg = "none",
 	font = wezterm.font("FantasqueSansM Nerd Font Mono"),
-	font_size = 14,
+	font_size = 16,
 }
 
 -- テーマから色を取得
@@ -69,9 +72,43 @@ config.colors = {
 	quick_select_match_fg = { Color = scheme.foreground },
 }
 
--- タブの形をカスタマイズ（矢印型）
-local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
-local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+-- タブの形をカスタマイズ（矢印型 + プロセスアイコン）
+-- ref: https://zenn.dev/gsy0911/articles/a7347e1a2d8d31
+-- タブの左側の装飾
+local SOLID_LEFT_ARROW = wezterm.nerdfonts.ple_lower_right_triangle
+local SOLID_LEFT_CIRCLE = wezterm.nerdfonts.ple_left_half_circle_thick
+-- タブの右側の装飾
+local SOLID_RIGHT_ARROW = wezterm.nerdfonts.ple_upper_left_triangle
+local SOLID_RIGHT_CIRCLE = wezterm.nerdfonts.ple_right_half_circle_thick
+
+-- プロセス名に応じたアイコンと色の定義
+local process_icons = {
+	["nvim"] = { icon = wezterm.nerdfonts.linux_neovim, color = "#32cd32" },
+	["vim"] = { icon = wezterm.nerdfonts.linux_neovim, color = "#32cd32" },
+	["zsh"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#808080" },
+	["bash"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#808080" },
+	["fish"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#808080" },
+	["docker"] = { icon = wezterm.nerdfonts.md_docker, color = "#4169e1" },
+	["python"] = { icon = wezterm.nerdfonts.dev_python, color = "#ffd700" },
+	["node"] = { icon = wezterm.nerdfonts.md_language_typescript, color = "#1e90ff" },
+	["git"] = { icon = wezterm.nerdfonts.dev_git, color = "#f44d27" },
+	["ssh"] = { icon = wezterm.nerdfonts.md_server, color = "#ff7f50" },
+	["cargo"] = { icon = wezterm.nerdfonts.dev_rust, color = "#dea584" },
+	["go"] = { icon = wezterm.nerdfonts.md_language_go, color = "#00add8" },
+	["lazygit"] = { icon = wezterm.nerdfonts.dev_git, color = "#f44d27" },
+}
+local default_icon = { icon = wezterm.nerdfonts.md_console, color = "#ae8b2d" }
+
+-- paneのタイトルからプロセス名を抽出してアイコンを返す
+local function get_process_icon(pane_title)
+	local title = pane_title:lower()
+	for process, info in pairs(process_icons) do
+		if title == process or title:find(process) then
+			return info
+		end
+	end
+	return default_icon
+end
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
 	local background = scheme.brights[1] -- bright black (gray)
@@ -84,17 +121,21 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	local edge_foreground = background
 	-- タブタイトルから "Copy mode: " を除去
 	local pane_title = tab.active_pane.title:gsub("^Copy mode: ", "")
-	local title = "   " .. wezterm.truncate_right(pane_title, max_width - 1) .. "   "
+	local proc = get_process_icon(pane_title)
+	local title = " " .. wezterm.truncate_right(pane_title, max_width - 1) .. " "
 	return {
 		{ Background = { Color = edge_background } },
+		{ Foreground = { Color = proc.color } },
+		{ Text = proc.icon },
+		{ Text = " " },
 		{ Foreground = { Color = edge_foreground } },
-		{ Text = SOLID_LEFT_ARROW },
+		{ Text = SOLID_LEFT_CIRCLE },
 		{ Background = { Color = background } },
 		{ Foreground = { Color = foreground } },
 		{ Text = title },
 		{ Background = { Color = edge_background } },
 		{ Foreground = { Color = edge_foreground } },
-		{ Text = SOLID_RIGHT_ARROW },
+		{ Text = SOLID_RIGHT_CIRCLE },
 	}
 end)
 
@@ -216,13 +257,6 @@ config.keys = {
 		key = "phys:w",
 		mods = "CTRL|SHIFT",
 		action = act.SpawnWindow,
-	},
-
-	-- Copy Mode (Ctrl+Shift+c)
-	{
-		key = "phys:c",
-		mods = "CTRL|SHIFT",
-		action = act.ActivateCopyMode,
 	},
 
 	-- Search Mode (Ctrl+Shift+f)
