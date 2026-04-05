@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local notify = require("notify")
 local config = wezterm.config_builder()
 
 -- ********** Theme/UI **********
@@ -114,15 +115,20 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	local background = scheme.brights[1] -- bright black (gray)
 	local foreground = scheme.foreground
 	local edge_background = "none"
+	local has_notif = notify.has_notification(tab.tab_id)
 	if tab.is_active then
 		background = scheme.ansi[4] -- yellow
+		foreground = scheme.background
+	elseif has_notif then
+		background = scheme.ansi[2] -- red（未読通知）
 		foreground = scheme.background
 	end
 	local edge_foreground = background
 	-- タブタイトルから "Copy mode: " を除去
 	local pane_title = tab.active_pane.title:gsub("^Copy mode: ", "")
 	local proc = get_process_icon(pane_title)
-	local title = " " .. wezterm.truncate_right(pane_title, max_width - 1) .. " "
+	local notif_icon = has_notif and "🔔 " or ""
+	local title = " " .. notif_icon .. wezterm.truncate_right(pane_title, max_width - 1) .. " "
 	return {
 		{ Background = { Color = edge_background } },
 		{ Foreground = { Color = proc.color } },
@@ -141,6 +147,8 @@ end)
 
 -- ステータスバーに現在のモードを表示
 wezterm.on("update-status", function(window, pane)
+	notify.clear_active_tab(window)
+
 	local mode = window:active_key_table()
 	local mode_text = "NORMAL"
 	local mode_color = scheme.ansi[3] -- green
@@ -164,6 +172,7 @@ end)
 config.keys = {
 	-- Disable conflicting defaults
 	{ key = "L", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+	{ key = "N", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
 
 	-- Split pane (Ctrl+Shift+' : right, Ctrl+Shift+; : down)
 	{
@@ -346,5 +355,7 @@ config.key_tables = {
 	copy_mode = copy_mode,
 	search_mode = search_mode,
 }
+
+notify.apply_to_config(config)
 
 return config
