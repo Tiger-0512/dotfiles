@@ -1,6 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
-local notify = require("notify")
+local notify = wezterm.plugin.require("https://github.com/Tiger-0512/wezterm-notify")
 local config = wezterm.config_builder()
 
 -- ********** Theme/UI **********
