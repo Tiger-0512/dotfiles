@@ -128,7 +128,7 @@ local function changeTerminal(event)
 				end)
 				if firstAlt and secondAlt then
 					cancelAlt()
-					hs.application.launchOrFocus("/Applications/Ghostty.app")
+					hs.application.launchOrFocus("/Applications/WezTerm.app")
 				end
 			else
 				cancelAlt()
