@@ -2,6 +2,41 @@
 
 [chezmoi](https://www.chezmoi.io/)で管理しているdotfilesリポジトリを公開用に通常のdotfilesの形式に修正し公開。
 
+## 構成
+
+| 役割                           | ツール                                           | 対象                                                                      |
+| ------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------- |
+| ユーザー設定                   | chezmoi                                          | `.zshrc`, `~/.config/*`, `.hammerspoon/`, `.tmux.conf`, `.vimrc`          |
+| CLI パッケージ / システム設定  | [nix-darwin](https://github.com/LnL7/nix-darwin) | `nix-config/` 配下 (macOS。Linux は flakey-profile で追従予定)            |
+| GUI アプリ                     | Homebrew Cask                                    | (source 側で宣言的に管理。本リポには含めず参考用)                         |
+
+> Nix への移行は段階的に進行中です。現時点 (Phase 2.1) では `nix-config/` は最小構成 (5 CLI) の PoC で、CLI の大半はまだ Homebrew 側で管理されています。
+
+## 新規マシンでのセットアップ (nix-darwin / macOS)
+
+本リポは chezmoi 管理の source から自動生成されたものです。chezmoi workflow で完全再現したい場合は元リポ (private) が必要ですが、`nix-config/` だけ使う場合は以下で動きます。
+
+```sh
+# 1. Nix を導入 (Determinate Systems Nix Installer)
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+
+# 2. このリポを clone
+git clone https://github.com/Tiger-0512/dotfiles.git ~/dotfiles
+cd ~/dotfiles/nix-config
+
+# 3. nix-darwin を初回 bootstrap (sudo 必要)
+sudo nix run nix-darwin -- switch --flake .#default
+
+# 4. 以後の更新
+darwin-rebuild switch --flake .#default
+```
+
+### 補足
+
+- Touch ID for sudo は `darwin.nix` の `security.pam.services.sudo_local.touchIdAuth = true` で有効化済み
+- Determinate Systems のインストーラ経由で Nix を入れているため、`darwin.nix` で `nix.enable = false` を設定し nix daemon の管理は Determinate 側に任せている
+- `flake.lock` が置かれているのでバージョン固定された再現ビルドが可能
+
 ## 含まれる設定
 
 | ツール                                                 | カテゴリ                | 設定ファイル                    |
