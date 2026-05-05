@@ -240,3 +240,19 @@ export PATH="$HOME/.q-spec/bin:$PATH"
 # Kiro CLI post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
 
+
+# -----------------------------------------------------------------
+# Nix を PATH の先頭に持ってくる。
+# ~/.zprofile で eval "$(brew shellenv)" が走った後に .zshrc が読まれるため、
+# ここで再 prepend しないと Homebrew が優先されてしまう。
+# ディレクトリが存在する時だけ動くので Nix 未導入マシンでも安全。
+# -----------------------------------------------------------------
+if [ -d /run/current-system/sw/bin ]; then
+    path=(/run/current-system/sw/bin $path)
+    export PATH
+fi
+
+if [ -d "$HOME/.nix-profile/bin" ]; then
+    path=("$HOME/.nix-profile/bin" $path)
+    export PATH
+fi
