@@ -2,11 +2,10 @@
 
 {
   # ------------------------------------------------------------------
-  # Phase 2.1 PoC: 最小構成 5 パッケージで nix-darwin を動作確認する。
-  # これらは既に Homebrew でも入っているので、PATH 順序によっては
-  # Homebrew 側が優先される可能性がある。nix の /run/current-system/sw/bin
-  # が PATH の先頭に来ていれば Nix 側が使われる。
-  # 共存検証のため Homebrew のパッケージはまだ削除しない。
+  # Phase 2.2: 閲覧系 CLI を Homebrew から Nix 単一管理に移行。
+  # 追加: git-delta (git pager), gh (GitHub CLI)
+  # これらは従来 Homebrew で入れていたが、本 Phase で Homebrew からは
+  # uninstall し、Nix 側だけで管理する (source-of-truth の一本化)。
   # ------------------------------------------------------------------
   environment.systemPackages = with pkgs; [
     bat
@@ -14,6 +13,8 @@
     ripgrep
     fd
     fzf
+    delta       # git-delta (dandavison/delta): git pager
+    gh
   ];
 
   # Apple Silicon
