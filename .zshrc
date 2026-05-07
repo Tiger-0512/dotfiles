@@ -49,12 +49,23 @@ unset cache_dir sheldon_cache sheldon_toml
 
 #-------------------- Theme --------------------#
 # Starship の初期化をキャッシュ
+# バイナリ path が変わった時 (Homebrew→Nix 切替、Nix パッケージ更新等) に
+# キャッシュを自動 invalidate する。
+# mtime 比較は Nix store 内のファイル mtime が 1970 に固定されていて
+# 信頼できないため、実体の path 文字列で判定する。
 _starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/starship.zsh"
-if [[ ! -f "$_starship_cache" ]] || [[ /opt/homebrew/bin/starship -nt "$_starship_cache" ]]; then
-  starship init zsh > "$_starship_cache"
+_starship_stamp="${XDG_CACHE_HOME:-$HOME/.cache}/starship.binpath"
+_starship_bin=$(command -v starship 2>/dev/null)
+if [[ -n "$_starship_bin" ]]; then
+  _starship_real=$(readlink -f "$_starship_bin" 2>/dev/null || echo "$_starship_bin")
+  _starship_last=$([[ -f "$_starship_stamp" ]] && cat "$_starship_stamp" 2>/dev/null || echo "")
+  if [[ ! -f "$_starship_cache" || "$_starship_last" != "$_starship_real" ]]; then
+    starship init zsh > "$_starship_cache"
+    print -- "$_starship_real" > "$_starship_stamp"
+  fi
 fi
-source "$_starship_cache"
-unset _starship_cache
+[[ -f "$_starship_cache" ]] && source "$_starship_cache"
+unset _starship_cache _starship_stamp _starship_bin _starship_real _starship_last
 
 
 #-------------------- tmux --------------------#
