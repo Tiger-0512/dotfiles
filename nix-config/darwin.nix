@@ -2,30 +2,22 @@
 
 {
   # ------------------------------------------------------------------
-  # Phase 2.2: 閲覧系 CLI を Homebrew から Nix 単一管理に移行。
-  # 追加: git-delta (git pager), gh (GitHub CLI)
-  # これらは従来 Homebrew で入れていたが、本 Phase で Homebrew からは
-  # uninstall し、Nix 側だけで管理する (source-of-truth の一本化)。
-  # Phase 2.3.1: ネットワーク・検索系 + shell 統合系 CLI を移行。
-  # 追加: jq, yq, zoxide, direnv, starship, sheldon, git-lfs, just
-  # Phase 2.3.2: ビルド・開発ツール系を移行。
-  # 追加: cmake, cloc, shellcheck, yamlfmt, biome, tree-sitter,
-  #       docutils (python3 packages 経由)
-  # (black は不要と判断し、Nix には追加せず Homebrew からも uninstall)
+  # Nix 管理の CLI / システムパッケージ (macOS, aarch64-darwin)
+  # 追加する時は nixpkgs-unstable の attribute 名を確認すること。
   # ------------------------------------------------------------------
   environment.systemPackages = with pkgs; [
-    # Phase 2.1 / 2.2
+    # Viewers / searchers
     bat
     eza
     ripgrep
     fd
     fzf
-    delta       # git-delta (dandavison/delta): git pager
+    delta        # git-delta (dandavison/delta): git pager
     gh
 
-    # Phase 2.3.1
+    # Shell integrations / task runners
     jq
-    yq-go       # nixpkgs の yq は Python 製。mikefarah/yq (Go 製、普段使う方) は yq-go
+    yq-go        # mikefarah/yq (Go). nixpkgs の 'yq' は Python 版なので避ける
     zoxide
     direnv
     starship
@@ -33,14 +25,24 @@
     git-lfs
     just
 
-    # Phase 2.3.2
+    # Build / lint / format
     cmake
     cloc
     shellcheck
     yamlfmt
     biome
     tree-sitter
-    python3Packages.docutils   # rst2html 等のコマンドを提供
+    python3Packages.docutils   # rst2html などの scripts を提供
+
+    # Editor / multiplexers / TUI
+    neovim
+    tmux
+    zellij
+    yazi
+    lazygit
+    # oxker: Apple Silicon macOS 環境で snapshot テスト ('Alt' vs 'Option' 表示差)
+    # が失敗するため、ビルド時のテストをスキップする。機能自体に問題はない。
+    (oxker.overrideAttrs (prev: { doCheck = false; }))
   ];
 
   # Apple Silicon
