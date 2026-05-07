@@ -8,6 +8,10 @@
   # uninstall し、Nix 側だけで管理する (source-of-truth の一本化)。
   # Phase 2.3.1: ネットワーク・検索系 + shell 統合系 CLI を移行。
   # 追加: jq, yq, zoxide, direnv, starship, sheldon, git-lfs, just
+  # Phase 2.3.2: ビルド・開発ツール系を移行。
+  # 追加: cmake, cloc, shellcheck, yamlfmt, biome, tree-sitter,
+  #       docutils (python3 packages 経由)
+  # (black は不要と判断し、Nix には追加せず Homebrew からも uninstall)
   # ------------------------------------------------------------------
   environment.systemPackages = with pkgs; [
     # Phase 2.1 / 2.2
@@ -28,6 +32,15 @@
     sheldon
     git-lfs
     just
+
+    # Phase 2.3.2
+    cmake
+    cloc
+    shellcheck
+    yamlfmt
+    biome
+    tree-sitter
+    python3Packages.docutils   # rst2html 等のコマンドを提供
   ];
 
   # Apple Silicon
