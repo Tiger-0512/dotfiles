@@ -49,6 +49,28 @@ nix run home-manager/master -- init --switch --flake .#default
 
 Linux では nix-darwin を使わないので、docker 等の system-level サービスが必要な場合は distro 側 (apt / dnf / systemd) で別途 install する。
 
+### パッケージの更新
+
+`flake.lock` で全 input (nixpkgs / nix-darwin / home-manager) が pin されているので、新しい版に上げたい時は lock を更新して再適用する。
+
+```sh
+cd ~/dotfiles/nix-config
+
+# 全 input をまとめて更新
+nix flake update
+
+# diff 確認
+git diff flake.lock
+
+# macOS
+darwin-rebuild switch --flake .#default --impure
+
+# Linux
+nix run home-manager/master -- switch --flake .#default
+```
+
+特定 input だけ更新する場合は `nix flake lock --update-input nixpkgs`(など)。
+
 ### 補足
 
 - Touch ID for sudo は `darwin.nix` の `security.pam.services.sudo_local.touchIdAuth = true` で有効化済み (macOS のみ)

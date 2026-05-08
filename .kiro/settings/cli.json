@@ -1,0 +1,10 @@
+{
+  "app.disableAutoupdates": true,
+  "autocomplete.theme": "gruvbox",
+  "chat.defaultModel": "claude-opus-4.7",
+  "chat.enableNotifications": true,
+  "chat.notificationMethod": "bel",
+  "codeWhisperer.shareCodeWhispererContentWithAWS": false,
+  "mcp.loadedBefore": true,
+  "telemetry.enabled": false
+}
