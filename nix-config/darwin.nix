@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   # ------------------------------------------------------------------
@@ -111,4 +111,54 @@
     name = "taigamat";
     home = "/Users/taigamat";
   };
+
+  # Homebrew cask / tap の宣言管理
+  # Phase 2.4.1 では既存の chezmoi 側 (run_onchange_after_04_homebrew.sh.tmpl)
+  # と共存。cleanup = "none" で宣言にないものは触らない。
+  # Phase 2.4.2 で chezmoi 側を廃止し、cleanup = "uninstall" に切り替える。
+  homebrew = {
+    enable = true;
+    onActivation = {
+      autoUpdate = false;
+      upgrade = false;
+      cleanup = "none";
+    };
+
+    taps = [
+      "manaflow-ai/cmux"
+    ];
+
+    casks = [
+      "ghostty"
+      "wezterm"
+      "visual-studio-code"
+      "zed"
+      "brave-browser"
+      "cmux"
+      "claude-code"
+      "kiro-cli"
+      "corretto"
+      "session-manager-plugin"
+      "raycast"
+      "hammerspoon"
+      "alt-tab"
+      "betterdisplay"
+      "hiddenbar"
+      "appcleaner"
+      "deskpad"
+      "obsidian"
+      "ollama-app"
+      "font-fantasque-sans-mono"
+      "font-fantasque-sans-mono-nerd-font"
+      "font-hack-nerd-font"
+      "asana"
+    ];
+  };
+
+  # 社内専用の nix-darwin 設定があれば条件付きで import する。
+  # chezmoi-internal は手動管理で git 追跡しないため存在しないマシンでは無視される。
+  imports =
+    lib.optional
+      (builtins.pathExists /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix)
+      /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix;
 }
