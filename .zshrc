@@ -266,3 +266,9 @@ fi
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate zsh)"
 fi
+
+# nix-darwin 適用の shortcut。
+# --impure は chezmoi-internal/darwin-internal.nix を conditional import するため。
+# flake の pure evaluation では source tree 外のファイルに pathExists が false を
+# 返すので、impure モードで明示的にファイル確認を許可する必要がある。
+alias darwin-switch='sudo darwin-rebuild switch --flake "$HOME/.local/share/chezmoi/nix-config#default" --impure'

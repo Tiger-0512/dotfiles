@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   # ------------------------------------------------------------------
@@ -117,16 +117,21 @@
   };
 
   # Homebrew cask / tap の宣言管理
-  # cleanup は "none" のまま。flake の pure evaluation では
-  # builtins.pathExists が絶対パスに対して false を返すため、
-  # chezmoi-internal/darwin-internal.nix の conditional import が効かない。
-  # "uninstall" にすると社内 tap / formula が意図せず消えるので避ける。
+  #
+  # cleanup = "uninstall": 宣言にない formula / cask は darwin-rebuild 時に
+  # 自動 uninstall される。社内固有の tap / formula を保持したい場合は
+  # 下の imports で読み込む chezmoi-internal/darwin-internal.nix 側で宣言する。
+  #
+  # darwin-rebuild switch には --impure が必要。
+  # flake の pure evaluation では builtins.pathExists が source tree 外の
+  # 絶対パスに対して常に false を返すため、impure モードでないと下の
+  # conditional import が機能しない。alias darwin-switch が --impure を付けている。
   homebrew = {
     enable = true;
     onActivation = {
       autoUpdate = false;
       upgrade = false;
-      cleanup = "none";
+      cleanup = "uninstall";
     };
 
     taps = [
@@ -160,10 +165,12 @@
     ];
   };
 
-  # NOTE: 社内専用の nix-darwin 設定 (chezmoi-internal/darwin-internal.nix) の
-  # conditional import は flake の pure evaluation で builtins.pathExists が
-  # 絶対パスに対して false を返すため機能しなかった。
-  # 対応案 (将来): --impure で darwin-rebuild、flake inputs に path URI、
-  # nix-config/ 内への symlink、etc. 要検討。
-  # 現状は社内 tap / brew は手動管理 (cleanup = "none" 前提)。
+  # 社内専用の nix-darwin 設定を条件付きで import する。
+  # 存在しないマシン (個人 Mac など) では import されず、darwin.nix 側で
+  # 宣言した分だけが有効になる。
+  # darwin-rebuild switch には --impure が必要 (上の homebrew コメント参照)。
+  imports =
+    lib.optional
+      (builtins.pathExists /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix)
+      /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix;
 }
