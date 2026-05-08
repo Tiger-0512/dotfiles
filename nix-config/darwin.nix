@@ -88,7 +88,6 @@
       "brave-browser"
       "cmux"
       "claude-code"
-      "kiro-cli"
       "corretto"
       "session-manager-plugin"
       "raycast"
