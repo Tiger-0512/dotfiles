@@ -65,6 +65,11 @@ let
 
     # AI / agent CLI (両 OS 対応、x86_64-linux / aarch64-linux / x86_64-darwin / aarch64-darwin で利用可)
     kiro-cli
+
+    # フォント (home-manager が macOS では ~/Library/Fonts/HomeManager、
+    # Linux では ~/.local/share/fonts に配置する)
+    fantasque-sans-mono
+    nerd-fonts.fantasque-sans-mono
   ];
 
   # macOS 固有の package。

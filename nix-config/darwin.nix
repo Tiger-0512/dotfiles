@@ -99,8 +99,6 @@
       "deskpad"
       "obsidian"
       "ollama-app"
-      "font-fantasque-sans-mono"
-      "font-fantasque-sans-mono-nerd-font"
       "font-hack-nerd-font"
       "asana"
     ];
