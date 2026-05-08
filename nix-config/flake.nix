@@ -36,13 +36,15 @@
     # nix run home-manager/master -- init --switch --flake .#default で起動
     # 現状 x86_64-linux のみ想定。Amazon Linux on Graviton (aarch64-linux) が必要に
     # なったら別途 homeConfigurations を追加する。
+    # username / homeDirectory は個人識別子を flake に焼かないため $USER から取る。
+    # pure evaluation では builtins.getEnv が空文字列を返すため --impure 必須。
     homeConfigurations."default" = home-manager.lib.homeManagerConfiguration {
       pkgs = import nixpkgs { system = "x86_64-linux"; };
       modules = [
         ./home.nix
         {
-          home.username = "taigamat";
-          home.homeDirectory = "/home/taigamat";
+          home.username = builtins.getEnv "USER";
+          home.homeDirectory = "/home/${builtins.getEnv "USER"}";
         }
       ];
       extraSpecialArgs = { inherit inputs; };
