@@ -2,6 +2,11 @@
 # Kiro CLI pre block. Keep at the top of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 
+# path 配列に重複エントリを持たせない (PATH も同期して uniq される)。
+# 以降の 'path=(new $path)' や 'export PATH=X:$PATH' が繰り返し評価されても
+# 同じディレクトリが複数回登録されない。
+typeset -U path PATH
+
 # # zellij内かどうかを判定する関数
 # # 注意: .zshrc読み込み時点では$ZELLIJ環境変数が未設定のため、プロセスツリーで検出
 # _is_inside_zellij() {
