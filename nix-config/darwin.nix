@@ -32,6 +32,14 @@
   # Apple Silicon
   nixpkgs.hostPlatform = "aarch64-darwin";
 
+  # unfree license の package を package 名 allowlist で個別許可する。
+  # 全体許可 (allowUnfree = true) は広すぎるため、明示的に必要なものだけ通す。
+  # - kiro-cli: 本体は unfree の Amazon 配布バイナリ。機能は CLI のみ。
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      "kiro-cli"
+    ];
+
   # nix コマンドで flakes を使えるようにする
   # (Determinate Systems インストーラなら既に有効化済みのはず)
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
