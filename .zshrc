@@ -261,7 +261,15 @@ if [ -d "$HOME/.nix-profile/bin" ]; then
     export PATH
 fi
 
-# mise: 言語ランタイム version 管理 (asdf 後継)
+# nix-darwin + home-manager (useUserPackages = true) 下では
+# home.packages が /etc/profiles/per-user/<USER>/bin に配置される。
+# shell の PATH に自動では入らないのでここで prepend する。
+if [ -d "/etc/profiles/per-user/$USER/bin" ]; then
+    path=("/etc/profiles/per-user/$USER/bin" $path)
+    export PATH
+fi
+
+# mise: 言語ランタイム version 管理
 # Nix PATH の後で activate する必要がある (mise 本体を PATH から解決するため)
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate zsh)"

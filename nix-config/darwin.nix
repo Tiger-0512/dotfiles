@@ -2,70 +2,12 @@
 
 {
   # ------------------------------------------------------------------
-  # Nix 管理の CLI / システムパッケージ (macOS, aarch64-darwin)
-  # 追加する時は nixpkgs-unstable の attribute 名を確認すること。
+  # macOS system-level 設定 (nix-darwin)
+  # Nix で入れる packages 自体は home-manager (./home.nix) に一本化しているので
+  # このファイルでは environment.systemPackages を持たない。
+  # Touch ID sudo / Homebrew cask / launchd agent / primaryUser など macOS 固有の
+  # 設定だけをここに書く。
   # ------------------------------------------------------------------
-  environment.systemPackages = with pkgs; [
-    # Viewers / searchers
-    bat
-    eza
-    ripgrep
-    fd
-    fzf
-    delta        # git-delta (dandavison/delta): git pager
-    gh
-
-    # Shell integrations / task runners
-    jq
-    yq-go        # mikefarah/yq (Go). nixpkgs の 'yq' は Python 版なので避ける
-    zoxide
-    direnv
-    starship
-    sheldon
-    git-lfs
-    just
-
-    # Build / lint / format
-    cmake
-    cloc
-    shellcheck
-    yamlfmt
-    biome
-    tree-sitter
-    python3Packages.docutils   # rst2html などの scripts を提供
-
-    # Editor / multiplexers / TUI
-    neovim
-    tmux
-    zellij
-    yazi
-    lazygit
-    # oxker: Apple Silicon macOS 環境で snapshot テスト ('Alt' vs 'Option' 表示差)
-    # が失敗するため、ビルド時のテストをスキップする。機能自体に問題はない。
-    (oxker.overrideAttrs (prev: { doCheck = false; }))
-
-    # Container runtime (macOS では colima が docker daemon を提供)
-    colima
-    docker
-    docker-compose
-    docker-credential-helpers   # docker-credential-osxkeychain などを提供
-
-    # AWS / IaC
-    awscli2                        # nixpkgs 'awscli' は v1 系なので v2 の awscli2 を選択
-    aws-cdk-cli                    # AWS CDK Toolkit (コマンド名は cdk)
-    git-remote-codecommit          # AWS CodeCommit 用 git remote helper
-
-    # Version manager + project-agnostic CLI toolchains
-    mise                           # asdf / volta の後継 (.tool-versions / .mise.toml を参照)
-    rustup                         # rustc / cargo の toolchain 管理
-    pnpm
-    uv                             # 高速な Python package / env manager
-    python3Packages.virtualenv     # uv venv で代替可だが明示利用のため残置
-
-    # 本体 / 補助ツール
-    chezmoi                        # このリポジトリ自体の管理 tool
-    git-filter-repo                # git history 書き換え用 (時々使う)
-  ];
 
   # colima をログイン時に自動起動する LaunchAgent。
   # colima start は VM を起動したら exit する (detached 設計) ので

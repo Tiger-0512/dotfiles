@@ -4,17 +4,19 @@
 
 ## 構成
 
-| 役割                           | ツール                                           | 対象                                                                      |
-| ------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------- |
-| ユーザー設定                   | chezmoi                                          | `.zshrc`, `~/.config/*`, `.hammerspoon/`, `.tmux.conf`, `.vimrc`          |
-| CLI パッケージ / システム設定  | [nix-darwin](https://github.com/LnL7/nix-darwin) | `nix-config/` 配下 (macOS。Linux は flakey-profile で追従予定)            |
-| GUI アプリ                     | Homebrew Cask                                    | (source 側で宣言的に管理。本リポには含めず参考用)                         |
+| 役割                           | ツール                                                                                                                          | 対象                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| ユーザー設定                   | chezmoi                                                                                                                         | `.zshrc`, `~/.config/*`, `.hammerspoon/`, `.tmux.conf`, `.vimrc` |
+| CLI パッケージ                 | [home-manager](https://github.com/nix-community/home-manager)                                                                   | `nix-config/home.nix` (macOS / Linux 共通)                       |
+| macOS システム設定             | [nix-darwin](https://github.com/LnL7/nix-darwin)                                                                                | `nix-config/darwin.nix` (Homebrew cask, launchd, Touch ID sudo)  |
+| GUI アプリ (macOS)             | Homebrew Cask                                                                                                                   | `nix-config/darwin.nix` の `homebrew.casks` で宣言                |
 
-> Nix への移行は段階的に進行中です。現時点 (Phase 2.1) では `nix-config/` は最小構成 (5 CLI) の PoC で、CLI の大半はまだ Homebrew 側で管理されています。
+> Nix packages は `home.nix` で一元管理され、macOS / Linux で同じリストが共有されます。
+> macOS では nix-darwin が home-manager を取り込む形で、Linux では standalone home-manager として適用できます。
 
-## 新規マシンでのセットアップ (nix-darwin / macOS)
+## 新規マシンでのセットアップ
 
-本リポは chezmoi 管理の source から自動生成されたものです。chezmoi workflow で完全再現したい場合は元リポ (private) が必要ですが、`nix-config/` だけ使う場合は以下で動きます。
+### macOS (nix-darwin + home-manager)
 
 ```sh
 # 1. Nix を導入 (Determinate Systems Nix Installer)
@@ -24,18 +26,36 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 git clone https://github.com/Tiger-0512/dotfiles.git ~/dotfiles
 cd ~/dotfiles/nix-config
 
-# 3. nix-darwin を初回 bootstrap (sudo 必要)
-sudo nix run nix-darwin -- switch --flake .#default
+# 3. nix-darwin を初回 bootstrap (sudo 必要、--impure は optional な社内 import を有効にするため)
+sudo nix run nix-darwin -- switch --flake .#default --impure
 
 # 4. 以後の更新
-darwin-rebuild switch --flake .#default
+darwin-rebuild switch --flake .#default --impure
 ```
+
+### Linux (Ubuntu / Amazon Linux 等)
+
+```sh
+# 1. Nix を導入
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+
+# 2. このリポを clone
+git clone https://github.com/Tiger-0512/dotfiles.git ~/dotfiles
+cd ~/dotfiles/nix-config
+
+# 3. home-manager で初回 bootstrap
+nix run home-manager/master -- init --switch --flake .#default
+```
+
+Linux では nix-darwin を使わないので、docker 等の system-level サービスが必要な場合は distro 側 (apt / dnf / systemd) で別途 install する。
 
 ### 補足
 
-- Touch ID for sudo は `darwin.nix` の `security.pam.services.sudo_local.touchIdAuth = true` で有効化済み
+- Touch ID for sudo は `darwin.nix` の `security.pam.services.sudo_local.touchIdAuth = true` で有効化済み (macOS のみ)
 - Determinate Systems のインストーラ経由で Nix を入れているため、`darwin.nix` で `nix.enable = false` を設定し nix daemon の管理は Determinate 側に任せている
 - `flake.lock` が置かれているのでバージョン固定された再現ビルドが可能
+- `home.nix` には `commonPackages` / `darwinOnlyPackages` / `linuxOnlyPackages` の分岐があり、`colima` / `docker` 系は macOS のみ
+- `--impure` は `chezmoi-internal/darwin-internal.nix` (ローカル管理) を条件付き import するため。該当ファイルがないマシンでは `--impure` を付けても挙動に影響しない
 
 ## 含まれる設定
 
