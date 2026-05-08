@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   # ------------------------------------------------------------------
@@ -61,6 +61,10 @@
     pnpm
     uv                             # 高速な Python package / env manager
     python3Packages.virtualenv     # uv venv で代替可だが明示利用のため残置
+
+    # 本体 / 補助ツール
+    chezmoi                        # このリポジトリ自体の管理 tool
+    git-filter-repo                # git history 書き換え用 (時々使う)
   ];
 
   # colima をログイン時に自動起動する LaunchAgent。
@@ -113,9 +117,10 @@
   };
 
   # Homebrew cask / tap の宣言管理
-  # Phase 2.4.1 では既存の chezmoi 側 (run_onchange_after_04_homebrew.sh.tmpl)
-  # と共存。cleanup = "none" で宣言にないものは触らない。
-  # Phase 2.4.2 で chezmoi 側を廃止し、cleanup = "uninstall" に切り替える。
+  # cleanup は "none" のまま。flake の pure evaluation では
+  # builtins.pathExists が絶対パスに対して false を返すため、
+  # chezmoi-internal/darwin-internal.nix の conditional import が効かない。
+  # "uninstall" にすると社内 tap / formula が意図せず消えるので避ける。
   homebrew = {
     enable = true;
     onActivation = {
@@ -155,10 +160,10 @@
     ];
   };
 
-  # 社内専用の nix-darwin 設定があれば条件付きで import する。
-  # chezmoi-internal は手動管理で git 追跡しないため存在しないマシンでは無視される。
-  imports =
-    lib.optional
-      (builtins.pathExists /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix)
-      /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix;
+  # NOTE: 社内専用の nix-darwin 設定 (chezmoi-internal/darwin-internal.nix) の
+  # conditional import は flake の pure evaluation で builtins.pathExists が
+  # 絶対パスに対して false を返すため機能しなかった。
+  # 対応案 (将来): --impure で darwin-rebuild、flake inputs に path URI、
+  # nix-config/ 内への symlink、etc. 要検討。
+  # 現状は社内 tap / brew は手動管理 (cleanup = "none" 前提)。
 }
