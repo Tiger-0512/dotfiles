@@ -49,6 +49,18 @@
     docker
     docker-compose
     docker-credential-helpers   # docker-credential-osxkeychain などを提供
+
+    # AWS / IaC
+    awscli2                        # nixpkgs 'awscli' は v1 系なので v2 の awscli2 を選択
+    aws-cdk-cli                    # AWS CDK Toolkit (コマンド名は cdk)
+    git-remote-codecommit          # AWS CodeCommit 用 git remote helper
+
+    # Version manager + project-agnostic CLI toolchains
+    mise                           # asdf / volta の後継 (.tool-versions / .mise.toml を参照)
+    rustup                         # rustc / cargo の toolchain 管理
+    pnpm
+    uv                             # 高速な Python package / env manager
+    python3Packages.virtualenv     # uv venv で代替可だが明示利用のため残置
   ];
 
   # colima をログイン時に自動起動する LaunchAgent。

@@ -123,18 +123,6 @@ unset _starship_cache _starship_stamp _starship_bin _starship_real _starship_las
 # fi
 
 
-#-------------------- asdf --------------------#
-# asdf を遅延ロード（初回実行時のみ読み込み）
-export ASDF_PATH=$HOME/.asdf
-export PATH="/Users/taigamat/.asdf/shims:$PATH"
-
-# asdf コマンドの遅延ロードラッパー
-asdf() {
-  unfunction asdf
-  . /opt/homebrew/opt/asdf/libexec/asdf.sh
-  asdf "$@"
-}
-
 # Solve conflict with homebrew
 # alias brew="PATH=/usr/local/bin:/usr/bin:/bin:/user/local/sbin:/usr/sbin:/sbin brew"
 
@@ -271,4 +259,10 @@ fi
 if [ -d "$HOME/.nix-profile/bin" ]; then
     path=("$HOME/.nix-profile/bin" $path)
     export PATH
+fi
+
+# mise: 言語ランタイム version 管理 (asdf 後継)
+# Nix PATH の後で activate する必要がある (mise 本体を PATH から解決するため)
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh)"
 fi
