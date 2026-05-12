@@ -33,7 +33,8 @@
     };
 
     # Linux (Ubuntu / Amazon Linux 等):
-    # nix run home-manager/master -- init --switch --flake .#default で起動
+    # NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- switch --flake .#default
+    # で起動 ( --impure は下の $USER 参照、NIXPKGS_ALLOW_UNFREE=1 は kiro-cli が unfree のため )
     # 現状 x86_64-linux のみ想定。Amazon Linux on Graviton (aarch64-linux) が必要に
     # なったら別途 homeConfigurations を追加する。
     # username / homeDirectory は個人識別子を flake に焼かないため $USER から取る。

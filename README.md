@@ -44,7 +44,12 @@ git clone https://github.com/Tiger-0512/dotfiles.git ~/dotfiles
 cd ~/dotfiles/nix-config
 
 # 3. home-manager で初回 bootstrap
-nix run home-manager/master -- init --switch --flake .#default
+#    - `switch` を使う (`init --switch` は flake の homeConfigurations を
+#      無視してテンプレート home.nix を当ててしまうため NG)
+#    - `--impure` は flake.nix の `builtins.getEnv "USER"` のため必要
+#    - `NIXPKGS_ALLOW_UNFREE=1` は kiro-cli (unfree) を入れるため必要
+NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- \
+    switch --flake .#default
 ```
 
 Linux では nix-darwin を使わないので、docker 等の system-level サービスが必要な場合は distro 側 (apt / dnf / systemd) で別途 install する。
@@ -66,7 +71,8 @@ git diff flake.lock
 darwin-rebuild switch --flake .#default --impure
 
 # Linux
-nix run home-manager/master -- switch --flake .#default
+NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- \
+    switch --flake .#default
 ```
 
 特定 input だけ更新する場合は `nix flake lock --update-input nixpkgs`(など)。

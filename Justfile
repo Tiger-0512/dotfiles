@@ -31,9 +31,11 @@ switch:
     sudo darwin-rebuild switch --flake {{ nix_config }}#default --impure
 
 # Linux: standalone home-manager を反映
+#   --impure = flake.nix が builtins.getEnv "USER" を使うため
+#   NIXPKGS_ALLOW_UNFREE=1 = kiro-cli が unfree のため
 [linux]
 switch:
-    cd {{ nix_config }} && nix run home-manager/master -- switch --flake .#default
+    cd {{ nix_config }} && NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- switch --flake .#default
 
 # flake-update + switch (= 更新運用のワンショット)
 update: flake-update switch
