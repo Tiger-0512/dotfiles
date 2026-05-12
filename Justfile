@@ -41,8 +41,3 @@ update: flake-update switch
 # PR 本文の禁止トークン事前チェック (file 指定, stdin は -)
 check-pr file:
     bash scripts/check-pr-body.sh {{ file }}
-
-# Linux (Docker) で home-manager switch のスモークテストを実行
-# 要 docker。初回は 10〜15 分 (Nix install + package download)。
-linux-smoke:
-    bash scripts/linux-smoke-test.sh
