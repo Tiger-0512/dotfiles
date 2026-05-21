@@ -233,15 +233,51 @@ require("lazy").setup({
 	},
 
 	-- Nvim Treesitter configurations and abstraction layer
-	-- NOTE: New API - highlighting via vim.treesitter.start(), parsers via :TSInstall
+	-- NOTE: `main` branch (post-rewrite). Requires Neovim >= 0.12, tree-sitter-cli >= 0.26.1.
+	-- See: https://github.com/nvim-treesitter/nvim-treesitter/tree/main
+	-- The `main` branch does NOT support lazy-loading; `lazy = false` is required.
 	{
 		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
 		build = ":TSUpdate",
 		config = function()
-			-- Enable treesitter highlighting for all supported filetypes
+			-- Install/keep up-to-date the parsers we use. Async; safe to call repeatedly.
+			require("nvim-treesitter").install({
+				"bash",
+				"css",
+				"csv",
+				"diff",
+				"dockerfile",
+				"go",
+				"html",
+				"javascript",
+				"json",
+				"lua",
+				"markdown",
+				"markdown_inline",
+				"python",
+				"query",
+				"regex",
+				"rust",
+				"toml",
+				"tsx",
+				"typescript",
+				"vim",
+				"vimdoc",
+				"yaml",
+			})
+
+			-- Enable treesitter highlighting (and indent) for any filetype
+			-- whose parser is available.
 			vim.api.nvim_create_autocmd("FileType", {
-				callback = function()
-					pcall(vim.treesitter.start)
+				callback = function(args)
+					local ok = pcall(vim.treesitter.start, args.buf)
+					if not ok then
+						return
+					end
+					-- Treesitter-based indent (experimental on `main`)
+					vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 				end,
 			})
 		end,
