@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, username, ... }:
 
 {
   # ------------------------------------------------------------------
@@ -21,8 +21,8 @@
       ProgramArguments = [ "${pkgs.colima}/bin/colima" "start" ];
       RunAtLoad = true;
       KeepAlive = false;
-      StandardOutPath = "/Users/taigamat/Library/Logs/colima.out.log";
-      StandardErrorPath = "/Users/taigamat/Library/Logs/colima.err.log";
+      StandardOutPath = "/Users/${username}/Library/Logs/colima.out.log";
+      StandardErrorPath = "/Users/${username}/Library/Logs/colima.err.log";
       EnvironmentVariables = {
         PATH = "/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin";
       };
@@ -58,12 +58,12 @@
   security.pam.services.sudo_local.touchIdAuth = true;
 
   # nix-darwin の最近の版では primary user を明示する必要がある
-  system.primaryUser = "taigamat";
+  system.primaryUser = username;
 
   # ログインユーザー定義
-  users.users.taigamat = {
-    name = "taigamat";
-    home = "/Users/taigamat";
+  users.users.${username} = {
+    name = username;
+    home = "/Users/${username}";
   };
 
   # Homebrew cask / tap の宣言管理
@@ -118,6 +118,9 @@
   # darwin-rebuild switch には --impure が必要 (上の homebrew コメント参照)。
   imports =
     lib.optional
-      (builtins.pathExists /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix)
-      /Users/taigamat/.local/share/chezmoi-internal/darwin-internal.nix;
+      (builtins.pathExists /Users/${username}/.local/share/chezmoi-internal/darwin-internal.nix)
+      /Users/${username}/.local/share/chezmoi-internal/darwin-internal.nix
+    ++ lib.optional
+      (builtins.pathExists /Users/${username}/.local/share/chezmoi-personal/darwin-personal.nix)
+      /Users/${username}/.local/share/chezmoi-personal/darwin-personal.nix;
 }

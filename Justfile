@@ -28,7 +28,7 @@ flake-check:
 # macOS: nix-darwin + home-manager を反映 (要 sudo, --impure は conditional import 用)
 [macos]
 switch:
-    sudo darwin-rebuild switch --flake {{ nix_config }}#default --impure
+    sudo USER=$USER darwin-rebuild switch --flake {{ nix_config }}#default --impure
 
 # Linux: standalone home-manager を反映
 #   --impure = flake.nix が builtins.getEnv "USER" を使うため

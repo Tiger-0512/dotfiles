@@ -1,5 +1,5 @@
 {
-  description = "taigamat's nix configuration (macOS via nix-darwin, Linux via home-manager)";
+  description = "nix configuration (macOS via nix-darwin, Linux via home-manager)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -18,18 +18,20 @@
   outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager }: {
     # macOS: nix-darwin + home-manager を束ねて適用する
     # darwin-switch alias から 'darwin-rebuild switch --flake .#default --impure' で起動
-    darwinConfigurations."default" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."default" = let
+      username = builtins.getEnv "USER";
+    in nix-darwin.lib.darwinSystem {
       modules = [
         ./darwin.nix
         home-manager.darwinModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.taigamat = import ./home.nix;
+          home-manager.users.${username} = import ./home.nix;
           home-manager.extraSpecialArgs = { inherit inputs; };
         }
       ];
-      specialArgs = { inherit inputs; };
+      specialArgs = { inherit inputs username; };
     };
 
     # Linux (Ubuntu / Amazon Linux 等):

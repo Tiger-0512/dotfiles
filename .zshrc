@@ -279,4 +279,4 @@ fi
 # --impure は chezmoi-internal/darwin-internal.nix を conditional import するため。
 # flake の pure evaluation では source tree 外のファイルに pathExists が false を
 # 返すので、impure モードで明示的にファイル確認を許可する必要がある。
-alias darwin-switch='sudo darwin-rebuild switch --flake "$HOME/.local/share/chezmoi/nix-config#default" --impure'
+alias darwin-switch='sudo USER=$USER darwin-rebuild switch --flake "$HOME/.local/share/chezmoi/nix-config#default" --impure'
