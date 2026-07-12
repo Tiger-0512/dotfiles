@@ -2,6 +2,8 @@
 # Kiro CLI pre block. Keep at the top of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 
+
+
 # path 配列に重複エントリを持たせない (PATH も同期して uniq される)。
 # 以降の 'path=(new $path)' や 'export PATH=X:$PATH' が繰り返し評価されても
 # 同じディレクトリが複数回登録されない。
@@ -241,8 +243,6 @@ export PATH="$HOME/.q-spec/bin:$PATH"
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
-# Kiro CLI post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
 
 
 # -----------------------------------------------------------------
@@ -280,3 +280,7 @@ fi
 # flake の pure evaluation では source tree 外のファイルに pathExists が false を
 # 返すので、impure モードで明示的にファイル確認を許可する必要がある。
 alias darwin-switch='sudo USER=$USER darwin-rebuild switch --flake "$HOME/.local/share/chezmoi/nix-config#default" --impure'
+
+
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
