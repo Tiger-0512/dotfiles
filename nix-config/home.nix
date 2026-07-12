@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
 let
   # oxker の aarch64-darwin での snapshot テスト問題を回避するため、
@@ -63,9 +63,6 @@ let
     chezmoi
     git-filter-repo
 
-    # AI / agent CLI (両 OS 対応、x86_64-linux / aarch64-linux / x86_64-darwin / aarch64-darwin で利用可)
-    kiro-cli
-
     # フォント (home-manager が macOS では ~/Library/Fonts/HomeManager、
     # Linux では ~/.local/share/fonts に配置する)
     fantasque-sans-mono
@@ -90,11 +87,25 @@ let
     if pkgs.stdenv.isDarwin then darwinOnlyPackages
     else if pkgs.stdenv.isLinux then linuxOnlyPackages
     else [ ];
+
+  # private マシン (chezmoi data の private=true) でのみ管理する package。
+  # 判定は chezmoi が private マシンにだけ配置する marker
+  # (~/.config/nix-personal-enabled、.chezmoiignore 参照) の存在で行う。
+  # marker 判定 (source tree 外の絶対パスへの pathExists) には --impure が必要だが、
+  # darwin-switch / Linux 側 home-manager switch のどちらも --impure を付与済み。
+  # config.home.homeDirectory は macOS=/Users/<user>, Linux=/home/<user> を解決するので
+  # 両 OS で正しい marker パスになる。
+  nixPersonalEnabled =
+    builtins.pathExists "${config.home.homeDirectory}/.config/nix-personal-enabled";
+
+  personalPackages = lib.optionals nixPersonalEnabled (with pkgs; [
+    kiro-cli
+  ]);
 in
 {
   home.stateVersion = "25.05";
 
-  home.packages = commonPackages ++ platformPackages;
+  home.packages = commonPackages ++ platformPackages ++ personalPackages;
 
   # home-manager 自体の self-management を有効化
   programs.home-manager.enable = true;
