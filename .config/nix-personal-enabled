@@ -1,0 +1,2 @@
+nix-config/darwin.nix はこのファイルが存在するマシンでのみ darwin-personal.nix を import する。
+.chezmoiignore により private マシン (chezmoi data の private=true) にのみ配置される。

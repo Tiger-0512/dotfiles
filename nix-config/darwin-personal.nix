@@ -6,5 +6,6 @@
     "slack"
     "kiro"
     "discord"
+    "claude-code"
   ];
 }

@@ -95,7 +95,6 @@
       "zed"
       "brave-browser"
       "cmux"
-      "claude-code"
       "corretto"
       "session-manager-plugin"
       "raycast"
@@ -121,6 +120,6 @@
       (builtins.pathExists /Users/${username}/.local/share/chezmoi-internal/darwin-internal.nix)
       /Users/${username}/.local/share/chezmoi-internal/darwin-internal.nix
     ++ lib.optional
-      (builtins.pathExists /Users/${username}/.local/share/chezmoi-personal/darwin-personal.nix)
-      /Users/${username}/.local/share/chezmoi-personal/darwin-personal.nix;
+      (builtins.pathExists /Users/${username}/.config/nix-personal-enabled)
+      ./darwin-personal.nix;
 }
