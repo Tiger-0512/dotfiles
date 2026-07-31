@@ -7,5 +7,6 @@
     "kiro"
     "discord"
     "claude-code"
+    "notion"
   ];
 }
