@@ -1,6 +1,23 @@
 
+# eval キャッシュヘルパー (zcache) を先に読み込む。
+# 以降の kiro-cli / starship / zoxide / direnv / mise 初期化で使う。
+[[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/cache-eval.zsh" ]] \
+  && source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/cache-eval.zsh"
+
 # Kiro CLI pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+# 本来は下記 vendor ファイルを source するが、その中身は
+#   eval "$(kiro-cli init zsh pre --rcfile zshrc)"
+# で毎回 subprocess を起動し ~35ms 掛かる。出力を zcache で固定化する。
+# 注意: kiro-cli の再インストール時に本ブロックが上書き・再追加されることがある
+# (git log 参照)。その場合は chezmoi apply で本ファイルの内容に戻す。
+if (( $+commands[kiro-cli] )) && (( $+functions[zcache] )); then
+  # 出力に生成時の zsh 実体 path (Q_SHELL) が焼き込まれるため zsh も stamp に含める。
+  # :A は symlink を解決する zsh の modifier (readlink 相当、subprocess 不要)。
+  _zsh_real="${${commands[zsh]:-$SHELL}:A}"
+  zcache -s "$_zsh_real" kiro-pre kiro-cli kiro-cli init zsh pre --rcfile zshrc
+else
+  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+fi
 
 
 
@@ -55,24 +72,8 @@ unset cache_dir sheldon_cache sheldon_toml
 
 
 #-------------------- Theme --------------------#
-# Starship の初期化をキャッシュ
-# バイナリ path が変わった時 (Homebrew→Nix 切替、Nix パッケージ更新等) に
-# キャッシュを自動 invalidate する。
-# mtime 比較は Nix store 内のファイル mtime が 1970 に固定されていて
-# 信頼できないため、実体の path 文字列で判定する。
-_starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/starship.zsh"
-_starship_stamp="${XDG_CACHE_HOME:-$HOME/.cache}/starship.binpath"
-_starship_bin=$(command -v starship 2>/dev/null)
-if [[ -n "$_starship_bin" ]]; then
-  _starship_real=$(readlink -f "$_starship_bin" 2>/dev/null || echo "$_starship_bin")
-  _starship_last=$([[ -f "$_starship_stamp" ]] && cat "$_starship_stamp" 2>/dev/null || echo "")
-  if [[ ! -f "$_starship_cache" || "$_starship_last" != "$_starship_real" ]]; then
-    starship init zsh > "$_starship_cache"
-    print -- "$_starship_real" > "$_starship_stamp"
-  fi
-fi
-[[ -f "$_starship_cache" ]] && source "$_starship_cache"
-unset _starship_cache _starship_stamp _starship_bin _starship_real _starship_last
+# Starship の初期化をキャッシュ (zcache に共通化。判定ロジックは cache-eval.zsh 参照)
+zcache starship starship starship init zsh
 
 
 #-------------------- tmux --------------------#
@@ -147,7 +148,7 @@ unset _starship_cache _starship_stamp _starship_bin _starship_real _starship_las
 # bindkey -s '^f' 'lfcd\n'
 
 #-------------------- zoxide --------------------#
-eval "$(zoxide init zsh)"
+zcache zoxide zoxide zoxide init zsh
 
 function fzf-cdr() {
     local selected_dir=$(zoxide query -l | fzf --prompt="Where you wanna go?> " --tac --preview 'eza --tree --level=2 {}')
@@ -198,7 +199,7 @@ export PATH="/Users/taigamat/.local/share/solana/install/active_release/bin:$PAT
 export PATH="/Users/taigamat/.local/share/automated-security-helper:$PATH"
 
 #-------------------- direnv --------------------#
-eval "$(direnv hook zsh)"
+zcache direnv direnv direnv hook zsh
 
 # #-------------------- finch --------------------#
 # alias docker='finch'
@@ -271,9 +272,7 @@ fi
 
 # mise: 言語ランタイム version 管理
 # Nix PATH の後で activate する必要がある (mise 本体を PATH から解決するため)
-if command -v mise >/dev/null 2>&1; then
-    eval "$(mise activate zsh)"
-fi
+zcache mise mise mise activate zsh
 
 # nix-darwin 適用の shortcut。
 # --impure は chezmoi-internal/darwin-internal.nix を conditional import するため。
@@ -283,4 +282,10 @@ alias darwin-switch='sudo USER=$USER darwin-rebuild switch --flake "$HOME/.local
 
 
 # Kiro CLI post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+# pre ブロックと同様に zcache で subprocess 起動 (~35ms) を省く。
+if (( $+commands[kiro-cli] )) && (( $+functions[zcache] )); then
+  zcache -s "$_zsh_real" kiro-post kiro-cli kiro-cli init zsh post --rcfile zshrc
+  unset _zsh_real
+else
+  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+fi
