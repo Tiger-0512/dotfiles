@@ -1,7 +1,7 @@
 {
   "app.disableAutoupdates": true,
   "autocomplete.theme": "gruvbox",
-  "chat.defaultModel": "claude-opus-4.8",
+  "chat.defaultModel": "claude-fable-5",
   "chat.enableNotifications": true,
   "chat.notificationMethod": "bel",
   "codeWhisperer.shareCodeWhispererContentWithAWS": false,
