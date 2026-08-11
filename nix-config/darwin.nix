@@ -57,6 +57,37 @@
   # (macOS 標準の /etc/pam.d/sudo_local の内容を代替)
   security.pam.services.sudo_local.touchIdAuth = true;
 
+  # ------------------------------------------------------------------
+  # /etc/zshrc (nix-darwin 生成) の初期化を絞る。
+  #
+  # /etc/zshrc は ~/.zshrc より前に読まれるため、ここで走る初期化は
+  # ~/.zshrc 側でどれだけ遅延・キャッシュしても回避できない。
+  # 計測 (zsh -i -l -c exit, warm) では全体 ~280ms のうち
+  # /etc/zshrc が ~172ms を占めていた。
+  # ------------------------------------------------------------------
+  programs.zsh = {
+    # 既定では /etc/zshrc に `autoload -U compinit && compinit` が入る。
+    # warm で ~98ms、page cache が cold だと fpath (42 entries, ほぼ Nix
+    # store) の走査で ~7.7s 掛かる。
+    # compinit は ~/.config/sheldon/plugins.toml が
+    # `zsh-defer -c 'autoload -Uz compinit && compinit -u'` で prompt 表示後に
+    # 回しているので、ここで eager に走らせると二重実行になる。
+    #
+    # 注意: enableCompletion は true のままにする。/etc/zshenv が
+    # $NIX_PROFILES/share/zsh/... を fpath へ追加するのはこの option に
+    # 紐づいており、false にすると Nix packages の completion が消える。
+    enableGlobalCompInit = false;
+
+    # bash 形式 completion (complete -F/-C) を使うものが無いため不要 (~6ms)。
+    enableBashCompletion = false;
+
+    # 既定値は
+    #   autoload -U promptinit && promptinit && prompt suse && setopt prompt_sp
+    # で ~39ms 掛かるが、prompt は starship が上書きするので完全に無駄。
+    # prompt_sp は zsh の既定で既に on。
+    promptInit = "";
+  };
+
   # nix-darwin の最近の版では primary user を明示する必要がある
   system.primaryUser = username;
 
