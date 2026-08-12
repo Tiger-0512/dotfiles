@@ -28,6 +28,15 @@ fi
 # 同じディレクトリが複数回登録されない。
 typeset -U path PATH
 
+# fpath も同様に重複を排除する。こちらは実害があって入れている:
+# `brew shellenv` の出力は FPATH を **export** するため、子の zsh がそれを
+# 継承した上で /etc/zshenv が $NIX_PROFILES 分 (12 entries) を無条件に
+# 再 prepend する。結果 zsh の入れ子ごとに fpath が 14 → 27 → 40 と増える。
+# 実際のターミナルは kiro-cli の figterm 経由で zsh が 2 段になるため、
+# 素の 14 ではなく 27 entries で動いていた (実測)。
+# compinit は fpath の全 entry を走査するので重複分がそのまま二重走査になる。
+typeset -U fpath FPATH
+
 # # zellij内かどうかを判定する関数
 # # 注意: .zshrc読み込み時点では$ZELLIJ環境変数が未設定のため、プロセスツリーで検出
 # _is_inside_zellij() {
@@ -165,8 +174,10 @@ zcache zoxide zoxide zoxide init zsh
 # ため、ここでは未定義でガードに弾かれる (z のタブ補完が黙って無効になる)。
 # /etc/zshrc が eager に compinit していた頃は間に合っていた経路。
 # zsh-defer は FIFO なので compinit の後に登録し直せばよい。
+# -mpr は prompt に無関係なタスクで precmd 一式 (~50ms) が走るのを止める
+# (理由は ~/.config/sheldon/plugins.toml の [templates] コメント参照)。
 if (( $+functions[zsh-defer] )) && (( $+functions[__zoxide_z_complete] )); then
-  zsh-defer -c 'compdef __zoxide_z_complete z'
+  zsh-defer -mpr -c 'compdef __zoxide_z_complete z'
 fi
 
 function fzf-cdr() {
@@ -300,6 +311,10 @@ fi
 # では遅延タスクが一度も実行されない。GUI アプリ / launchd / VS Code の task
 # などがこの形で node や python を呼ぶため、そこでは eager に activate する。
 # -c の判別は zsh が設定する $ZSH_EXECUTION_STRING で行う。
+#
+# ここは他の遅延タスクと違い -mpr を付けない。activate は PATH を書き換えて
+# node / python の version を変えるので、starship が prompt に出している
+# 言語 version を 1 度だけ描き直させたい (precmd + reset-prompt が必要)。
 if (( $+functions[zsh-defer] )) && [[ -z "$ZSH_EXECUTION_STRING" ]]; then
   zsh-defer -c 'zcache mise mise mise activate zsh'
 else

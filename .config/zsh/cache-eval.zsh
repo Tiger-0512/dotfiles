@@ -123,6 +123,61 @@ zcache() {
   source "$cache"
 }
 
+#-------------------- compinit のキャッシュ --------------------#
+# compinit は fpath の全ディレクトリを glob して補完関数を探すため重い。
+# 実測 (fpath 27 entries): page cache が cold で 2.6〜3.8s、warm でも ~78ms。
+#
+# -C を付けると走査を丸ごと省いて dump を source するだけになる (~25ms) が、
+# compinit 自身の staleness 判定も飛ばす (compinit の実装では -C は
+# _i_check を空にし、dump 内の `#files` 数と `version` の照合を通らずに
+# 無条件で source する)。つまり素の -C には 2 つの穴がある:
+#   - fpath に増えた補完関数が反映されない
+#   - zsh を更新した時に別 version が書いた dump を無検証で読む
+#
+# そこで zcache と同じ発想で「判定材料が変わった時だけ全走査」する。
+# 判定材料 (stamp) は:
+#   - $ZSH_VERSION          … compinit 自身が見ているものと同じ
+#   - fpath 各 entry の :A  … symlink 解決後の実体 path。
+#     /run/current-system/sw/share/zsh/site-functions のような Nix profile
+#     経由の path は「文字列が不変で mtime も 1970 固定」なので、これを
+#     解決しないと nix-darwin / home-manager の更新を検出できない。
+#     :A なら store hash が入るため更新で必ず変わる (subprocess 不要)。
+#   - store 外 entry の mtime … /opt/homebrew/share/zsh/site-functions などに
+#     brew install で補完ファイルが増えた場合を拾う。ディレクトリの mtime は
+#     ファイル追加・削除で変わる。
+#
+# stamp の計算自体は fpath=14 で ~3.4ms。呼び出し側が zsh-defer 経由なので
+# prompt 表示までの経路には乗らない。
+#
+# 判定材料が変わらないまま補完だけ増えた等で取り逃がした場合は
+#   rm ~/.cache/zsh-init/compinit.stamp
+# で次回起動時に全走査へ戻せる。
+zcache_compinit() {
+  local dump="${ZSH_COMPDUMP:-${ZDOTDIR:-$HOME}/.zcompdump}"
+  local stamp="$ZCACHE_DIR/compinit.stamp"
+
+  zmodload -F zsh/stat b:zstat 2>/dev/null
+  local d m real="$ZSH_VERSION"
+  for d in $fpath; do
+    real+=":${d:A}"
+    [[ "$d" == /nix/store/* ]] && continue
+    zstat +mtime -A m -- "$d" 2>/dev/null && real+="@$m"
+  done
+
+  autoload -Uz compinit
+
+  local prev=""
+  [[ -r "$stamp" ]] && prev=$(<"$stamp")
+  if [[ -s "$dump" && "$prev" == "$real" ]]; then
+    compinit -C -d "$dump"
+    return 0
+  fi
+
+  [[ -d "$ZCACHE_DIR" ]] || mkdir -p "$ZCACHE_DIR"
+  compinit -u -d "$dump"
+  print -r -- "$real" > "$stamp"
+}
+
 #-------------------- 生成物から起動時 fork を除くフィルタ --------------------#
 # zcache は subprocess の「起動」は省けるが、生成物の中に書かれた
 # `$(...)` は source する度に fork される。実測ではここが残りのコストの

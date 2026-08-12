@@ -4,7 +4,17 @@
 shell = "zsh"
 
 [templates]
-defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"
+# zsh-defer は既定で全オプション (12dmszpr) が有効。うち
+#   m = タスクごとに precmd hook を呼ぶ
+#   p = zle reset-prompt
+#   r = zle -R
+# の 3 つは「タスクが prompt の見た目を変える」場合のためのもの。
+# ここで遅延しているのは補完関連だけで prompt には影響しないのに、
+# precmd 一式 (starship の fork 等) が毎タスク走って実測 ~50ms/タスク
+# 掛かっていた。タスク本体が空の zstyle でも 50ms 掛かる状態。
+# -mpr で 3 つとも切る。1/2 (出力の /dev/null 化) と z (syntax-highlighting
+# の再描画) は既定のまま残す。
+defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer -mpr source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"
 
 [plugins]
 
@@ -25,8 +35,15 @@ github = "zsh-users/zsh-autosuggestions"
 [plugins.zsh-completions]
 github = "zsh-users/zsh-completions"
 apply = ["defer"]
+# compinit は素の `compinit -u` だと fpath 全走査で warm ~78ms /
+# page cache cold で 2.6〜3.8s 掛かる。zcache_compinit は判定材料が
+# 変わらない限り -C (dump を読むだけ、~25ms) に切り替える。
+# 実装と判定材料の詳細は ~/.config/zsh/cache-eval.zsh 参照。
+#
+# cache-eval.zsh が読めなかった場合は素の compinit に落ちる。
+# -mpr の理由は上の [templates] のコメント参照。
 hooks.post = """
-zsh-defer -c 'autoload -Uz compinit && compinit -u'
-zsh-defer -c "zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'"
-zsh-defer -c "zstyle ':completion:*:default' menu select=1"
+zsh-defer -mpr -c 'if (( $+functions[zcache_compinit] )); then zcache_compinit; else autoload -Uz compinit && compinit -u; fi'
+zsh-defer -mpr -c "zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'"
+zsh-defer -mpr -c "zstyle ':completion:*:default' menu select=1"
 """
