@@ -11,7 +11,9 @@ if (( $+commands[kiro-cli] )) && (( $+functions[zcache] )); then
   # 出力に生成時の zsh 実体 path (Q_SHELL) が焼き込まれるため zsh も stamp に含める。
   # :A は symlink を解決する zsh の modifier (readlink 相当、subprocess 不要)。
   _zsh_real="${${commands[zsh]:-$SHELL}:A}"
-  zcache -s "$_zsh_real" kiro-zprofile-pre kiro-cli kiro-cli init zsh pre --rcfile zprofile
+  # zcache_gen_kiro は生成物の mkdir に存在チェックを足すフィルタ
+  # (毎起動の fork を省く。cache-eval.zsh 参照)。
+  zcache -s "$_zsh_real" kiro-zprofile-pre kiro-cli zcache_gen_kiro kiro-cli init zsh pre --rcfile zprofile
 else
   [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zprofile.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zprofile.pre.zsh"
 fi

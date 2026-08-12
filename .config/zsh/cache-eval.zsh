@@ -53,6 +53,18 @@ zcache() {
   local real="${bin_path:A}"
   [[ -n "$real" ]] || real="$bin_path"
   [[ -n "$extra" ]] && real="$real:$extra"
+  # 生成コマンド自体も stamp に含める。フィルタ (zcache_gen_*) を挟んだり
+  # 引数を変えたときにキャッシュが自動で作り直される。
+  # これが無いとバイナリが同じ限り古い生成物を掴み続ける。
+  real="$real:$*"
+
+  # 生成コマンドが shell function ならその定義内容も含める。
+  # フィルタの実装だけを直した場合は $* が変わらないため、これが無いと
+  # 古い生成物を掴み続ける (実際に踏んだ)。
+  # 改行を空白に潰して 1 行に保つ ($(<file) の末尾改行剥がしと食い違わせない)。
+  if (( $+functions[$1] )); then
+    real="$real:${functions[$1]//$'\n'/ }"
+  fi
 
   local prev=""
   [[ -r "$stamp" ]] && prev=$(<"$stamp")
@@ -82,4 +94,58 @@ zcache() {
   fi
 
   source "$cache"
+}
+
+#-------------------- 生成物から起動時 fork を除くフィルタ --------------------#
+# zcache は subprocess の「起動」は省けるが、生成物の中に書かれた
+# `$(...)` は source する度に fork される。実測ではここが残りのコストの
+# 大半だった (mise ~19ms / starship ~14ms / kiro-cli mkdir ~4ms x2)。
+#
+# 以下は zcache の <生成コマンド> 位置に挟む wrapper。
+# フィルタが走るのはキャッシュ生成時 (= バイナリ更新時) だけなので、
+# 変換コスト自体は起動パスに乗らない。
+#
+# 上流の出力形式が変わってマッチしなくなっても、元の行がそのまま残る
+# だけなので壊れない (省いたはずの fork が復活するのみ)。
+
+# kiro-cli init: `mkdir -p "${HOME}/.local/bin"` に存在チェックを足す。
+# ~/.local/bin は初回に作られたら以後ずっと存在するが、この行は無条件に
+# fork する。pre ブロックは .zprofile と .zshrc の 2 箇所で走るので 2 倍効く。
+zcache_gen_kiro() {
+  local out line
+  out="$("$@")" || return 1
+  for line in "${(@f)out}"; do
+    if [[ "$line" == 'mkdir -p "${HOME}/.local/bin"'* ]]; then
+      print -r -- '[[ -d "${HOME}/.local/bin" ]] || '"$line"
+    else
+      print -r -- "$line"
+    fi
+  done
+}
+
+# starship init: PROMPT2 を生成時に展開した文字列で置き換える。
+# 生成物の `PROMPT2="$(starship prompt --continuation)"` は source する度に
+# starship を fork して ~14ms 掛かる。値は starship の version にしか依存
+# しないので、キャッシュ生成時に一度だけ実行して literal として焼き込む。
+#
+# zsh-defer で後から代入する方法は使えない: kiro-cli の post ブロックが
+# precmd で PROMPT2 を Q_USER_PROMPT2 に退避し preexec で復元するため、
+# prompt 表示後の代入は次のコマンド実行時に巻き戻される。
+zcache_gen_starship() {
+  local out line cont
+  out="$("$@")" || return 1
+  for line in "${(@f)out}"; do
+    if [[ "$line" == 'PROMPT2='* ]]; then
+      # $1 は生成コマンドの starship 本体 (呼び出し側と同じものを使う)。
+      cont="$("$1" prompt --continuation 2>/dev/null)"
+      if [[ -n "$cont" ]]; then
+        # (qq) = single quote 化。値には生の ESC が入るが、prompt 展開は
+        # 表示時に行われるので literal のまま保持してよい。
+        print -r -- "PROMPT2=${(qq)cont}"
+        continue
+      fi
+      # 取得に失敗したら元の行を残す (fork は復活するが壊れない)。
+    fi
+    print -r -- "$line"
+  done
 }

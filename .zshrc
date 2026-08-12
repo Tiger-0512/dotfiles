@@ -14,7 +14,9 @@ if (( $+commands[kiro-cli] )) && (( $+functions[zcache] )); then
   # 出力に生成時の zsh 実体 path (Q_SHELL) が焼き込まれるため zsh も stamp に含める。
   # :A は symlink を解決する zsh の modifier (readlink 相当、subprocess 不要)。
   _zsh_real="${${commands[zsh]:-$SHELL}:A}"
-  zcache -s "$_zsh_real" kiro-pre kiro-cli kiro-cli init zsh pre --rcfile zshrc
+  # zcache_gen_kiro は生成物の mkdir に存在チェックを足すフィルタ
+  # (毎起動の fork を省く。cache-eval.zsh 参照)。
+  zcache -s "$_zsh_real" kiro-pre kiro-cli zcache_gen_kiro kiro-cli init zsh pre --rcfile zshrc
 else
   [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 fi
@@ -73,7 +75,9 @@ unset cache_dir sheldon_cache sheldon_toml
 
 #-------------------- Theme --------------------#
 # Starship の初期化をキャッシュ (zcache に共通化。判定ロジックは cache-eval.zsh 参照)
-zcache starship starship starship init zsh
+# zcache_gen_starship は PROMPT2 の command substitution を生成時に展開して
+# literal に置き換えるフィルタ (毎起動の fork ~14ms を省く。cache-eval.zsh 参照)。
+zcache starship starship zcache_gen_starship starship init zsh
 
 
 #-------------------- tmux --------------------#
@@ -272,7 +276,15 @@ fi
 
 # mise: 言語ランタイム version 管理
 # Nix PATH の後で activate する必要がある (mise 本体を PATH から解決するため)
-zcache mise mise mise activate zsh
+#
+# activate の出力は読み込み時に `mise hook-env -s zsh` を fork するので
+# ~19ms 掛かる (キャッシュしても消えない: fork は生成物の中身)。
+# prompt 表示後に回す。最初のコマンド入力までには activate 済みになる。
+if (( $+functions[zsh-defer] )); then
+  zsh-defer -c 'zcache mise mise mise activate zsh'
+else
+  zcache mise mise mise activate zsh
+fi
 
 # nix-darwin 適用の shortcut。
 # --impure は chezmoi-internal/darwin-internal.nix を conditional import するため。
