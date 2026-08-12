@@ -10,7 +10,8 @@
 # ため、パッケージ更新時に必ず文字列が変わる。
 #
 # 使い方:
-#   zcache [-s <追加 stamp 文字列>] <name> <binary> <生成コマンド...>
+#   zcache [-s <追加 stamp 文字列>] [-f <監視するファイル>] \
+#          <name> <binary> <生成コマンド...>
 #
 # 例:
 #   zcache zoxide zoxide zoxide init zsh
@@ -20,16 +21,22 @@
 # 焼き込まれる。zsh だけが更新されると古い Nix store path が残り、
 # GC 後に figterm の起動が壊れる。-s で zsh の path も判定材料に含める。
 #
+# -f は生成物がユーザーの設定ファイルの内容にも依存する場合に使う。
+# こちらはファイルの「内容」を stamp に含める (理由は下の実装コメント参照)。
+#
 # <binary> が PATH に無い場合は何もしない (未導入マシンでも安全)。
 
 : ${ZCACHE_DIR:=${XDG_CACHE_HOME:-$HOME/.cache}/zsh-init}
 
 zcache() {
-  local extra=""
-  if [[ "$1" == "-s" ]]; then
-    extra="$2"
-    shift 2
-  fi
+  local extra="" watch=""
+  while true; do
+    case "$1" in
+      -s) extra="$2"; shift 2 ;;
+      -f) watch="$2"; shift 2 ;;
+      *)  break ;;
+    esac
+  done
 
   local name="$1" bin="$2"
   shift 2
@@ -58,12 +65,32 @@ zcache() {
   # これが無いとバイナリが同じ限り古い生成物を掴み続ける。
   real="$real:$*"
 
-  # 生成コマンドが shell function ならその定義内容も含める。
+  # 生成コマンドが自作フィルタならその定義内容も含める。
   # フィルタの実装だけを直した場合は $* が変わらないため、これが無いと
   # 古い生成物を掴み続ける (実際に踏んだ)。
   # 改行を空白に潰して 1 行に保つ ($(<file) の末尾改行剥がしと食い違わせない)。
-  if (( $+functions[$1] )); then
+  #
+  # zcache_gen_* に限定するのが重要。単に $+functions[$1] で見ると、
+  # `mise` のように「生成物を source した結果として同名の function が
+  # 定義される」コマンドで stamp が揺れる。新規 shell では function 無し、
+  # `source ~/.zshrc` した shell では function 有りになるため、両者の間で
+  # 再生成が往復する (実際に踏んだ)。
+  if [[ "$1" == zcache_gen_* ]] && (( $+functions[$1] )); then
     real="$real:${functions[$1]//$'\n'/ }"
+  fi
+
+  # -f で指定された設定ファイルの内容を含める。
+  # ファイルが無い場合は項目自体を足さないので、後から作られれば差分になる。
+  #
+  # mtime ではなく内容にした理由が 2 つある:
+  #   - mtime の精度は秒なので、同じ秒に 2 回編集されると差分を取り逃がす
+  #   - 対象が chezmoi 管理下のファイルだと、chezmoi apply は内容が同じでも
+  #     mtime を更新するため、mtime 判定では無駄な再生成が走る
+  # $(<file) は zsh が内部で読むだけで fork しない (実測 0.14ms/回)。
+  # 改行は空白に潰して stamp を 1 行に保つ。
+  if [[ -n "$watch" && -r "$watch" ]]; then
+    local content="$(<"$watch")"
+    real="$real:$watch=${content//$'\n'/ }"
   fi
 
   local prev=""
@@ -131,6 +158,11 @@ zcache_gen_kiro() {
 # zsh-defer で後から代入する方法は使えない: kiro-cli の post ブロックが
 # precmd で PROMPT2 を Q_USER_PROMPT2 に退避し preexec で復元するため、
 # prompt 表示後の代入は次のコマンド実行時に巻き戻される。
+#
+# 注意: `starship init zsh` の出力自体は設定に依存しないが、ここで焼き込む
+# `starship prompt --continuation` は starship.toml を読む。呼び出し側で
+# -f に starship.toml を渡して stamp に含めること (でないと config を編集
+# しても PROMPT2 が更新されない)。
 zcache_gen_starship() {
   local out line cont
   out="$("$@")" || return 1

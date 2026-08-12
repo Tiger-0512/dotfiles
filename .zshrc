@@ -77,7 +77,12 @@ unset cache_dir sheldon_cache sheldon_toml
 # Starship の初期化をキャッシュ (zcache に共通化。判定ロジックは cache-eval.zsh 参照)
 # zcache_gen_starship は PROMPT2 の command substitution を生成時に展開して
 # literal に置き換えるフィルタ (毎起動の fork ~14ms を省く。cache-eval.zsh 参照)。
-zcache starship starship zcache_gen_starship starship init zsh
+#
+# -f で starship.toml の内容を stamp に含める。焼き込む PROMPT2 の値
+# (starship prompt --continuation) は config を読んで決まるため、
+# binary だけを stamp にしていると continuation_prompt を設定しても反映されない。
+zcache -f "${STARSHIP_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml}" \
+  starship starship zcache_gen_starship starship init zsh
 
 
 #-------------------- tmux --------------------#
@@ -153,6 +158,16 @@ zcache starship starship zcache_gen_starship starship init zsh
 
 #-------------------- zoxide --------------------#
 zcache zoxide zoxide zoxide init zsh
+
+# zoxide init の出力には
+#   [[ "${+functions[compdef]}" -ne 0 ]] && compdef __zoxide_z_complete z
+# が含まれるが、compdef を定義する compinit は sheldon 側で zsh-defer される
+# ため、ここでは未定義でガードに弾かれる (z のタブ補完が黙って無効になる)。
+# /etc/zshrc が eager に compinit していた頃は間に合っていた経路。
+# zsh-defer は FIFO なので compinit の後に登録し直せばよい。
+if (( $+functions[zsh-defer] )) && (( $+functions[__zoxide_z_complete] )); then
+  zsh-defer -c 'compdef __zoxide_z_complete z'
+fi
 
 function fzf-cdr() {
     local selected_dir=$(zoxide query -l | fzf --prompt="Where you wanna go?> " --tac --preview 'eza --tree --level=2 {}')
@@ -280,7 +295,12 @@ fi
 # activate の出力は読み込み時に `mise hook-env -s zsh` を fork するので
 # ~19ms 掛かる (キャッシュしても消えない: fork は生成物の中身)。
 # prompt 表示後に回す。最初のコマンド入力までには activate 済みになる。
-if (( $+functions[zsh-defer] )); then
+#
+# ただし zsh-defer は zle が idle になった時に走るので、`zsh -i -c '...'`
+# では遅延タスクが一度も実行されない。GUI アプリ / launchd / VS Code の task
+# などがこの形で node や python を呼ぶため、そこでは eager に activate する。
+# -c の判別は zsh が設定する $ZSH_EXECUTION_STRING で行う。
+if (( $+functions[zsh-defer] )) && [[ -z "$ZSH_EXECUTION_STRING" ]]; then
   zsh-defer -c 'zcache mise mise mise activate zsh'
 else
   zcache mise mise mise activate zsh
