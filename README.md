@@ -91,8 +91,11 @@ Herdr では状態検出のみで、native session restore の対象外。zsh co
 適用時に pinned Herdr から生成する。background agent の完了と入力待ちは、Herdr
 client が detach されていても OS の desktop notification で表示する。
 tab / pane 操作は prefix なしの direct keybinding とし、必須の prefix は `F24` へ
-退避する。`ctrl+t`、`ctrl+<` / `ctrl+>`、`ctrl+q/w/e/r`、`ctrl+;` / `ctrl+'` を
-tab 作成、tab 移動、pane 移動、pane 分割に割り当てる。これらのキーは Herdr 内の
+退避する。`ctrl+esc` で detach し、`ctrl+t`、`ctrl+<` / `ctrl+>`、
+`ctrl+q/w/e/r`、`ctrl+;` / `ctrl+'` を tab 作成、tab 移動、pane 移動、pane 分割に
+割り当てる。WezTerm は修飾が失われるキーを CSI-u sequence として Herdr へ送る。
+Hammerspoon の `ctrl+w` / `ctrl+shift+w` 単語選択リマップは WezTerm が前面の間だけ
+無効化し、他のアプリでは維持する。これらの direct keybinding は Herdr 内の
 pane application より優先される。
 ローカルの対話型 terminal では `.zshrc` から session list を `fzf` で表示し、
 既存 session の開始・再接続または名前つき session の新規作成を選べる。Esc なら
@@ -216,8 +219,8 @@ Vimライクなカーソル移動をシステム全体で有効化。
 | `Ctrl+h/j/k/l`     | カーソル移動 (左/下/上/右) |
 | `Ctrl+i`           | 行頭へ移動                |
 | `Ctrl+a`           | 行末へ移動                |
-| `Ctrl+w`           | 単語選択 (右方向)         |
-| `Ctrl+Shift+w`     | 単語選択 (左方向)         |
+| `Ctrl+w`           | 単語選択 (右方向、WezTerm では無効) |
+| `Ctrl+Shift+w`     | 単語選択 (左方向、WezTerm では無効) |
 
 ### ターミナル起動
 
