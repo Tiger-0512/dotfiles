@@ -1,0 +1,42 @@
+# Managed by chezmoi. Agent integrations are installed separately because
+# they update each agent's own configuration files.
+onboarding = false
+
+[update]
+# Herdr itself is pinned and updated through the Nix flake.
+version_check = false
+
+[ui.toast]
+# Notify even when no Herdr terminal client is attached.
+delivery = "system"
+delay_seconds = 1
+
+[keys]
+# Herdr requires a prefix key, so park it on an otherwise unused key and use
+# direct bindings for the normal tab and pane workflow.
+prefix = "f24"
+detach = "ctrl+esc"
+new_tab = "ctrl+t"
+previous_tab = "ctrl+<"
+next_tab = "ctrl+>"
+focus_pane_left = "ctrl+q"
+focus_pane_down = "ctrl+w"
+focus_pane_up = "ctrl+e"
+focus_pane_right = "ctrl+r"
+split_horizontal = "ctrl+semicolon"
+split_vertical = "ctrl+quote"
+
+[session]
+resume_agents_on_restore = true
+
+[experimental]
+# Render Yazi image and PDF previews through WezTerm's Kitty graphics support.
+kitty_graphics = true
+
+# Keep terminal output that may contain prompts or secrets off disk.
+pane_history = false
+
+# Keep the native macOS IME candidate window aligned with agent TUIs.
+reveal_hidden_cursor_for_cjk_ime = true
+cjk_ime_agents = ["claude", "codex", "kiro"]
+switch_ascii_input_source_in_prefix = true

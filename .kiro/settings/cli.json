@@ -1,7 +1,7 @@
 {
   "app.disableAutoupdates": true,
   "autocomplete.theme": "gruvbox",
-  "chat.defaultModel": "claude-fable-5",
+  "chat.defaultModel": "gpt-5.6-sol",
   "chat.enableNotifications": true,
   "chat.notificationMethod": "bel",
   "codeWhisperer.shareCodeWhispererContentWithAWS": false,

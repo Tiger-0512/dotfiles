@@ -77,8 +77,29 @@ local function isGhostty()
 	return app and app:name() == "Ghostty"
 end
 
-remapKey({ "ctrl", "shift" }, "w", pressFn({ "alt", "shift" }, "left"))
-remapKey({ "ctrl" }, "w", pressFn({ "alt", "shift" }, "right"))
+local ctrlShiftWRemap = pressFn({ "alt", "shift" }, "left")
+local ctrlShiftWHotkey = hs.hotkey.bind({ "ctrl", "shift" }, "w", ctrlShiftWRemap, nil, ctrlShiftWRemap)
+local ctrlWRemap = pressFn({ "alt", "shift" }, "right")
+local ctrlWHotkey = hs.hotkey.bind({ "ctrl" }, "w", ctrlWRemap, nil, ctrlWRemap)
+
+local function updateCtrlWHotkeys()
+	local app = hs.application.frontmostApplication()
+	if app and app:name() == "WezTerm" then
+		ctrlShiftWHotkey:disable()
+		ctrlWHotkey:disable()
+	else
+		ctrlShiftWHotkey:enable()
+		ctrlWHotkey:enable()
+	end
+end
+
+ctrlWAppWatcher = hs.application.watcher.new(function(_, eventType)
+	if eventType == hs.application.watcher.activated then
+		updateCtrlWHotkeys()
+	end
+end)
+ctrlWAppWatcher:start()
+updateCtrlWHotkeys()
 
 -- remapKey({ "ctrl", "shift" }, "h", function()
 -- 	if isGhostty() then

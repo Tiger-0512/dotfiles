@@ -249,16 +249,41 @@ config.keys = {
 		action = act.SpawnTab("CurrentPaneDomain"),
 	},
 
-	-- Move tab (Ctrl+Shift+, : previous, Ctrl+Shift+. : next)
+	-- Send Herdr shortcuts with CSI-u so modifiers survive terminal input.
+	{
+		key = "phys:w",
+		mods = "CTRL",
+		action = act.SendString("\x1b[119;5u"),
+	},
+	{
+		key = "mapped:w",
+		mods = "CTRL",
+		action = act.SendString("\x1b[119;5u"),
+	},
 	{
 		key = "phys:Comma",
 		mods = "CTRL|SHIFT",
-		action = act.ActivateTabRelative(-1),
+		action = act.SendString("\x1b[60;6u"),
+	},
+	{
+		key = "mapped:<",
+		mods = "CTRL",
+		action = act.SendString("\x1b[60;6u"),
 	},
 	{
 		key = "phys:Period",
 		mods = "CTRL|SHIFT",
-		action = act.ActivateTabRelative(1),
+		action = act.SendString("\x1b[62;6u"),
+	},
+	{
+		key = "mapped:>",
+		mods = "CTRL",
+		action = act.SendString("\x1b[62;6u"),
+	},
+	{
+		key = "Escape",
+		mods = "CTRL",
+		action = act.SendString("\x1b[27;5u"),
 	},
 
 	-- Create window (Ctrl+Shift+w)

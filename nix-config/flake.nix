@@ -13,9 +13,16 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Coding agent 向けの永続 terminal workspace manager。
+    # 通常利用は master ではなく release tag の固定が公式推奨。
+    herdr = {
+      url = "github:herdrdev/herdr/v0.8.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager }: {
+  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, herdr }: {
     # macOS: nix-darwin + home-manager を束ねて適用する
     # darwin-switch alias から 'darwin-rebuild switch --flake .#default --impure' で起動
     darwinConfigurations."default" = let

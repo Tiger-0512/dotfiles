@@ -10,6 +10,7 @@
 | CLI パッケージ                 | [home-manager](https://github.com/nix-community/home-manager)                                                                   | `nix-config/home.nix` (macOS / Linux 共通)                       |
 | macOS システム設定             | [nix-darwin](https://github.com/LnL7/nix-darwin)                                                                                | `nix-config/darwin.nix` (Homebrew cask, launchd, Touch ID sudo)  |
 | GUI アプリ (macOS)             | Homebrew Cask                                                                                                                   | `nix-config/darwin.nix` の `homebrew.casks` で宣言                |
+| Agent workspace                | [Herdr](https://herdr.dev/)                                                                                                    | 公式 Nix flake の安定版タグを固定し、macOS / Linux 共通で導入    |
 
 > Nix packages は `home.nix` で一元管理され、macOS / Linux で同じリストが共有されます。
 > macOS では nix-darwin が home-manager を取り込む形で、Linux では standalone home-manager として適用できます。
@@ -56,7 +57,7 @@ Linux では nix-darwin を使わないので、docker 等の system-level サ�
 
 ### パッケージの更新
 
-`flake.lock` で全 input (nixpkgs / nix-darwin / home-manager) が pin されているので、新しい版に上げたい時は lock を更新して再適用する。
+`flake.lock` で全 input (nixpkgs / nix-darwin / home-manager / herdr) が pin されているので、新しい版に上げたい時は lock を更新して再適用する。
 
 ```sh
 cd ~/dotfiles/nix-config
@@ -75,7 +76,35 @@ NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- \
     switch --flake .#default
 ```
 
-特定 input だけ更新する場合は `nix flake lock --update-input nixpkgs`(など)。
+特定 input だけ更新する場合は `nix flake update nixpkgs`(など)。
+
+Herdr は公式推奨に従い release tag を固定している。新しい安定版へ更新する場合は、
+`flake.nix` の `github:herdrdev/herdr/vX.Y.Z` を変更してから
+`nix flake update herdr` を実行する。
+
+Herdr の設定は `.config/herdr/config.toml` で管理する。Claude Code / Codex /
+Kiro CLI の macOS 日本語 IME 対応を有効にし、機密情報を含み得る pane history は
+無効にしている。WezTerm の Kitty graphics 対応を利用し、Herdr 内の Yazi で画像と
+PDF をプレビューする。Markdown は Yazi 既定のシンタックスハイライト表示を利用する。
+Native agent session restore は Claude Code と Codex で利用する。Kiro CLI は現行
+Herdr では状態検出のみで、native session restore の対象外。zsh completion は Nix
+適用時に pinned Herdr から生成する。background agent の完了と入力待ちは、Herdr
+client が detach されていても OS の desktop notification で表示する。
+tab / pane 操作は prefix なしの direct keybinding とし、必須の prefix は `F24` へ
+退避する。`ctrl+t`、`ctrl+<` / `ctrl+>`、`ctrl+q/w/e/r`、`ctrl+;` / `ctrl+'` を
+tab 作成、tab 移動、pane 移動、pane 分割に割り当てる。これらのキーは Herdr 内の
+pane application より優先される。
+ローカルの対話型 terminal では `.zshrc` から session list を `fzf` で表示し、
+既存 session の開始・再接続または名前つき session の新規作成を選べる。Esc なら
+通常 shell に残る。Herdr pane 内、SSH、tmux / Zellij、IDE 内 terminal、非 TTY は
+対象外で、一時的に無効化する場合は `HERDR_DISABLE_AUTO_ATTACH=1 zsh` を使う。
+Claude Code と Codex の integration は、各 agent の設定 directory が存在する場合に
+home-manager activation から冪等に自動導入する。agent を初めて起動した後にまだ
+integration がなければ、home-manager / darwin switch を再実行する:
+
+```sh
+herdr integration status
+```
 
 ### 補足
 
@@ -99,6 +128,7 @@ NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- \
 | [WezTerm](https://wezfurlong.org/wezterm/)             | ターミナル              | `.config/wezterm/`              |
 | tmux                                                   | マルチプレクサ          | `.tmux.conf`                    |
 | [Zellij](https://zellij.dev/)                          | マルチプレクサ          | `.config/zellij/config.kdl`     |
+| [Herdr](https://herdr.dev/)                            | Agent workspace         | `.config/herdr/config.toml`     |
 | [Yazi](https://yazi-rs.github.io/)                     | ファイルマネージャ      | `.config/yazi/`                 |
 | [lf](https://github.com/gokcehan/lf)                   | ファイルマネージャ      | `.config/lf/`                   |
 | Git                                                    | Git                     | `.config/git/`                  |

@@ -1,6 +1,17 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 let
+  herdrPackage =
+    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
+  # Herdr 本体と同じ pinned version から zsh completion を生成する。
+  # Nix profile の site-functions は既存の fpath / compinit が検出する。
+  herdrZshCompletion = pkgs.runCommand "herdr-zsh-completion" {} ''
+    mkdir -p "$out/share/zsh/site-functions"
+    ${herdrPackage}/bin/herdr completion zsh \
+      > "$out/share/zsh/site-functions/_herdr"
+  '';
+
   # oxker の aarch64-darwin での snapshot テスト問題を回避するため、
   # macOS のみ doCheck = false で build する。Linux では素のまま。
   oxkerForPlatform =
@@ -43,6 +54,8 @@ let
     neovim
     tmux
     zellij
+    herdrPackage
+    herdrZshCompletion
     yazi
     lazygit
     oxkerForPlatform
@@ -106,6 +119,29 @@ in
   home.stateVersion = "25.05";
 
   home.packages = commonPackages ++ platformPackages ++ personalPackages;
+
+  # Herdr の公式 integration installer は冪等なので、agent の設定 directory が
+  # 存在する場合に home-manager activation から同期する。agent を後から初回起動
+  # した場合は、次回の home-manager / darwin switch で自動的に導入される。
+  home.activation.installHerdrIntegrations =
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      install_herdr_integration() {
+        local integration="$1"
+        local config_dir="$2"
+
+        if [[ ! -d "$config_dir" ]]; then
+          echo "Skipping Herdr $integration integration: $config_dir does not exist"
+          return
+        fi
+
+        if ! $DRY_RUN_CMD ${herdrPackage}/bin/herdr integration install "$integration"; then
+          echo "warning: failed to install Herdr $integration integration" >&2
+        fi
+      }
+
+      install_herdr_integration claude "${config.home.homeDirectory}/.claude"
+      install_herdr_integration codex "${config.home.homeDirectory}/.codex"
+    '';
 
   # home-manager 自体の self-management を有効化
   programs.home-manager.enable = true;

@@ -327,6 +327,81 @@ fi
 # 返すので、impure モードで明示的にファイル確認を許可する必要がある。
 alias darwin-switch='sudo USER=$USER darwin-rebuild switch --flake "$HOME/.local/share/chezmoi/nix-config#default" --impure'
 
+#-------------------- Herdr --------------------#
+# ローカルの対話型 terminal を開いた時に session picker を表示する。
+# Herdr pane 内の shell、SSH、他の multiplexer、IDE 内 terminal、
+# `zsh -i -c` では起動しない。必要な時は HERDR_DISABLE_AUTO_ATTACH=1 で無効化する。
+if [[ -o interactive && -t 0 && -t 1
+      && -z "${HERDR_ENV:-}"
+      && -z "${HERDR_DISABLE_AUTO_ATTACH:-}"
+      && -z "${SSH_CONNECTION:-}"
+      && -z "${TMUX:-}"
+      && -z "${ZELLIJ:-}"
+      && -z "${ZSH_EXECUTION_STRING:-}"
+      && "$TERM_PROGRAM" != "vscode"
+      && "$TERM_PROGRAM" != "kiro" ]] \
+    && (( $+commands[herdr] )); then
+  _herdr_select_session() {
+    # jq / fzf が無い環境では従来どおり default session へ接続する。
+    if (( ! $+commands[jq] || ! $+commands[fzf] )); then
+      command herdr
+      return
+    fi
+
+    local sessions_json session_rows selected session_name new_session_name
+    sessions_json="$(command herdr session list --json 2>/dev/null)" || {
+      command herdr
+      return
+    }
+
+    session_rows="$(
+      print -rn -- "$sessions_json" |
+        command jq -r '
+          .sessions[] |
+          [
+            .name,
+            (
+              .name
+              + (if .default then " (default)" else "" end)
+              + " [" + (if .running then "running" else "stopped" end) + "]"
+            )
+          ] |
+          @tsv
+        '
+    )"
+
+    selected="$(
+      {
+        printf '\tCreate New Session\n'
+        [[ -n "$session_rows" ]] && print -r -- "$session_rows"
+      } |
+        command fzf \
+          --delimiter=$'\t' \
+          --with-nth=2 \
+          --prompt='Herdr session: ' \
+          --height='~50%' \
+          --layout=reverse \
+          --border \
+          --exit-0
+    )"
+
+    # Esc なら Herdr を起動せず、現在の shell をそのまま使う。
+    [[ -z "$selected" ]] && return
+
+    session_name="${selected%%$'\t'*}"
+    if [[ -n "$session_name" ]]; then
+      command herdr session attach "$session_name"
+      return
+    fi
+
+    vared -p 'New Herdr session name: ' -c new_session_name
+    [[ -n "$new_session_name" ]] &&
+      command herdr session attach "$new_session_name"
+  }
+
+  _herdr_select_session
+  unfunction _herdr_select_session
+fi
 
 # Kiro CLI post block. Keep at the bottom of this file.
 # pre ブロックと同様に zcache で subprocess 起動 (~35ms) を省く。

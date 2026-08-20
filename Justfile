@@ -17,7 +17,8 @@ apply:
 verify:
     bash scripts/verify-public-sync.sh --with-nix-fixtures
 
-# nix flake の全 input (nixpkgs / nix-darwin / home-manager) を最新化
+# nix flake の可変 input (nixpkgs / nix-darwin / home-manager) を最新化。
+# release tag 固定の herdr は flake.nix の tag を変更してから lock を更新する。
 flake-update:
     cd {{ nix_config }} && nix flake update
 
