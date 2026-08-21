@@ -60,82 +60,6 @@ end)
 
 -- ********** Keybindings **********
 config.keys = {
-	-- Disable conflicting defaults
-	{ key = "L", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
-	{ key = "N", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
-	-- tab は Herdr で管理する。tab bar が無効で新しい tab を視認できないため、
-	-- WezTerm 側の tab 生成は割り当てず既定の割り当ても無効化する。
-	{ key = "T", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
-	{ key = "t", mods = "SUPER", action = act.DisableDefaultAssignment },
-
-	-- Split pane (Ctrl+Shift+' : right, Ctrl+Shift+; : down)
-	{
-		key = "phys:Quote",
-		mods = "CTRL|SHIFT",
-		action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-	},
-	{
-		key = "phys:Semicolon",
-		mods = "CTRL|SHIFT",
-		action = act.SplitVertical({ domain = "CurrentPaneDomain" }),
-	},
-
-	-- Move pane (Ctrl+Shift+h/j/k/l)
-	{
-		key = "phys:h",
-		mods = "CTRL|SHIFT",
-		action = act.ActivatePaneDirection("Left"),
-	},
-	{
-		key = "phys:j",
-		mods = "CTRL|SHIFT",
-		action = act.ActivatePaneDirection("Down"),
-	},
-	{
-		key = "phys:k",
-		mods = "CTRL|SHIFT",
-		action = act.ActivatePaneDirection("Up"),
-	},
-	{
-		key = "phys:l",
-		mods = "CTRL|SHIFT",
-		action = act.ActivatePaneDirection("Right"),
-	},
-
-	-- Resize pane (Ctrl+Shift+Cmd+h/j/k/l, 10 cells)
-	{
-		key = "phys:h",
-		mods = "CTRL|SHIFT|SUPER",
-		action = act.AdjustPaneSize({ "Left", 10 }),
-	},
-	{
-		key = "phys:j",
-		mods = "CTRL|SHIFT|CMD",
-		action = act.AdjustPaneSize({ "Down", 10 }),
-	},
-	{
-		key = "phys:k",
-		mods = "CTRL|SHIFT|CMD",
-		action = act.AdjustPaneSize({ "Up", 10 }),
-	},
-	{
-		key = "phys:l",
-		mods = "CTRL|SHIFT|CMD",
-		action = act.AdjustPaneSize({ "Right", 10 }),
-	},
-
-	-- Scroll pane (Ctrl+Shift+u : page down, Ctrl+Shift+i : page up)
-	{
-		key = "phys:u",
-		mods = "CTRL|SHIFT",
-		action = act.ScrollByPage(1),
-	},
-	{
-		key = "phys:i",
-		mods = "CTRL|SHIFT",
-		action = act.ScrollByPage(-1),
-	},
-
 	-- Send Herdr shortcuts with CSI-u so modifiers survive terminal input.
 	{
 		key = "phys:w",
@@ -173,6 +97,54 @@ config.keys = {
 		action = act.SendString("\x1b[27;5u"),
 	},
 
+	-- Pane resize (Ctrl+Shift+h/j/k/l -> Herdr resize_pane_*)
+	-- ctrl+shift+<letter> has no legacy encoding distinct from ctrl+<letter>,
+	-- so CSI-u is required for Herdr to see the shift modifier.
+	{
+		key = "phys:h",
+		mods = "CTRL|SHIFT",
+		action = act.SendString("\x1b[104;6u"),
+	},
+	{
+		key = "phys:j",
+		mods = "CTRL|SHIFT",
+		action = act.SendString("\x1b[106;6u"),
+	},
+	{
+		key = "phys:k",
+		mods = "CTRL|SHIFT",
+		action = act.SendString("\x1b[107;6u"),
+	},
+	{
+		key = "phys:l",
+		mods = "CTRL|SHIFT",
+		action = act.SendString("\x1b[108;6u"),
+	},
+
+	-- Scroll the Herdr pane scrollback (Ctrl+u: down, Ctrl+i: up).
+	-- Herdr intercepts unmodified PageUp / PageDown for pane scrollback; the
+	-- shift / ctrl variants are forwarded to the pane instead, so send them bare.
+	{
+		key = "phys:u",
+		mods = "CTRL",
+		action = act.SendString("\x1b[6~"),
+	},
+	{
+		key = "mapped:u",
+		mods = "CTRL",
+		action = act.SendString("\x1b[6~"),
+	},
+	{
+		key = "phys:i",
+		mods = "CTRL",
+		action = act.SendString("\x1b[5~"),
+	},
+	{
+		key = "mapped:i",
+		mods = "CTRL",
+		action = act.SendString("\x1b[5~"),
+	},
+
 	-- Create window (Ctrl+Shift+w)
 	{
 		key = "phys:w",
@@ -194,6 +166,117 @@ config.keys = {
 		action = act.QuickSelect,
 	},
 }
+
+-- tab / pane / scroll / copy mode は Herdr が担うため、WezTerm 側では同等の操作を
+-- 割り当てず、既定の割り当ても無効化して pane (= Herdr) へキーを通す。
+-- WezTerm の既定は同じ操作を複数の表記で登録しているため、mapped の shift 形
+-- (CTRL+"W" など) と物理キー形の双方を列挙する必要がある。
+local disabled_default_keys = {
+	-- SpawnWindow の既定を外し、通知ビューアの ctrl+shift+n を通す
+	{ key = "N", mods = "CTRL|SHIFT" },
+
+	-- 以前 WezTerm 側で pane 移動 / pane 分割 / scroll に割り当てていたキー。
+	-- 割り当てを外すと ctrl+shift+h が HideApplication、ctrl+shift+k が
+	-- ClearScrollback、ctrl+shift+u が CharSelect という無関係な既定に戻るため、
+	-- Herdr のキーとして pane へ通すよう明示的に無効化する。
+	-- h/j/k/l は上で phys 表記に CSI-u の SendString を割り当てているが、既定は
+	-- mapped 表記 (CTRL+"H" と CTRL+"h") でも登録されているため両方を外しておく。
+	{ key = "H", mods = "CTRL|SHIFT" },
+	{ key = "h", mods = "CTRL|SHIFT" },
+	{ key = "J", mods = "CTRL|SHIFT" },
+	{ key = "j", mods = "CTRL|SHIFT" },
+	{ key = "K", mods = "CTRL|SHIFT" },
+	{ key = "k", mods = "CTRL|SHIFT" },
+	{ key = "L", mods = "CTRL|SHIFT" },
+	{ key = "l", mods = "CTRL|SHIFT" },
+	{ key = "U", mods = "CTRL|SHIFT" },
+	{ key = "u", mods = "CTRL|SHIFT" },
+	{ key = "I", mods = "CTRL|SHIFT" },
+	{ key = "i", mods = "CTRL|SHIFT" },
+	{ key = '"', mods = "CTRL|SHIFT" },
+	{ key = "'", mods = "CTRL|SHIFT" },
+	{ key = ":", mods = "CTRL|SHIFT" },
+	{ key = ";", mods = "CTRL|SHIFT" },
+
+	-- tab 生成 (Herdr: ctrl+t)
+	{ key = "T", mods = "CTRL|SHIFT" },
+	{ key = "t", mods = "SUPER" },
+
+	-- tab 切り替え (Herdr: ctrl+, / ctrl+.)
+	{ key = "Tab", mods = "CTRL" },
+	{ key = "Tab", mods = "CTRL|SHIFT" },
+	{ key = "PageUp", mods = "CTRL" },
+	{ key = "PageDown", mods = "CTRL" },
+	{ key = "[", mods = "SUPER|SHIFT" },
+	{ key = "]", mods = "SUPER|SHIFT" },
+	{ key = "{", mods = "SUPER" },
+	{ key = "{", mods = "SUPER|SHIFT" },
+	{ key = "}", mods = "SUPER" },
+	{ key = "}", mods = "SUPER|SHIFT" },
+
+	-- tab 順序の入れ替え (Herdr: move_tab_previous / move_tab_next)
+	{ key = "PageUp", mods = "CTRL|SHIFT" },
+	{ key = "PageDown", mods = "CTRL|SHIFT" },
+
+	-- tab close (Herdr: prefix+shift+x)
+	{ key = "W", mods = "CTRL" },
+	{ key = "W", mods = "CTRL|SHIFT" },
+	{ key = "w", mods = "CTRL|SHIFT" },
+	{ key = "w", mods = "SUPER" },
+
+	-- pane 分割 (Herdr: ctrl+; / ctrl+')
+	{ key = '"', mods = "CTRL|ALT" },
+	{ key = '"', mods = "CTRL|ALT|SHIFT" },
+	{ key = "'", mods = "CTRL|ALT|SHIFT" },
+	{ key = "%", mods = "CTRL|ALT" },
+	{ key = "%", mods = "CTRL|ALT|SHIFT" },
+	{ key = "5", mods = "CTRL|ALT|SHIFT" },
+
+	-- pane focus (Herdr: ctrl+q/w/e/r)
+	{ key = "LeftArrow", mods = "CTRL|SHIFT" },
+	{ key = "RightArrow", mods = "CTRL|SHIFT" },
+	{ key = "UpArrow", mods = "CTRL|SHIFT" },
+	{ key = "DownArrow", mods = "CTRL|SHIFT" },
+
+	-- pane resize (Herdr: prefix+r の resize mode)
+	{ key = "LeftArrow", mods = "CTRL|ALT|SHIFT" },
+	{ key = "RightArrow", mods = "CTRL|ALT|SHIFT" },
+	{ key = "UpArrow", mods = "CTRL|ALT|SHIFT" },
+	{ key = "DownArrow", mods = "CTRL|ALT|SHIFT" },
+
+	-- pane zoom (Herdr: prefix+z)
+	{ key = "Z", mods = "CTRL" },
+	{ key = "Z", mods = "CTRL|SHIFT" },
+	{ key = "z", mods = "CTRL|SHIFT" },
+
+	-- scroll (Herdr: 修飾なしの pageup / pagedown で pane scrollback)
+	{ key = "PageUp", mods = "SHIFT" },
+	{ key = "PageDown", mods = "SHIFT" },
+
+	-- copy mode (Herdr: ctrl+y。WezTerm 側は ctrl+shift+f の検索から入る)
+	{ key = "X", mods = "CTRL" },
+	{ key = "X", mods = "CTRL|SHIFT" },
+	{ key = "x", mods = "CTRL|SHIFT" },
+}
+
+-- tab の index 指定 (Herdr: prefix+1..9)。WezTerm は数字と shift 記号の両方に
+-- ActivateTab を割り当てているため、どちらの表記も無効化する。
+for i = 1, 9 do
+	table.insert(disabled_default_keys, { key = tostring(i), mods = "CTRL|SHIFT" })
+	table.insert(disabled_default_keys, { key = tostring(i), mods = "SUPER" })
+end
+for _, key in ipairs({ "!", "@", "#", "$", "%", "^", "&", "*", "(" }) do
+	table.insert(disabled_default_keys, { key = key, mods = "CTRL" })
+	table.insert(disabled_default_keys, { key = key, mods = "CTRL|SHIFT" })
+end
+
+for _, entry in ipairs(disabled_default_keys) do
+	table.insert(config.keys, {
+		key = entry.key,
+		mods = entry.mods,
+		action = act.DisableDefaultAssignment,
+	})
+end
 
 -- キーテーブル（デフォルトを維持しつつカスタマイズ）
 local copy_mode = nil
