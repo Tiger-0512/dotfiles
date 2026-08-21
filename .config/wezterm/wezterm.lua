@@ -36,36 +36,15 @@ config.font = wezterm.font_with_fallback({
 config.font_size = 16
 
 -- ********** Tab bar **********
-config.use_fancy_tab_bar = true
-config.hide_tab_bar_if_only_one_tab = false
-config.show_tab_index_in_tab_bar = false
-config.switch_to_last_active_tab_when_closing_tab = true
-
--- タブバーの透過とフォント設定
-config.window_frame = {
-	inactive_titlebar_bg = "none",
-	active_titlebar_bg = "none",
-	font = wezterm.font("FantasqueSansM Nerd Font Mono"),
-	font_size = 16,
-}
+-- tab は Herdr で管理するため、WezTerm 側の tab bar は表示しない。
+-- tab bar が無効な間は左右の status 行も描画されないため、
+-- format-tab-title / update-status による装飾とモード表示は行わない。
+config.enable_tab_bar = false
 
 -- テーマから色を取得
 local scheme = wezterm.color.get_builtin_schemes()[config.color_scheme]
 
--- タブバーを背景色に合わせる
-config.window_background_gradient = {
-	colors = { scheme.background },
-}
-
--- タブの追加ボタンを非表示
-config.show_new_tab_button_in_tab_bar = false
-
--- タブ同士の境界線を非表示
 config.colors = {
-	tab_bar = {
-		inactive_tab_edge = "none",
-	},
-
 	-- Quick Select Mode のハイライト色
 	quick_select_label_bg = { Color = scheme.ansi[2] }, -- red
 	quick_select_label_fg = { Color = scheme.background },
@@ -73,99 +52,10 @@ config.colors = {
 	quick_select_match_fg = { Color = scheme.foreground },
 }
 
--- タブの形をカスタマイズ（矢印型 + プロセスアイコン）
--- ref: https://zenn.dev/gsy0911/articles/a7347e1a2d8d31
--- タブの左側の装飾
-local SOLID_LEFT_ARROW = wezterm.nerdfonts.ple_lower_right_triangle
-local SOLID_LEFT_CIRCLE = wezterm.nerdfonts.ple_left_half_circle_thick
--- タブの右側の装飾
-local SOLID_RIGHT_ARROW = wezterm.nerdfonts.ple_upper_left_triangle
-local SOLID_RIGHT_CIRCLE = wezterm.nerdfonts.ple_right_half_circle_thick
-
--- プロセス名に応じたアイコンと色の定義
-local process_icons = {
-	["nvim"] = { icon = wezterm.nerdfonts.linux_neovim, color = "#32cd32" },
-	["vim"] = { icon = wezterm.nerdfonts.linux_neovim, color = "#32cd32" },
-	["zsh"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#808080" },
-	["bash"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#808080" },
-	["fish"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#808080" },
-	["docker"] = { icon = wezterm.nerdfonts.md_docker, color = "#4169e1" },
-	["python"] = { icon = wezterm.nerdfonts.dev_python, color = "#ffd700" },
-	["node"] = { icon = wezterm.nerdfonts.md_language_typescript, color = "#1e90ff" },
-	["git"] = { icon = wezterm.nerdfonts.dev_git, color = "#f44d27" },
-	["ssh"] = { icon = wezterm.nerdfonts.md_server, color = "#ff7f50" },
-	["cargo"] = { icon = wezterm.nerdfonts.dev_rust, color = "#dea584" },
-	["go"] = { icon = wezterm.nerdfonts.md_language_go, color = "#00add8" },
-	["lazygit"] = { icon = wezterm.nerdfonts.dev_git, color = "#f44d27" },
-}
-local default_icon = { icon = wezterm.nerdfonts.md_console, color = "#ae8b2d" }
-
--- paneのタイトルからプロセス名を抽出してアイコンを返す
-local function get_process_icon(pane_title)
-	local title = pane_title:lower()
-	for process, info in pairs(process_icons) do
-		if title == process or title:find(process) then
-			return info
-		end
-	end
-	return default_icon
-end
-
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-	local background = scheme.brights[1] -- bright black (gray)
-	local foreground = scheme.foreground
-	local edge_background = "none"
-	local has_notif = notify.has_notification(tab.tab_id)
-	if tab.is_active then
-		background = scheme.ansi[4] -- yellow
-		foreground = scheme.background
-	elseif has_notif then
-		background = scheme.ansi[2] -- red（未読通知）
-		foreground = scheme.background
-	end
-	local edge_foreground = background
-	-- タブタイトルから "Copy mode: " を除去
-	local pane_title = tab.active_pane.title:gsub("^Copy mode: ", "")
-	local proc = get_process_icon(pane_title)
-	local notif_icon = has_notif and "🔔 " or ""
-	local title = " " .. notif_icon .. wezterm.truncate_right(pane_title, max_width - 1) .. " "
-	return {
-		{ Background = { Color = edge_background } },
-		{ Foreground = { Color = proc.color } },
-		{ Text = proc.icon },
-		{ Text = " " },
-		{ Foreground = { Color = edge_foreground } },
-		{ Text = SOLID_LEFT_CIRCLE },
-		{ Background = { Color = background } },
-		{ Foreground = { Color = foreground } },
-		{ Text = title },
-		{ Background = { Color = edge_background } },
-		{ Foreground = { Color = edge_foreground } },
-		{ Text = SOLID_RIGHT_CIRCLE },
-	}
-end)
-
--- ステータスバーに現在のモードを表示
-wezterm.on("update-status", function(window, pane)
+-- 未読通知の tab 表示は tab bar と一緒に廃止したため、
+-- active tab の通知状態だけを継続してクリアする。
+wezterm.on("update-status", function(window, _pane)
 	notify.clear_active_tab(window)
-
-	local mode = window:active_key_table()
-	local mode_text = "NORMAL"
-	local mode_color = scheme.ansi[3] -- green
-
-	if mode == "copy_mode" then
-		mode_text = "COPY"
-		mode_color = scheme.ansi[6] -- magenta
-	elseif mode == "search_mode" then
-		mode_text = "SEARCH"
-		mode_color = scheme.ansi[7] -- cyan
-	end
-
-	window:set_right_status(wezterm.format({
-		{ Foreground = { Color = scheme.background } },
-		{ Background = { Color = mode_color } },
-		{ Text = " " .. mode_text .. " " },
-	}))
 end)
 
 -- ********** Keybindings **********
@@ -173,6 +63,10 @@ config.keys = {
 	-- Disable conflicting defaults
 	{ key = "L", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
 	{ key = "N", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+	-- tab は Herdr で管理する。tab bar が無効で新しい tab を視認できないため、
+	-- WezTerm 側の tab 生成は割り当てず既定の割り当ても無効化する。
+	{ key = "T", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+	{ key = "t", mods = "SUPER", action = act.DisableDefaultAssignment },
 
 	-- Split pane (Ctrl+Shift+' : right, Ctrl+Shift+; : down)
 	{
@@ -242,13 +136,6 @@ config.keys = {
 		action = act.ScrollByPage(-1),
 	},
 
-	-- Create tab (Ctrl+Shift+t)
-	{
-		key = "phys:t",
-		mods = "CTRL|SHIFT",
-		action = act.SpawnTab("CurrentPaneDomain"),
-	},
-
 	-- Send Herdr shortcuts with CSI-u so modifiers survive terminal input.
 	{
 		key = "phys:w",
@@ -262,23 +149,23 @@ config.keys = {
 	},
 	{
 		key = "phys:Comma",
-		mods = "CTRL|SHIFT",
-		action = act.SendString("\x1b[60;6u"),
+		mods = "CTRL",
+		action = act.SendString("\x1b[44;5u"),
 	},
 	{
-		key = "mapped:<",
+		key = "mapped:,",
 		mods = "CTRL",
-		action = act.SendString("\x1b[60;6u"),
+		action = act.SendString("\x1b[44;5u"),
 	},
 	{
 		key = "phys:Period",
-		mods = "CTRL|SHIFT",
-		action = act.SendString("\x1b[62;6u"),
+		mods = "CTRL",
+		action = act.SendString("\x1b[46;5u"),
 	},
 	{
-		key = "mapped:>",
+		key = "mapped:.",
 		mods = "CTRL",
-		action = act.SendString("\x1b[62;6u"),
+		action = act.SendString("\x1b[46;5u"),
 	},
 	{
 		key = "Escape",

@@ -91,12 +91,14 @@ Herdr では状態検出のみで、native session restore の対象外。zsh co
 適用時に pinned Herdr から生成する。background agent の完了と入力待ちは、Herdr
 client が detach されていても OS の desktop notification で表示する。
 tab / pane 操作は prefix なしの direct keybinding とし、必須の prefix は `F24` へ
-退避する。`ctrl+esc` で detach し、`ctrl+t`、`ctrl+<` / `ctrl+>`、
+退避する。`ctrl+esc` で detach し、`ctrl+t`、`ctrl+,` / `ctrl+.`、
 `ctrl+q/w/e/r`、`ctrl+;` / `ctrl+'` を tab 作成、tab 移動、pane 移動、pane 分割に
 割り当てる。WezTerm は修飾が失われるキーを CSI-u sequence として Herdr へ送る。
 Hammerspoon の `ctrl+w` / `ctrl+shift+w` 単語選択リマップは WezTerm が前面の間だけ
 無効化し、他のアプリでは維持する。これらの direct keybinding は Herdr 内の
-pane application より優先される。
+pane application より優先される。tab の管理は Herdr に一元化したため WezTerm 側の
+tab bar は非表示にし、tab タイトルの装飾と tab bar 上のモード表示、および
+tab 生成の `ctrl+shift+t` / `cmd+t` は廃止する。
 ローカルの対話型 terminal では `.zshrc` から session list を `fzf` で表示し、
 既存 session の開始・再接続または名前つき session の新規作成を選べる。Esc なら
 通常 shell に残る。Herdr pane 内、SSH、tmux / Zellij、IDE 内 terminal、非 TTY は
