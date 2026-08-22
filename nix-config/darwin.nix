@@ -130,7 +130,6 @@
       "session-manager-plugin"
       "raycast"
       "hammerspoon"
-      "alt-tab"
       "betterdisplay"
       "hiddenbar"
       "appcleaner"
