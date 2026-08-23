@@ -15,7 +15,7 @@ let
   # oxker の aarch64-darwin での snapshot テスト問題を回避するため、
   # macOS のみ doCheck = false で build する。Linux では素のまま。
   oxkerForPlatform =
-    if pkgs.stdenv.isDarwin
+    if pkgs.stdenv.hostPlatform.isDarwin
     then pkgs.oxker.overrideAttrs (_prev: { doCheck = false; })
     else pkgs.oxker;
 
@@ -86,19 +86,23 @@ let
   # colima: macOS 上で Linux VM + Docker engine を提供。Linux では不要 (native)。
   # docker / docker-compose / docker-credential-helpers: macOS では colima と組で
   #   CLI を Nix 管理する。Linux では distro 側 (apt/dnf) で daemon + CLI を用意する方針。
+  # rift-wm: macOS 専用の tiling window manager。meta.platforms が aarch64-darwin
+  #   のみなので Apple Silicon 前提 (darwin.nix の hostPlatform と一致)。launchd への
+  #   登録は rift 自身が `rift service install` で行うため nix-darwin 側では扱わない。
   darwinOnlyPackages = with pkgs; [
     colima
     docker
     docker-compose
     docker-credential-helpers
+    rift-wm
   ];
 
   # Linux 固有の package (現時点で空)。
   linuxOnlyPackages = [ ];
 
   platformPackages =
-    if pkgs.stdenv.isDarwin then darwinOnlyPackages
-    else if pkgs.stdenv.isLinux then linuxOnlyPackages
+    if pkgs.stdenv.hostPlatform.isDarwin then darwinOnlyPackages
+    else if pkgs.stdenv.hostPlatform.isLinux then linuxOnlyPackages
     else [ ];
 
   # private マシン (chezmoi data の private=true) でのみ管理する package。

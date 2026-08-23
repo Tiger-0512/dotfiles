@@ -11,6 +11,7 @@
 | macOS システム設定             | [nix-darwin](https://github.com/LnL7/nix-darwin)                                                                                | `nix-config/darwin.nix` (Homebrew cask, launchd, Touch ID sudo)  |
 | GUI アプリ (macOS)             | Homebrew Cask                                                                                                                   | `nix-config/darwin.nix` の `homebrew.casks` で宣言                |
 | Agent workspace                | [Herdr](https://herdr.dev/)                                                                                                    | 公式 Nix flake の安定版タグを固定し、macOS / Linux 共通で導入    |
+| ウィンドウ管理 (macOS)         | [Rift](https://github.com/acsandmann/rift)                                                                                      | `nix-config/home.nix` の macOS 専用 package として導入            |
 
 > Nix packages は `home.nix` で一元管理され、macOS / Linux で同じリストが共有されます。
 > macOS では nix-darwin が home-manager を取り込む形で、Linux では standalone home-manager として適用できます。
@@ -117,6 +118,24 @@ integration がなければ、home-manager / darwin switch を再実行する:
 ```sh
 herdr integration status
 ```
+
+### Rift (macOS の tiling window manager)
+
+[Rift](https://github.com/acsandmann/rift) は nixpkgs の `rift-wm` として
+`home.nix` の macOS 専用 package で導入する。`meta.platforms` が `aarch64-darwin`
+のみなので Apple Silicon 専用で、Linux の `homeConfigurations` には含まれない。
+
+switch ではインストールまでしか行われないので、launchd への登録は初回だけ手動で
+実行する。その後 macOS のアクセシビリティ権限を許可し、`alt+z` で space の管理を
+有効化する (SIP の無効化は不要)。
+
+```sh
+rift service install
+rift service start
+```
+
+設定ファイルは `~/.config/rift/config.toml` (TOML)。既定値は upstream の
+`rift.default.toml` を参照。現時点では dotfiles 管理下に置いていない。
 
 ### 補足
 
