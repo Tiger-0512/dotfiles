@@ -79,7 +79,6 @@ rift-service:
       exit 0
     fi
     rift service start
-    echo "rift service started (初回はアクセシビリティ権限の許可と alt+z が必要)"
 
 # Linux: standalone home-manager を反映
 #   --impure = flake.nix が builtins.getEnv "USER" を使うため

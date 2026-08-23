@@ -131,8 +131,9 @@ subcommand で行う。`Justfile` の `rift-service` recipe に寄せてあり�
 内容の再同期を含む冪等な自己修復動作なので、switch のたびに流して問題ない
 (`rift service install` は plist が既にあると失敗するため使わない)。
 
-その後 macOS のアクセシビリティ権限を許可し、`alt+z` で space の管理を
-有効化する (SIP の無効化は不要)。
+その後 macOS のアクセシビリティ権限を許可する。権限付与後は `rift service restart`
+が必要。既定では space が非管理状態で始まるので、`alt+z` (`⌥Z`) または
+`rift-cli execute toggle-space-activated` で管理を有効化する (SIP の無効化は不要)。
 
 ```sh
 just rift-service   # = rift service start (単体で叩く場合)
