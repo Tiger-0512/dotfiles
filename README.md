@@ -125,13 +125,17 @@ herdr integration status
 `home.nix` の macOS 専用 package で導入する。`meta.platforms` が `aarch64-darwin`
 のみなので Apple Silicon 専用で、Linux の `homeConfigurations` には含まれない。
 
-switch ではインストールまでしか行われないので、launchd への登録は初回だけ手動で
-実行する。その後 macOS のアクセシビリティ権限を許可し、`alt+z` で space の管理を
+switch ではインストールまでしか行われないので、launchd への登録は Rift 自身の
+subcommand で行う。`Justfile` の `rift-service` recipe に寄せてあり、`just switch`
+から後続実行されるため通常は手動操作が不要。`rift service start` は plist の作成と
+内容の再同期を含む冪等な自己修復動作なので、switch のたびに流して問題ない
+(`rift service install` は plist が既にあると失敗するため使わない)。
+
+その後 macOS のアクセシビリティ権限を許可し、`alt+z` で space の管理を
 有効化する (SIP の無効化は不要)。
 
 ```sh
-rift service install
-rift service start
+just rift-service   # = rift service start (単体で叩く場合)
 ```
 
 設定ファイルは `~/.config/rift/config.toml` (TOML)。既定値は upstream の

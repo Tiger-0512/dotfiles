@@ -88,7 +88,8 @@ let
   #   CLI を Nix 管理する。Linux では distro 側 (apt/dnf) で daemon + CLI を用意する方針。
   # rift-wm: macOS 専用の tiling window manager。meta.platforms が aarch64-darwin
   #   のみなので Apple Silicon 前提 (darwin.nix の hostPlatform と一致)。launchd への
-  #   登録は rift 自身が `rift service install` で行うため nix-darwin 側では扱わない。
+  #   登録は rift 自身の `rift service start` が行うため nix-darwin 側では扱わず、
+  #   Justfile の rift-service recipe (switch から自動実行) に任せる。
   darwinOnlyPackages = with pkgs; [
     colima
     docker
