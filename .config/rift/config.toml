@@ -425,6 +425,12 @@ comb1 = "Alt + Shift"
 "Alt + X" = "prev_workspace"
 "Alt + C" = "next_workspace"
 
+# フォーカス中ウィンドウを前後のワークスペースへ移動する
+# （move_window_to_workspace の prev/next はキー入力元の space/workspace に作用する。
+#   follow は当バージョン非対応のため付けない）
+"Alt + Shift + X" = { move_window_to_workspace = "prev" }
+"Alt + Shift + C" = { move_window_to_workspace = "next" }
+
 # commands to change the layout engine of the active workspace
 # "Alt + Ctrl + 1" = { set_workspace_layout = { mode = "traditional" } }
 # "Alt + Ctrl + 2" = { set_workspace_layout = { mode = "bsp" } }
@@ -461,8 +467,8 @@ comb1 = "Alt + Shift"
 # Move a window to a display (by index, UUID, or direction)
 # "Alt + Ctrl + Up" = { move_window_to_display = { selector = "up" } }
 # "Alt + Ctrl + Down" = { move_window_to_display = { selector = "down" } }
-# "Alt + Ctrl + Left" = { move_window_to_display = { selector = "left" } }
-# "Alt + Ctrl + Right" = { move_window_to_display = { selector = "right" } }
+"Alt + Ctrl + Left" = { move_window_to_display = { selector = "left" } }
+"Alt + Ctrl + Right" = { move_window_to_display = { selector = "right" } }
 # "Alt + Ctrl + A" = { move_window_to_display = { selector = 0 } }
 
 # if mission control is enabled
