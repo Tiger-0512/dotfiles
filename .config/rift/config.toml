@@ -8,6 +8,7 @@
 #
 # 上流からの変更点 (rift 更新時はここを見て追従する):
 #   - [settings.ui.menu_bar] enabled = false -> true
+#   - [keys] toggle_orientation: "Alt + Slash" -> "Alt + Period"
 #
 # 上流に新しいフィールドが増えた場合は既定値で補完されるので壊れないが、
 # フィールドが削除・改名された場合は deny_unknown_fields でパースが失敗する。
@@ -434,8 +435,10 @@ comb1 = "Alt + Shift"
 "Alt + Shift + Right" = { join_window = "right" }
 "Alt + Shift + Up" = { join_window = "up" }
 "Alt + Shift + Down" = { join_window = "down" }
+# toggle_stack と toggle_orientation は対で使うので、隣り合ったキーに揃える
+# (上流は Alt + Comma / Alt + Slash)
 "Alt + Comma" = "toggle_stack"
-"Alt + Slash" = "toggle_orientation"
+"Alt + Period" = "toggle_orientation"
 "Alt + Ctrl + E" = "unjoin_windows"
 
 "Alt + Shift + Space" = "toggle_window_floating"
