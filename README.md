@@ -91,17 +91,33 @@ Native agent session restore は Claude Code と Codex で利用する。Kiro CL
 Herdr では状態検出のみで、native session restore の対象外。zsh completion は Nix
 適用時に pinned Herdr から生成する。background agent の完了と入力待ちは、Herdr
 client が detach されていても OS の desktop notification で表示する。
-tab / pane 操作は prefix なしの direct keybinding とし、必須の prefix は `F24` へ
-退避する。`ctrl+esc` で detach し、`ctrl+t`、`ctrl+,` / `ctrl+.`、
-`ctrl+q/w/e/r`、`ctrl+;` / `ctrl+'`、`ctrl+shift+h/j/k/l`、`ctrl+y` を tab 作成、
-tab 移動、pane 移動、pane 分割、pane リサイズ、copy mode に割り当てる。WezTerm は
-修飾が失われるキーを CSI-u sequence として Herdr へ送る。pane scrollback の scroll は
-Herdr が修飾なしの `pageup` / `pagedown` を intercept するため、WezTerm 側で
-`ctrl+u` / `ctrl+i` をその escape sequence に変換して下 / 上へ scroll できるように
-している。
-Hammerspoon の `ctrl+w` / `ctrl+shift+w` 単語選択リマップは WezTerm が前面の間だけ
-無効化し、他のアプリでは維持する。これらの direct keybinding は Herdr 内の
-pane application より優先される。tab / pane の管理は Herdr に一元化したため
+tab / pane / space 操作は prefix なしの direct keybinding とし、必須の prefix は
+`F24` へ退避する。`ctrl+esc` で detach し、`ctrl+t`、`ctrl+y` / `ctrl+o`、
+`ctrl+i` / `ctrl+u`、`ctrl+shift+s`、`ctrl+q/w/e/r`、`ctrl+;` / `ctrl+'`、
+`ctrl+shift+h/j/k/l`、`ctrl+shift+y` を tab 作成、tab 移動、space 移動 (上 / 下)、
+space 新規作成、pane 移動、pane 分割、pane リサイズ、copy mode に割り当てる。
+WezTerm は修飾が失われるキー (`ctrl+shift+<英字>` と、legacy encoding が `Tab` と
+同じ `ctrl+i`) を CSI-u sequence として Herdr へ送る。
+scroll は Herdr の `[keys]` に action が無く、client が scroll を発行する入力経路は
+マウスホイールと修飾なしの `pageup` / `pagedown` (ページ単位) の 2 つだけ。行単位で
+動かしたいので `ctrl+,` (下) / `ctrl+.` (上) は Hammerspoon の
+`hs.eventtap.event.newScrollEvent` で本物のスクロールホイールイベントを送る形にし、
+Herdr の `[ui] mouse_scroll_lines` (既定 3 行) 単位で動かす。WezTerm 以外の
+全アプリでも同じキーで scroll できる。ホイールイベントはキーボードフォーカスでは
+なくイベント座標で配送先が決まるため、座標を前面ウィンドウの中心に設定して前面
+アプリへ直接 post している (pane 分割時はフォーカス中の pane ではなくウィンドウ中心
+の pane が動くので、フォーカス基準で動かしたい時は素の `pageup` / `pagedown` を
+使う)。キーをシステム全体で奪うので、環境設定が `cmd+,` の macOS では GUI アプリと
+衝突せず、legacy control code を持たないため shell や TUI の既定 binding とも
+重ならない `ctrl+,` / `ctrl+.` を選んでいる。
+`ctrl+a` は入力待ち (`blocked`) の agent の pane へ focus する。Herdr にはこの
+action が無いため、`[[keys.command]]` の shell 実行から
+`.config/herdr/focus-waiting-agent.sh` を呼び、`herdr agent list` の状態を見て
+`herdr agent focus` する。`blocked` を優先し、次に `done`。連打でキューを巡回する。
+Hammerspoon の `ctrl+w` / `ctrl+shift+w` (単語選択)、`ctrl+i` (行頭)、`ctrl+a`
+(行末) のリマップは WezTerm が前面の間だけ無効化し、他のアプリでは維持する
+(`hs.hotkey` はシステム全体で先にキーを奪うため)。これらの direct keybinding は
+Herdr 内の pane application より優先される。tab / pane の管理は Herdr に一元化したため
 WezTerm 側の tab bar は非表示にし、tab タイトルの装飾と tab bar 上のモード表示は
 廃止する。tab / pane / scroll / copy mode の WezTerm 既定 keybinding も
 `DisableDefaultAssignment` で無効化してキーを Herdr へ通し、WezTerm 側には
@@ -139,8 +155,21 @@ subcommand で行う。`Justfile` の `rift-service` recipe に寄せてあり�
 just rift-service   # = rift service start (単体で叩く場合)
 ```
 
-設定ファイルは `~/.config/rift/config.toml` (TOML)。既定値は upstream の
-`rift.default.toml` を参照。現時点では dotfiles 管理下に置いていない。
+設定は `.config/rift/config.toml` で管理する。**上流 `rift.default.toml` の全文
+コピーがベース**で、差分だけを書くことはできない。rift は config をデフォルトと
+マージせず丸ごとパースし、`settings` / `keys` / `virtual_workspaces` が必須
+フィールドなので、一部だけ書くと `keys` が空になり `alt+z` を含む全キーバインドが
+消える。上流からの変更点はファイル冒頭のコメントに列挙している。
+
+反映は再起動不要:
+
+```sh
+rift-cli execute config reload
+```
+
+`[settings.ui.menu_bar] enabled = true` にしてメニューバー表示を有効にしている。
+常時見える帯は workspace インジケータで、クリックして開くドロップダウンの
+`Enable Tiling` のチェックマークが `alt+z` の状態 (space の管理 on/off) を示す。
 
 ### 補足
 
@@ -171,6 +200,7 @@ just rift-service   # = rift service start (単体で叩く場合)
 | [LazyGit](https://github.com/jesseduffield/lazygit)    | Git UI                  | `.config/lazygit/config.yml`    |
 | [GitUI](https://github.com/extrawurst/gitui)           | Git UI                  | `.config/gitui/`                |
 | [Hammerspoon](https://www.hammerspoon.org/)            | macOS自動化             | `.hammerspoon/`                 |
+| [Rift](https://github.com/acsandmann/rift)             | ウィンドウ管理 (macOS)  | `.config/rift/config.toml`      |
 
 ※ Alacritty, tmux, Zellij, lf, GitUIは現在利用していないため古い設定になっている可能性があります。
 
@@ -250,10 +280,11 @@ Vimライクなカーソル移動をシステム全体で有効化。
 | キー               | 機能                      |
 | ------------------ | ------------------------- |
 | `Ctrl+h/j/k/l`     | カーソル移動 (左/下/上/右) |
-| `Ctrl+i`           | 行頭へ移動                |
-| `Ctrl+a`           | 行末へ移動                |
+| `Ctrl+i`           | 行頭へ移動 (WezTerm では無効) |
+| `Ctrl+a`           | 行末へ移動 (WezTerm では無効) |
 | `Ctrl+w`           | 単語選択 (右方向、WezTerm では無効) |
 | `Ctrl+Shift+w`     | 単語選択 (左方向、WezTerm では無効) |
+| `Ctrl+,` / `Ctrl+.`| スクロール (下 / 上、全アプリ共通)  |
 
 ### ターミナル起動
 

@@ -1,3 +1,7 @@
+-- `hs` CLI (hs -c '...') から設定の reload や動作確認をできるようにする。
+-- ローカルの message port が開くだけで、外部からは接続できない。
+require("hs.ipc")
+
 hs.hotkey.alertDuration = 0
 hs.hints.showTitleThresh = 0
 hs.window.animationDuration = 0
@@ -77,29 +81,45 @@ local function isGhostty()
 	return app and app:name() == "Ghostty"
 end
 
-local ctrlShiftWRemap = pressFn({ "alt", "shift" }, "left")
-local ctrlShiftWHotkey = hs.hotkey.bind({ "ctrl", "shift" }, "w", ctrlShiftWRemap, nil, ctrlShiftWRemap)
-local ctrlWRemap = pressFn({ "alt", "shift" }, "right")
-local ctrlWHotkey = hs.hotkey.bind({ "ctrl" }, "w", ctrlWRemap, nil, ctrlWRemap)
+-- WezTerm が前面の間だけ無効化するリマップ。
+-- hs.hotkey はシステム全体で先にキーを奪うため、同じキーを WezTerm 内の Herdr の
+-- direct keybinding として使うものは前面判定で明示的に譲る必要がある。
+--   ctrl+w       -> Herdr: focus_pane_down
+--   ctrl+shift+w -> WezTerm: 新規ウィンドウ
+--   ctrl+i       -> Herdr: previous_workspace (上の space へ)
+--   ctrl+a       -> Herdr: 入力待ち agent の pane へ focus (keys.command)
+local weztermYieldingRemaps = {
+	{ mods = { "ctrl", "shift" }, key = "w", press = pressFn({ "alt", "shift" }, "left") },
+	{ mods = { "ctrl" }, key = "w", press = pressFn({ "alt", "shift" }, "right") },
+	{ mods = { "ctrl" }, key = "i", press = pressFn({ "cmd" }, "left") },
+	{ mods = { "ctrl" }, key = "a", press = pressFn({ "cmd" }, "right") },
+}
 
-local function updateCtrlWHotkeys()
+local weztermYieldingHotkeys = {}
+for _, entry in ipairs(weztermYieldingRemaps) do
+	table.insert(weztermYieldingHotkeys, hs.hotkey.bind(entry.mods, entry.key, entry.press, nil, entry.press))
+end
+
+local function updateWeztermYieldingHotkeys()
 	local app = hs.application.frontmostApplication()
-	if app and app:name() == "WezTerm" then
-		ctrlShiftWHotkey:disable()
-		ctrlWHotkey:disable()
-	else
-		ctrlShiftWHotkey:enable()
-		ctrlWHotkey:enable()
+	local inWezTerm = app ~= nil and app:name() == "WezTerm"
+	for _, hotkey in ipairs(weztermYieldingHotkeys) do
+		if inWezTerm then
+			hotkey:disable()
+		else
+			hotkey:enable()
+		end
 	end
 end
 
-ctrlWAppWatcher = hs.application.watcher.new(function(_, eventType)
+-- watcher は GC されると通知が止まるのでグローバルに保持する
+weztermAppWatcher = hs.application.watcher.new(function(_, eventType)
 	if eventType == hs.application.watcher.activated then
-		updateCtrlWHotkeys()
+		updateWeztermYieldingHotkeys()
 	end
 end)
-ctrlWAppWatcher:start()
-updateCtrlWHotkeys()
+weztermAppWatcher:start()
+updateWeztermYieldingHotkeys()
 
 -- remapKey({ "ctrl", "shift" }, "h", function()
 -- 	if isGhostty() then
@@ -121,8 +141,62 @@ remapKey({ "ctrl" }, "h", pressFn("left"))
 remapKey({ "ctrl" }, "j", pressFn("down"))
 remapKey({ "ctrl" }, "k", pressFn("up"))
 remapKey({ "ctrl" }, "l", pressFn("right"))
-remapKey({ "ctrl" }, "i", pressFn({ "cmd" }, "left"))
-remapKey({ "ctrl" }, "a", pressFn({ "cmd" }, "right"))
+-- ctrl+i (行頭) / ctrl+a (行末) は weztermYieldingRemaps 側で bind している
+
+-- ctrl+, (下) / ctrl+. (上) でスクロール。
+-- page key の代わりに本物のスクロールホイールイベントを送るので、行単位で動き、
+-- WezTerm (Herdr) だけでなくブラウザなど全アプリで効く。Herdr は
+-- mouse_capture = true でホイールを受け取り、[ui] mouse_scroll_lines (既定 3) 行ずつ
+-- pane scrollback を動かす。
+--
+-- キーをグローバルに奪うので競合の少ない ctrl+, / ctrl+. を使う。macOS の環境設定は
+-- cmd+, なので GUI アプリと衝突せず、`,` / `.` には legacy control code が無いので
+-- shell や TUI が既定で bind することもない (Herdr の tab 移動も ctrl+y / ctrl+o へ
+-- 移したので空いている)。
+--
+-- ホイールイベントの配送先はキーボードフォーカスではなく**マウスポインタの位置**で
+-- 決まる。CGEvent の location を書き換えても HID tap 経由の post では無視され、
+-- 特定 pid への post (CGEventPostToPid) も mouse 系イベントでは配送されないことが
+-- 多いので、どちらも使わずに素の post だけを行う。
+-- したがってスクロール対象は「ポインタの下にあるもの」になる。ポインタが前面
+-- ウィンドウの外にある時だけ、一時的にウィンドウ中心へ移してから post する
+-- (window server が非同期に hit-test するので、戻すのは少し遅らせる)。
+-- Herdr で pane を分割している場合はフォーカス中の pane ではなくポインタの下の pane が
+-- 動く。フォーカス基準で確実に動かしたい時は素の pageup / pagedown を使う
+-- (Herdr は修飾なしの page key を intercept する)。
+local SCROLL_LINES = 3
+
+local function insideFrame(point, frame)
+	return point.x >= frame.x
+		and point.x <= frame.x + frame.w
+		and point.y >= frame.y
+		and point.y <= frame.y + frame.h
+end
+
+local function scrollFn(lines)
+	return function()
+		local win = hs.window.focusedWindow()
+		local frame = win and win:frame()
+		local origin = hs.mouse.absolutePosition()
+
+		local warped = false
+		if frame and not insideFrame(origin, frame) then
+			hs.mouse.absolutePosition({ x = frame.x + frame.w / 2, y = frame.y + frame.h / 2 })
+			warped = true
+		end
+
+		hs.eventtap.event.newScrollEvent({ 0, lines }, {}, "line"):post()
+
+		if warped then
+			hs.timer.doAfter(0.05, function()
+				hs.mouse.absolutePosition(origin)
+			end)
+		end
+	end
+end
+
+remapKey({ "ctrl" }, ",", scrollFn(-SCROLL_LINES))
+remapKey({ "ctrl" }, ".", scrollFn(SCROLL_LINES))
 
 ----------------------------------------------------------------------------------------------------
 -- Open terminal with Second Alt(Option)
