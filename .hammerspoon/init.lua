@@ -84,14 +84,12 @@ end
 -- WezTerm が前面の間だけ無効化するリマップ。
 -- hs.hotkey はシステム全体で先にキーを奪うため、同じキーを WezTerm 内の Herdr の
 -- direct keybinding として使うものは前面判定で明示的に譲る必要がある。
---   ctrl+w       -> Herdr: focus_pane_down
+--   ctrl+w       -> WezTerm 内の shell / TUI
 --   ctrl+shift+w -> WezTerm: 新規ウィンドウ
---   ctrl+i       -> Herdr: previous_workspace (上の space へ)
 --   ctrl+a       -> Herdr: 入力待ち agent の pane へ focus (keys.command)
 local weztermYieldingRemaps = {
 	{ mods = { "ctrl", "shift" }, key = "w", press = pressFn({ "alt", "shift" }, "left") },
 	{ mods = { "ctrl" }, key = "w", press = pressFn({ "alt", "shift" }, "right") },
-	{ mods = { "ctrl" }, key = "i", press = pressFn({ "cmd" }, "left") },
 	{ mods = { "ctrl" }, key = "a", press = pressFn({ "cmd" }, "right") },
 }
 
@@ -141,18 +139,14 @@ remapKey({ "ctrl" }, "h", pressFn("left"))
 remapKey({ "ctrl" }, "j", pressFn("down"))
 remapKey({ "ctrl" }, "k", pressFn("up"))
 remapKey({ "ctrl" }, "l", pressFn("right"))
--- ctrl+i (行頭) / ctrl+a (行末) は weztermYieldingRemaps 側で bind している
+remapKey({ "ctrl" }, "i", pressFn({ "cmd" }, "left"))
+-- ctrl+a (行末) は weztermYieldingRemaps 側で bind している
 
--- ctrl+, (下) / ctrl+. (上) でスクロール。
+-- ctrl+shift+a (下) / ctrl+shift+s (上) でスクロール。
 -- page key の代わりに本物のスクロールホイールイベントを送るので、行単位で動き、
 -- WezTerm (Herdr) だけでなくブラウザなど全アプリで効く。Herdr は
 -- mouse_capture = true でホイールを受け取り、[ui] mouse_scroll_lines (既定 3) 行ずつ
 -- pane scrollback を動かす。
---
--- キーをグローバルに奪うので競合の少ない ctrl+, / ctrl+. を使う。macOS の環境設定は
--- cmd+, なので GUI アプリと衝突せず、`,` / `.` には legacy control code が無いので
--- shell や TUI が既定で bind することもない (Herdr の tab 移動も ctrl+y / ctrl+o へ
--- 移したので空いている)。
 --
 -- ホイールイベントの配送先はキーボードフォーカスではなく**マウスポインタの位置**で
 -- 決まる。CGEvent の location を書き換えても HID tap 経由の post では無視され、
@@ -195,8 +189,8 @@ local function scrollFn(lines)
 	end
 end
 
-remapKey({ "ctrl" }, ",", scrollFn(-SCROLL_LINES))
-remapKey({ "ctrl" }, ".", scrollFn(SCROLL_LINES))
+remapKey({ "ctrl", "shift" }, "a", scrollFn(-SCROLL_LINES))
+remapKey({ "ctrl", "shift" }, "s", scrollFn(SCROLL_LINES))
 
 ----------------------------------------------------------------------------------------------------
 -- Open terminal with Second Alt(Option)

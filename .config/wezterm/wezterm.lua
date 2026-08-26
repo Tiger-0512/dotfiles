@@ -62,14 +62,24 @@ end)
 config.keys = {
 	-- Send Herdr shortcuts with CSI-u so modifiers survive terminal input.
 	{
-		key = "phys:w",
+		key = "phys:m",
 		mods = "CTRL",
-		action = act.SendString("\x1b[119;5u"),
+		action = act.SendString("\x1b[109;5u"),
 	},
 	{
-		key = "mapped:w",
+		key = "mapped:m",
 		mods = "CTRL",
-		action = act.SendString("\x1b[119;5u"),
+		action = act.SendString("\x1b[109;5u"),
+	},
+	{
+		key = "phys:Comma",
+		mods = "CTRL",
+		action = act.SendString("\x1b[44;5u"),
+	},
+	{
+		key = "phys:Period",
+		mods = "CTRL",
+		action = act.SendString("\x1b[46;5u"),
 	},
 	{
 		key = "Escape",
@@ -77,7 +87,7 @@ config.keys = {
 		action = act.SendString("\x1b[27;5u"),
 	},
 
-	-- Pane resize (Ctrl+Shift+h/j/k/l -> Herdr resize_pane_*)
+	-- Tab / workspace navigation (Ctrl+Shift+h/j/k/l).
 	-- ctrl+shift+<letter> has no legacy encoding distinct from ctrl+<letter>,
 	-- so CSI-u is required for Herdr to see the shift modifier.
 	{
@@ -101,37 +111,22 @@ config.keys = {
 		action = act.SendString("\x1b[108;6u"),
 	},
 
-	-- Herdr の space (workspace) 移動 (Ctrl+i: 上, Ctrl+u: 下)。
-	-- ctrl+i の legacy encoding は 0x09 = Tab で Tab と区別できないため、
-	-- CSI-u で修飾を保持して送る。ctrl+u は 0x15 で一意なので変換は不要。
-	{
-		key = "phys:i",
-		mods = "CTRL",
-		action = act.SendString("\x1b[105;5u"),
-	},
-	{
-		key = "mapped:i",
-		mods = "CTRL",
-		action = act.SendString("\x1b[105;5u"),
-	},
-
-	-- Copy mode (Ctrl+Shift+y) と space 新規作成 (Ctrl+Shift+s)。
+	-- Copy mode と pane resize mode。
 	-- ctrl+shift+<letter> は legacy encoding で ctrl+<letter> と区別できないため
-	-- CSI-u が必須 (resize の ctrl+shift+h/j/k/l と同じ理由)。
+	-- CSI-u が必須。
 	{
 		key = "phys:y",
 		mods = "CTRL|SHIFT",
 		action = act.SendString("\x1b[121;6u"),
 	},
 	{
-		key = "phys:s",
+		key = "phys:r",
 		mods = "CTRL|SHIFT",
-		action = act.SendString("\x1b[115;6u"),
+		action = act.SendString("\x1b[114;6u"),
 	},
 
-	-- pane scrollback の scroll (Ctrl+,: 下, Ctrl+.: 上) は Hammerspoon 側で
-	-- 本物のスクロールホイールイベントとして送る (init.lua の scrollFn)。
-	-- hs.hotkey がシステム全体で先にキーを奪うため WezTerm 側の割り当ては不要。
+	-- Ctrl+Shift+a / Ctrl+Shift+s の scroll は Hammerspoon 側で本物の
+	-- ホイールイベントとして送る。
 
 	-- Create window (Ctrl+Shift+w)
 	{
@@ -177,6 +172,8 @@ local disabled_default_keys = {
 	{ key = "k", mods = "CTRL|SHIFT" },
 	{ key = "L", mods = "CTRL|SHIFT" },
 	{ key = "l", mods = "CTRL|SHIFT" },
+	{ key = "R", mods = "CTRL|SHIFT" },
+	{ key = "r", mods = "CTRL|SHIFT" },
 	{ key = "U", mods = "CTRL|SHIFT" },
 	{ key = "u", mods = "CTRL|SHIFT" },
 	{ key = "I", mods = "CTRL|SHIFT" },
@@ -190,7 +187,7 @@ local disabled_default_keys = {
 	{ key = "T", mods = "CTRL|SHIFT" },
 	{ key = "t", mods = "SUPER" },
 
-	-- tab 切り替え (Herdr: ctrl+y / ctrl+o)
+	-- tab 切り替え (Herdr: ctrl+shift+h / ctrl+shift+l)
 	{ key = "Tab", mods = "CTRL" },
 	{ key = "Tab", mods = "CTRL|SHIFT" },
 	{ key = "PageUp", mods = "CTRL" },
@@ -220,13 +217,13 @@ local disabled_default_keys = {
 	{ key = "%", mods = "CTRL|ALT|SHIFT" },
 	{ key = "5", mods = "CTRL|ALT|SHIFT" },
 
-	-- pane focus (Herdr: ctrl+q/w/e/r)
+	-- pane focus (Herdr: ctrl+n/m/,/.)
 	{ key = "LeftArrow", mods = "CTRL|SHIFT" },
 	{ key = "RightArrow", mods = "CTRL|SHIFT" },
 	{ key = "UpArrow", mods = "CTRL|SHIFT" },
 	{ key = "DownArrow", mods = "CTRL|SHIFT" },
 
-	-- pane resize (Herdr: prefix+r の resize mode)
+	-- pane resize (Herdr: ctrl+shift+r の resize mode)
 	{ key = "LeftArrow", mods = "CTRL|ALT|SHIFT" },
 	{ key = "RightArrow", mods = "CTRL|ALT|SHIFT" },
 	{ key = "UpArrow", mods = "CTRL|ALT|SHIFT" },
