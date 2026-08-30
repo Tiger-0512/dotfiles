@@ -82,6 +82,11 @@ config.keys = {
 		action = act.SendString("\x1b[46;5u"),
 	},
 	{
+		key = "phys:Slash",
+		mods = "CTRL",
+		action = act.SendString("\x1b[47;5u"),
+	},
+	{
 		key = "Escape",
 		mods = "CTRL",
 		action = act.SendString("\x1b[27;5u"),

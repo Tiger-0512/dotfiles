@@ -196,7 +196,6 @@ zle -N fzf-cdr
 bindkey '^g^f' fzf-cdr
 
 #-------------------- yazi --------------------#
-export EDITOR="nvim"
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	yazi "$@" --cwd-file="$tmp"
