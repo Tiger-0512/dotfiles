@@ -30,7 +30,7 @@ delay_seconds = 1
 # direct bindings for the normal tab and pane workflow.
 prefix = "f24"
 detach = "ctrl+esc"
-new_tab = "ctrl+t"
+new_tab = "ctrl+shift+t"
 previous_tab = "ctrl+shift+h"
 next_tab = "ctrl+shift+l"
 # Spaces (workspaces) are stacked vertically in the sidebar, so "up" is the

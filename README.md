@@ -92,7 +92,7 @@ Herdr では状態検出のみで、native session restore の対象外。zsh co
 適用時に pinned Herdr から生成する。background agent の完了と入力待ちは、Herdr
 client が detach されていても OS の desktop notification で表示する。
 tab / pane / space 操作は prefix なしの direct keybinding とし、必須の prefix は
-`F24` へ退避する。`ctrl+esc` で detach し、`ctrl+t`、`ctrl+shift+h/l`、
+`F24` へ退避する。`ctrl+esc` で detach し、`ctrl+shift+t`、`ctrl+shift+h/l`、
 `ctrl+shift+k/j`、`ctrl+s`、`ctrl+n/m/,/.`、`ctrl+;` / `ctrl+'`、
 `ctrl+shift+r`、`ctrl+shift+y` を tab 作成、tab 移動、space 移動 (上 / 下)、
 space 新規作成、pane 移動、pane 分割、pane resize mode、copy mode に割り当てる。

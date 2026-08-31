@@ -92,9 +92,14 @@ config.keys = {
 		action = act.SendString("\x1b[27;5u"),
 	},
 
-	-- Tab / workspace navigation (Ctrl+Shift+h/j/k/l).
+	-- Tab creation/navigation and workspace navigation (Ctrl+Shift+t/h/j/k/l).
 	-- ctrl+shift+<letter> has no legacy encoding distinct from ctrl+<letter>,
 	-- so CSI-u is required for Herdr to see the shift modifier.
+	{
+		key = "phys:t",
+		mods = "CTRL|SHIFT",
+		action = act.SendString("\x1b[116;6u"),
+	},
 	{
 		key = "phys:h",
 		mods = "CTRL|SHIFT",
@@ -188,7 +193,7 @@ local disabled_default_keys = {
 	{ key = ":", mods = "CTRL|SHIFT" },
 	{ key = ";", mods = "CTRL|SHIFT" },
 
-	-- tab 生成 (Herdr: ctrl+t)
+	-- tab 生成 (Herdr: ctrl+shift+t)
 	{ key = "T", mods = "CTRL|SHIFT" },
 	{ key = "t", mods = "SUPER" },
 
