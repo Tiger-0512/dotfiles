@@ -101,7 +101,7 @@ WezTerm は修飾が失われるキー (`ctrl+shift+<英字>`、legacy encoding 
 として Herdr へ送る。
 scroll は Herdr の `[keys]` に action が無く、client が scroll を発行する入力経路は
 マウスホイールと修飾なしの `pageup` / `pagedown` (ページ単位) の 2 つだけ。行単位で
-動かしたいので `ctrl+shift+a` (下) / `ctrl+shift+s` (上) は Hammerspoon の
+動かしたいので `ctrl+shift+s` (下) / `ctrl+shift+d` (上) は Hammerspoon の
 `hs.eventtap.event.newScrollEvent` で本物のスクロールホイールイベントを送る形にし、
 Herdr の `[ui] mouse_scroll_lines` (既定 3 行) 単位で動かす。WezTerm 以外の
 全アプリでも同じキーで scroll できる。ホイールイベントはキーボードフォーカスでは

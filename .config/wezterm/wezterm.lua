@@ -135,7 +135,7 @@ config.keys = {
 		action = act.SendString("\x1b[114;6u"),
 	},
 
-	-- Ctrl+Shift+a / Ctrl+Shift+s の scroll は Hammerspoon 側で本物の
+	-- Ctrl+Shift+s / Ctrl+Shift+d の scroll は Hammerspoon 側で本物の
 	-- ホイールイベントとして送る。
 
 	-- Create window (Ctrl+Shift+w)

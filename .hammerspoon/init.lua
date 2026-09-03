@@ -142,7 +142,7 @@ remapKey({ "ctrl" }, "l", pressFn("right"))
 remapKey({ "ctrl" }, "i", pressFn({ "cmd" }, "left"))
 -- ctrl+a (行末) は weztermYieldingRemaps 側で bind している
 
--- ctrl+shift+a (下) / ctrl+shift+s (上) でスクロール。
+-- ctrl+shift+s (下) / ctrl+shift+d (上) でスクロール。
 -- page key の代わりに本物のスクロールホイールイベントを送るので、行単位で動き、
 -- WezTerm (Herdr) だけでなくブラウザなど全アプリで効く。Herdr は
 -- mouse_capture = true でホイールを受け取り、[ui] mouse_scroll_lines (既定 3) 行ずつ
@@ -189,8 +189,8 @@ local function scrollFn(lines)
 	end
 end
 
-remapKey({ "ctrl", "shift" }, "a", scrollFn(-SCROLL_LINES))
-remapKey({ "ctrl", "shift" }, "s", scrollFn(SCROLL_LINES))
+remapKey({ "ctrl", "shift" }, "s", scrollFn(-SCROLL_LINES))
+remapKey({ "ctrl", "shift" }, "d", scrollFn(SCROLL_LINES))
 
 ----------------------------------------------------------------------------------------------------
 -- Open terminal with Second Alt(Option)
