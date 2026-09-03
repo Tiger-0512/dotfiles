@@ -112,7 +112,10 @@
     onActivation = {
       autoUpdate = false;
       upgrade = false;
-      cleanup = "uninstall";
+      # nix-darwin が --force-cleanup を渡すが Homebrew 5.x では --cleanup に改名済み。
+      # cleanup = "uninstall" は使わず extraFlags で代替する。
+      cleanup = "none";
+      extraFlags = [ "--cleanup" ];
     };
 
     taps = [
