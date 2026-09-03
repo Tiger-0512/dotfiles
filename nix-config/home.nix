@@ -118,6 +118,7 @@ let
 
   personalPackages = lib.optionals nixPersonalEnabled (with pkgs; [
     kiro-cli
+    codex
   ]);
 in
 {
