@@ -48,10 +48,16 @@ cd ~/dotfiles/nix-config
 # 3. home-manager で初回 bootstrap
 #    - `switch` を使う (`init --switch` は flake の homeConfigurations を
 #      無視してテンプレート home.nix を当ててしまうため NG)
-#    - `--impure` は flake.nix の `builtins.getEnv "USER"` のため必要
+#    - `--impure` は flake.nix の `builtins.getEnv "USER"` のため必要。
+#      2 箇所に必要な点に注意:
+#        * `nix run --impure` … home-manager 本体を取得する外側の nix
+#        * `-- switch ... --impure` … home-manager が内部で呼ぶ nix build に
+#          転送される。これが無いと getEnv が空文字列を返し
+#          `A definition for option 'home.username' is not of type
+#           'non-empty string'` で落ちる。
 #    - `NIXPKGS_ALLOW_UNFREE=1` は kiro-cli (unfree) を入れるため必要
 NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- \
-    switch --flake .#default
+    switch --flake .#default --impure
 ```
 
 Linux では nix-darwin を使わないので、docker 等の system-level サービスが必要な場合は distro 側 (apt / dnf / systemd) で別途 install する。
@@ -73,8 +79,10 @@ git diff flake.lock
 darwin-rebuild switch --flake .#default --impure
 
 # Linux
+# 末尾の --impure は home-manager が内部で呼ぶ nix build 用
+# (前段の `nix run --impure` とは別に必要)。
 NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- \
-    switch --flake .#default
+    switch --flake .#default --impure
 ```
 
 特定 input だけ更新する場合は `nix flake update nixpkgs`(など)。

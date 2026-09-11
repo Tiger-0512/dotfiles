@@ -81,12 +81,15 @@ rift-service:
     rift service start
 
 # Linux: standalone home-manager を反映
-#   --impure = flake.nix が builtins.getEnv "USER" を使うため
+#   --impure = flake.nix が builtins.getEnv "USER" を使うため。2 箇所必要:
+#     nix run --impure     … home-manager 本体を取得する外側の nix 用
+#     switch ... --impure  … home-manager が内部で呼ぶ nix build へ転送される。
+#                            無いと getEnv が空を返し home.username の型検査で落ちる。
 #   NIXPKGS_ALLOW_UNFREE=1 = kiro-cli が unfree のため
 [linux]
 [doc('Linux: standalone home-manager を反映')]
 switch:
-    cd {{ nix_config }} && NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- switch --flake .#default
+    cd {{ nix_config }} && NIXPKGS_ALLOW_UNFREE=1 nix run --impure home-manager/master -- switch --flake .#default --impure
 
 # flake-update + switch (= 更新運用のワンショット)
 update: flake-update switch

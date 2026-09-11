@@ -259,6 +259,16 @@ fi
 
 export PATH=$HOME/.toolbox/bin:$PATH
 
+# 一部の managed Linux 環境では、host 側の provisioning が ~/.zshrc を
+# `grep -P "export AWS_EC2_METADATA_DISABLED=*"` して、見つからなければ
+# 末尾に自前のブロックを追記する。ここで宣言しておくと追記されないので、
+# chezmoi apply 直後に target が drift する (chezmoi status が常に M になる)
+# のを防げる。行の位置は問われない (ファイル全体を grep するため)、
+# 末尾に置く必要のある kiro-cli / Fig の post ブロックより前に置く。
+# macOS では IMDS 自体が無いため無害。
+# if you wish to use IMDS set AWS_EC2_METADATA_DISABLED=false
+export AWS_EC2_METADATA_DISABLED=true
+
 # Added by AIM CLI
 export PATH="$HOME/.aim/mcp-servers:$PATH"
 
