@@ -105,8 +105,10 @@ tab / pane / space 操作は prefix なしの direct keybinding とし、必須�
 `ctrl+shift+r`、`ctrl+shift+y` を tab 作成、tab 移動、space 移動 (上 / 下)、
 space 新規作成、pane 移動、pane 分割、pane resize mode、copy mode に割り当てる。
 WezTerm は修飾が失われるキー (`ctrl+shift+<英字>`、legacy encoding が `Enter` と
-同じ `ctrl+m`、legacy control code の無い `ctrl+,` / `ctrl+.`) を CSI-u sequence
-として Herdr へ送る。
+同じ `ctrl+m`、legacy control code の無い `ctrl+,` / `ctrl+.` / `ctrl+;` /
+`ctrl+'`) を CSI-u sequence として Herdr へ送る。Herdr client が要求する kitty
+keyboard protocol (`CSI >7u`) は WezTerm の既定 (`enable_kitty_keyboard = false`)
+では無視されるため、この変換が無いキーは SSH 越しの remote Herdr でも届かない。
 scroll は Herdr の `[keys]` に action が無く、client が scroll を発行する入力経路は
 マウスホイールと修飾なしの `pageup` / `pagedown` (ページ単位) の 2 つだけ。行単位で
 動かしたいので `ctrl+shift+s` (下) / `ctrl+shift+d` (上) は Hammerspoon の

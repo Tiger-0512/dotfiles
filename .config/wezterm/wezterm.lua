@@ -92,6 +92,32 @@ config.keys = {
 		action = act.SendString("\x1b[27;5u"),
 	},
 
+	-- pane 分割 (Herdr: ctrl+; / ctrl+')。
+	-- `;` / `'` にも legacy control code が無いため ctrl+, / ctrl+. と同じ扱いが必要。
+	-- Herdr client は起動時に kitty keyboard protocol (`CSI >7u`) だけを要求するが、
+	-- WezTerm は enable_kitty_keyboard が既定 false でこれを無視するため、
+	-- 明示的に CSI-u へ変換しないと素の `;` / `'` が届く (SSH 越しでも同じ)。
+	{
+		key = "phys:Semicolon",
+		mods = "CTRL",
+		action = act.SendString("\x1b[59;5u"),
+	},
+	{
+		key = "mapped:;",
+		mods = "CTRL",
+		action = act.SendString("\x1b[59;5u"),
+	},
+	{
+		key = "phys:Quote",
+		mods = "CTRL",
+		action = act.SendString("\x1b[39;5u"),
+	},
+	{
+		key = "mapped:'",
+		mods = "CTRL",
+		action = act.SendString("\x1b[39;5u"),
+	},
+
 	-- Tab creation/navigation and workspace navigation (Ctrl+Shift+t/h/j/k/l).
 	-- ctrl+shift+<letter> has no legacy encoding distinct from ctrl+<letter>,
 	-- so CSI-u is required for Herdr to see the shift modifier.
