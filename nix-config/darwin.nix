@@ -141,6 +141,7 @@
       "ollama-app"
       "font-hack-nerd-font"
       "asana"
+      "openinterminal"
     ];
   };
 
