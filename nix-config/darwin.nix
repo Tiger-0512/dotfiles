@@ -112,10 +112,8 @@
     onActivation = {
       autoUpdate = false;
       upgrade = false;
-      # nix-darwin が --force-cleanup を渡すが Homebrew 5.x では --cleanup に改名済み。
-      # cleanup = "uninstall" は使わず extraFlags で代替する。
-      cleanup = "none";
-      extraFlags = [ "--cleanup" ];
+      # nix-darwin は --force-cleanup を渡す (Homebrew 7.x で --cleanup は disabled)。
+      cleanup = "uninstall";
     };
 
     taps = [
