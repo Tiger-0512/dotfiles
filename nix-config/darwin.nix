@@ -140,6 +140,7 @@
       "font-hack-nerd-font"
       "asana"
       "openinterminal"
+      "anki"
     ];
   };
 
