@@ -116,17 +116,12 @@
       cleanup = "uninstall";
     };
 
-    taps = [
-      "manaflow-ai/cmux"
-    ];
-
     casks = [
       "ghostty"
       "wezterm"
       "visual-studio-code"
       "zed"
       "brave-browser"
-      "cmux"
       "corretto"
       "session-manager-plugin"
       "raycast"
