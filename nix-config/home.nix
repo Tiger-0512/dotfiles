@@ -95,7 +95,7 @@ let
     docker
     docker-compose
     docker-credential-helpers
-    rift-wm
+    # rift-wm  # 一時的に無効化 (設定ファイル dot_config/rift は残す)
   ];
 
   # Linux 固有の package (現時点で空)。
