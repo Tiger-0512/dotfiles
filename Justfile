@@ -75,7 +75,7 @@ rift-service:
     #!/usr/bin/env bash
     set -euo pipefail
     if ! command -v rift >/dev/null 2>&1; then
-      echo "skip: rift not on PATH (switch 未実行?)" >&2
+      echo "skip: rift not on PATH (未インストール)" >&2
       exit 0
     fi
     rift service start
